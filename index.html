@@ -3584,8 +3584,6 @@ async function initFCM(){
         appId: OS_APP_ID,
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
-        serviceWorkerPath: "/Nido/OneSignalSDKWorker.js",
-        serviceWorkerParam: { scope: "/Nido/" },
       });
       console.log("[Push] OneSignal inicializado ✓");
 
@@ -3695,7 +3693,7 @@ async function testPushSelf(){
       return;
     }
     toast("📤 Enviando push de prueba...");
-    const resp = await fetch("https://falling-cake-46be.trabajos-excel-co.workers.dev/", {
+    const resp = await fetch("https://nido-push.trabajos-excel-co.workers.dev/", {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ targets:[sub.id], titulo:"🔔 Prueba Nido", cuerpo:"Las notificaciones funcionan correctamente ✓" })
