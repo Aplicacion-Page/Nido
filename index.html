@@ -3584,7 +3584,7 @@ async function initFCM(){
         appId: OS_APP_ID,
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
-        serviceWorkerPath: "OneSignalSDK.sw.js",
+        serviceWorkerPath: "/Nido/OneSignalSDKWorker.js",
         serviceWorkerParam: { scope: "/Nido/" },
       });
       console.log("[Push] OneSignal inicializado ✓");
