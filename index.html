@@ -3575,39 +3575,139 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 // Guarda el OneSignal player ID del usuario en Firestore
 async function initFCM(){
-  if(!USE_PUSH) return;
+  if(!USE_PUSH){ console.warn("[Push] USE_PUSH=false, desactivado"); return; }
   try{
+    console.log("[Push] Iniciando OneSignal con appId:", OS_APP_ID);
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal){
       await OneSignal.init({
         appId: OS_APP_ID,
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
+        serviceWorkerPath: "OneSignalSDK.sw.js",
+        serviceWorkerParam: { scope: "/Nido/" },
       });
+      console.log("[Push] OneSignal inicializado ✓");
 
       // Escuchar cambio de suscripción y guardar subscription ID en Firestore
       OneSignal.User.PushSubscription.addEventListener("change", async (e) => {
-        if(e.current.optedIn && e.current.id && db && curUser){
-          await db.collection("os_tokens").doc(curUser).set({
-            subscriptionId: e.current.id,
-            user: curUser,
-            updatedAt: Date.now()
-          }).catch(()=>{});
+        console.log("[Push] Cambio de suscripción:", e.current);
+        if(e.current.optedIn && e.current.id){
+          console.log("[Push] Suscrito ✓ ID:", e.current.id);
+          toast("🔔 Notificaciones activadas ✓");
+          if(db && curUser){
+            await db.collection("os_tokens").doc(curUser).set({
+              subscriptionId: e.current.id,
+              user: curUser,
+              updatedAt: Date.now()
+            }).then(()=>console.log("[Push] Token guardado en Firestore ✓"))
+              .catch(err=>console.error("[Push] Error guardando token:", err));
+          }
+        } else {
+          console.warn("[Push] No suscrito o sin ID:", e.current);
         }
       });
 
       // Guardar subscription ID si ya está suscrito
       const sub = OneSignal.User.PushSubscription;
+      console.log("[Push] Estado suscripción actual → optedIn:", sub.optedIn, "| id:", sub.id);
       const osUid2=myProfile?.uid||curUser;
       if(sub.optedIn && sub.id && db && osUid2){
         await db.collection("os_tokens").doc(osUid2).set({
           subscriptionId: sub.id,
           user: osUid2,
           updatedAt: Date.now()
-        }).catch(()=>{});
+        }).then(()=>{ console.log("[Push] Token existente guardado en Firestore ✓"); toast("🔔 Push listo ✓"); })
+          .catch(err=>console.error("[Push] Error guardando token existente:", err));
+      } else if(!sub.optedIn){
+        console.warn("[Push] Usuario no ha dado permiso de notificaciones");
+      } else if(!sub.id){
+        console.warn("[Push] Sin subscription ID — posible problema con el Service Worker");
       }
     });
-  }catch(e){ console.warn("OneSignal init error:", e.message); }
+  }catch(e){
+    console.error("[Push] Error crítico en initFCM:", e.message);
+    toast("⚠️ Error push: "+e.message);
+  }
+}
+
+// ── Diagnóstico push — actualiza el panel en Settings ─────────
+function dbgSet(id, html){ const el=document.getElementById(id); if(el) el.innerHTML=html; }
+async function runPushDiag(){
+  const ok  = c=>`<span style="color:var(--gr);font-weight:700">${c}</span>`;
+  const err = c=>`<span style="color:var(--re);font-weight:700">${c}</span>`;
+  const mu  = c=>`<span style="color:var(--mu)">${c}</span>`;
+
+  // 1. OneSignal cargado?
+  if(typeof OneSignalDeferred === "undefined"){
+    dbgSet("dbg-onesignal","OneSignal: "+err("SDK no cargado"));
+    return;
+  }
+  dbgSet("dbg-onesignal","OneSignal: "+ok("SDK cargado ✓"));
+
+  // 2. Permiso del navegador
+  const perm = Notification.permission;
+  dbgSet("dbg-permission","Permiso: "+(perm==="granted"?ok("granted ✓"):perm==="denied"?err("DENEGADO ✗"):mu("pendiente — no solicitado")));
+
+  // 3. Suscripción OneSignal
+  try{
+    await new Promise(res=>{
+      OneSignalDeferred.push(async os=>{
+        const sub = os.User.PushSubscription;
+        dbgSet("dbg-subscribed","Suscripción: "+(sub.optedIn?ok("activa ✓"):err("inactiva ✗")));
+        if(sub.id){
+          const short = sub.id.substring(0,12)+"…";
+          dbgSet("dbg-token","Token: "+ok(short));
+          // 4. Verificar en Firestore
+          const uid = myProfile?.uid||curUser;
+          if(db && uid){
+            const doc = await db.collection("os_tokens").doc(uid).get().catch(()=>null);
+            if(doc?.exists){
+              const saved = doc.data().subscriptionId;
+              const match = saved === sub.id;
+              dbgSet("dbg-firestore","Firestore: "+(match?ok("guardado ✓"):err("ID diferente ✗")));
+            } else {
+              dbgSet("dbg-firestore","Firestore: "+err("sin registro ✗"));
+            }
+          }
+        } else {
+          dbgSet("dbg-token","Token: "+err("sin ID"));
+          dbgSet("dbg-firestore","Firestore: "+mu("—"));
+        }
+        res();
+      });
+    });
+  }catch(e){
+    dbgSet("dbg-subscribed","Suscripción: "+err("error — "+e.message));
+  }
+}
+
+// ── Debug: enviar push de prueba a uno mismo ──────────────────
+async function testPushSelf(){
+  if(!USE_PUSH){ toast("⚠️ USE_PUSH está desactivado"); return; }
+  try{
+    const sub = await new Promise(res=>{
+      OneSignalDeferred.push(os=>res(os.User.PushSubscription));
+    });
+    console.log("[Push-Test] Sub:", sub);
+    if(!sub.optedIn || !sub.id){
+      toast("⚠️ No hay suscripción activa. ¿Diste permiso de notificaciones?");
+      return;
+    }
+    toast("📤 Enviando push de prueba...");
+    const resp = await fetch("https://falling-cake-46be.trabajos-excel-co.workers.dev/", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ targets:[sub.id], titulo:"🔔 Prueba Nido", cuerpo:"Las notificaciones funcionan correctamente ✓" })
+    });
+    const txt = await resp.text();
+    console.log("[Push-Test] Respuesta Worker:", resp.status, txt);
+    if(resp.ok) toast("✅ Push enviado — revisa tu celular");
+    else        toast("❌ Error Worker: "+resp.status+" — "+txt);
+  }catch(e){
+    console.error("[Push-Test] Error:", e);
+    toast("❌ Error: "+e.message);
+  }
 }
 
 
@@ -3824,7 +3924,7 @@ async function sendPush(titulo, cuerpo, paraUsuario){
     if(targets.length === 0) return;
 
     // Llamar via Cloudflare Worker (evita restricciones CORS)
-    await fetch("https://falling-cake-46be.trabajos-excel-co.workers.dev/", {
+    await fetch("https://nido-push.trabajos-excel-co.workers.dev/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ targets, titulo, cuerpo })
@@ -3872,8 +3972,9 @@ function openSettings(){
   d.classList.remove("closing");
   d.classList.add("open");
   populateSettings();
-  // Update presence of partner
   refreshPartnerPresence();
+  // Actualizar diagnóstico push al abrir settings
+  if(USE_PUSH) setTimeout(runPushDiag, 800);
 }
 function closeSettings(){
   const d=$("settings-drawer");
@@ -5000,6 +5101,21 @@ $("btn-install-dismiss").addEventListener("click",()=>{ $("install-banner").styl
         </div>
         <div id="set-notif-https-warn" style="display:none;font-size:11px;color:var(--mu);padding:6px 4px;line-height:1.5">
           ⚠️ Las notificaciones push requieren HTTPS. Funcionarán cuando la app esté alojada en un servidor seguro.
+        </div>
+        <!-- Diagnóstico push -->
+        <div id="set-push-debug" style="margin-top:8px;padding:10px;background:var(--s2);border-radius:10px;font-size:11px;color:var(--mu);line-height:1.7">
+          <div style="font-weight:700;color:var(--tx);margin-bottom:6px">🔍 Diagnóstico</div>
+          <div id="dbg-onesignal">OneSignal: <span style="color:var(--mu)">verificando…</span></div>
+          <div id="dbg-permission">Permiso: <span style="color:var(--mu)">verificando…</span></div>
+          <div id="dbg-subscribed">Suscripción: <span style="color:var(--mu)">verificando…</span></div>
+          <div id="dbg-token">Token: <span style="color:var(--mu)">—</span></div>
+          <div id="dbg-firestore">Firestore: <span style="color:var(--mu)">—</span></div>
+          <button onclick="testPushSelf()" style="margin-top:8px;width:100%;padding:8px;background:var(--ac2);border:1.5px solid var(--ac);border-radius:8px;color:var(--ac);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
+            📤 Enviar push de prueba a mí mismo
+          </button>
+          <button onclick="runPushDiag()" style="margin-top:6px;width:100%;padding:8px;background:var(--s3);border:1.5px solid var(--bor2);border-radius:8px;color:var(--tx);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">
+            🔄 Actualizar diagnóstico
+          </button>
         </div>
       </div>
 
