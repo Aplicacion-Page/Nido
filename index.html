@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Nido · Construyendo Juntos</title>
-<meta name="build" content="v16-08/05/2026 jakarta+jetbrains+gsap+apexcharts+sweetalert2+lottie+tippy+ripple-buttons">
+<meta name="build" content="v16-14/05/2026 jakarta+jetbrains+gsap+apexcharts+lottie+tippy+ripple-buttons+nido-dialog">
 <meta name="theme-color" content="#0d1117" id="meta-theme">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Finanzas 🤝">
+<meta name="apple-mobile-web-app-title" content="Nido">
 <meta name="description" content="Control de gastos compartidos en pareja">
 <!-- Inter variable font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,8 +21,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <!-- AutoAnimate — animación automática de listas -->
 <script src="https://cdn.jsdelivr.net/npm/@formkit/auto-animate@0.8.2/index.min.js"></script>
-<!-- SweetAlert2 — modales y toasts elegantes -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<!-- Diálogos: reemplazado por nidoDialog (glassmorphism propio, sin CDN externo) -->
 <!-- ApexCharts — gráficas interactivas -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.0/dist/apexcharts.min.js"></script>
 <!-- Lottie Player — animaciones en estados vacíos -->
@@ -34,16 +33,32 @@
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
 (function(){
-  const manifest={name:"Nido · Construyendo Juntos",short_name:"Nido",start_url:"./",display:"standalone",background_color:"transparent",theme_color:"#0A1A3C",orientation:"portrait",
+  const manifest={
+    name:"Nido · Construyendo Juntos",
+    short_name:"Nido",
+    description:"Gestión de gastos en pareja — simple, claro y en tiempo real.",
+    start_url:"./",
+    display:"standalone",
+    background_color:"#0A1A3C",
+    theme_color:"#0A1A3C",
+    orientation:"portrait",
     icons:[
       {src:"./3.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
-      {src:"./3.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}
-    ]};
+      {src:"./3.png",sizes:"512x512",type:"image/png",purpose:"any maskable"},
+      {src:"./3.png",sizes:"any",type:"image/png",purpose:"any"}
+    ]
+  };
   const b=new Blob([JSON.stringify(manifest)],{type:"application/json"});
   const l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(b);
   document.head.appendChild(l);
-  // Apply saved theme immediately to avoid flash
-  if(localStorage.getItem("fp-theme")==="light") document.documentElement.setAttribute("data-theme","light");
+  // Tema: preferencia guardada → si no hay, seguir el sistema del celular
+  const _saved=localStorage.getItem("fp-theme");
+  if(_saved){
+    document.documentElement.setAttribute("data-theme",_saved);
+  } else {
+    const _sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme",_sysDark?"dark":"light");
+  }
 })();
 </script>
 <style>
@@ -58,7 +73,7 @@
   --ac:#818cf8; --ac2:rgba(129,140,248,0.15); --ac3:rgba(129,140,248,0.08);
   --tx:#dde4f5; --mu:#6b7faa; --so:#8898c0;
   --re:#fb7185; --ye:#fbbf24;
-  --topbar-bg:rgba(7,16,42,.95);
+  --topbar-bg:rgba(7,16,42,.20);
   --nav-bg:rgba(7,16,42,.98);
   --shadow:0 8px 32px rgba(0,0,0,.55);
   --shadow-sm:0 2px 12px rgba(0,0,0,.35);
@@ -73,10 +88,10 @@
   --ac:#1e40af; --ac2:rgba(30,64,175,0.10); --ac3:rgba(30,64,175,0.05);
   --tx:#0f1c3d; --mu:#4a5a82; --so:#64748b;
   --re:#e11d48; --ye:#d97706;
-  --topbar-bg:#0A1A3C;
+  --topbar-bg:rgba(10,26,60,.20);
   --nav-bg:#0A1A3C;
   --shadow:0 8px 32px rgba(10,26,60,.15);
-  --shadow-sm:0 2px 12px rgba(10,26,60,.10);
+  --shadow-sm:0 2px 12px rgba(10,26,60,.20);
 }
 
 /* ══════════════════ RESET ══════════════════ */
@@ -517,39 +532,42 @@ input[inputmode="numeric"]::placeholder,
 [data-theme="light"] .sc.bpk{border-color:rgba(219,39,119,.2)}
 [data-theme="light"] .sc.bgr{border-color:rgba(5,150,105,.2)}
 
-/* ── Topbar y nav con color navy en modo claro ──────────────────── */
-[data-theme="light"] .topbar{
-  border-bottom-color:rgba(255,255,255,.08);
-  box-shadow:0 1px 0 rgba(255,255,255,.06),0 4px 20px rgba(10,26,60,.40);
+/* ── Topbar semitransparente: texto y bordes oscuros para legibilidad ── */
+.topbar{color:rgba(10,26,60,.90);border-bottom-color:rgba(10,26,60,.15)}
+.topbar .tbrand,
+.topbar #brand-name{color:rgba(10,26,60,.90)!important}
+.topbar .icon-btn{
+  border-color:rgba(10,26,60,.18);
+  background:rgba(10,26,60,.07);
+  color:rgba(10,26,60,.70);
 }
-[data-theme="light"] .topbar .tbrand,
-[data-theme="light"] .topbar #brand-name{color:rgba(255,255,255,.95)!important}
-[data-theme="light"] .topbar .icon-btn{
-  border-color:rgba(255,255,255,.15);
-  background:rgba(255,255,255,.10);
-  color:rgba(255,255,255,.75);
-  box-shadow:none;
+.topbar .icon-btn:hover{
+  border-color:rgba(10,26,60,.35);
+  background:rgba(10,26,60,.12);
+  color:rgba(10,26,60,.90);
 }
-[data-theme="light"] .topbar .icon-btn:hover{
-  border-color:rgba(255,255,255,.35);
-  background:rgba(255,255,255,.20);
-  color:#fff;
-  box-shadow:none;
+.topbar .logbtn{
+  border-color:rgba(10,26,60,.18);
+  background:rgba(10,26,60,.07);
+  color:rgba(10,26,60,.75);
 }
-[data-theme="light"] .topbar .logbtn{
-  border-color:rgba(255,255,255,.20);
-  background:rgba(255,255,255,.10);
-  color:rgba(255,255,255,.80);
-}
-[data-theme="light"] .topbar .logbtn:hover{
-  border-color:rgba(255,255,255,.50);
-  color:#fff;
-}
-/* Dot de sync sobre fondo navy */
-[data-theme="light"] .topbar .sdot.soff{background:rgba(255,255,255,.35)}
-/* Avatar border en topbar */
-[data-theme="light"] #topbar-avatar-placeholder{border-color:rgba(255,255,255,.25)}
-[data-theme="light"] #topbar-avatar-placeholder:hover{border-color:rgba(255,255,255,.60)}
+.topbar .logbtn:hover{border-color:rgba(10,26,60,.40);color:rgba(10,26,60,.90)}
+.topbar .sdot.soff{background:rgba(10,26,60,.25)}
+#topbar-avatar-placeholder{border-color:rgba(10,26,60,.25)}
+#topbar-avatar-placeholder:hover{border-color:rgba(10,26,60,.55)}
+
+/* ── Modo oscuro: revertir a blanco (fondo sigue siendo oscuro) ────── */
+[data-theme="dark"] .topbar{color:#fff;border-bottom-color:rgba(255,255,255,.10)}
+[data-theme="dark"] .topbar .tbrand,
+[data-theme="dark"] .topbar #brand-name{color:#fff!important}
+[data-theme="dark"] .topbar .icon-btn{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
+[data-theme="dark"] .topbar .icon-btn:hover{border-color:rgba(255,255,255,.40);background:rgba(255,255,255,.14);color:#fff}
+[data-theme="dark"] .topbar .logbtn{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:rgba(255,255,255,.80)}
+[data-theme="dark"] .topbar .logbtn:hover{border-color:rgba(255,255,255,.45);color:#fff}
+[data-theme="dark"] .topbar .sdot.soff{background:rgba(255,255,255,.35)}
+[data-theme="dark"] #topbar-avatar-placeholder{border-color:rgba(255,255,255,.28)}
+[data-theme="dark"] #topbar-avatar-placeholder:hover{border-color:rgba(255,255,255,.60)}
+[data-theme="dark"] .topbar{box-shadow:0 1px 0 rgba(255,255,255,.06),0 4px 20px rgba(0,0,0,.25)}
 
 /* ── Bottom nav navy ─────────────────────────────────────────────── */
 [data-theme="light"] .bnav{
@@ -597,6 +615,9 @@ input[inputmode="numeric"]::placeholder,
 
 /* ══════════════════ INSTALL BANNER ══════════════════ */
 #install-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:linear-gradient(135deg,var(--s2),var(--s3));border-top:1px solid var(--ac2);padding:14px 16px;align-items:center;gap:12px;box-shadow:0 -4px 20px rgba(0,0,0,.3);animation:slideUp .3s ease}
+#ios-install-banner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;background:linear-gradient(135deg,var(--s2),var(--s3));border-top:1px solid var(--ac2);padding:14px 16px;flex-direction:column;gap:10px;box-shadow:0 -4px 20px rgba(0,0,0,.3);animation:slideUp .3s ease}
+#ios-install-banner .ios-steps{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mu);flex-wrap:wrap}
+#ios-install-banner .ios-steps span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 
 /* ══════════════════ RESPONSIVE ══════════════════ */
 
@@ -632,6 +653,37 @@ input[inputmode="numeric"]::placeholder,
 
 @media(max-width:360px){.content{padding:13px 10px 108px}.sval{font-size:15px}.row2{grid-template-columns:1fr}.sgrid{grid-template-columns:1fr 1fr;gap:8px}}
 @media(max-width:320px){.sgrid{grid-template-columns:1fr}}
+
+/* ── Formulario compacto en móviles (todo visible sin scroll) ── */
+@media screen and (max-height:820px){
+  #pnl-agregar .stit{font-size:18px}
+  #pnl-agregar>div:first-child{margin-bottom:8px}
+  #ultimo-gasto-banner{padding:7px 12px;margin-bottom:8px;font-size:12px}
+  #pnl-agregar>div:nth-child(3){padding:7px 12px;margin-bottom:8px}
+  #pnl-agregar .card{padding:12px 14px;margin-bottom:10px}
+  #pnl-agregar .fg{margin-bottom:8px}
+  #pnl-agregar .flbl{margin-bottom:3px}
+  #pnl-agregar .finp{padding:9px 12px;font-size:15px}
+  #pnl-agregar .val-wrap .finp{padding-left:26px}
+  #pnl-agregar .fsel{padding:9px 34px 9px 12px;font-size:14px}
+  #pnl-agregar .opt{padding:8px 6px;font-size:13px}
+  #pnl-agregar .osub{font-size:9px;margin-top:1px}
+  #pnl-agregar .prevbox{padding:7px 12px;margin-top:8px;min-height:32px;font-size:12px}
+  #pnl-agregar #btn-save{padding:12px 20px;font-size:14px}
+}
+@media screen and (max-height:700px){
+  #pnl-agregar .stit{font-size:16px}
+  #pnl-agregar>div:first-child{margin-bottom:5px}
+  #ultimo-gasto-banner{padding:5px 10px;margin-bottom:6px;font-size:11px}
+  #pnl-agregar>div:nth-child(3){padding:6px 12px;margin-bottom:6px}
+  #pnl-agregar .card{padding:10px 12px;margin-bottom:8px}
+  #pnl-agregar .fg{margin-bottom:6px}
+  #pnl-agregar .finp{padding:8px 10px;font-size:14px}
+  #pnl-agregar .fsel{padding:8px 32px 8px 10px;font-size:13px}
+  #pnl-agregar .opt{padding:7px 5px;font-size:12px}
+  #pnl-agregar .prevbox{padding:6px 10px;margin-top:6px;min-height:28px;font-size:11px}
+  #pnl-agregar #btn-save{padding:10px 20px;font-size:13px}
+}
 
 /* ── Offline banner ── */
 #offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:600;background:linear-gradient(90deg,rgba(251,191,36,.97),rgba(217,119,6,.97));color:#1a0f00;padding:9px 16px;font-size:12px;font-weight:700;text-align:center;letter-spacing:.02em;animation:slideDown .3s ease}
@@ -752,6 +804,86 @@ svg.lucide{
 }
 /* .btn es block por defecto; mantener cuando sea necesario */
 .btn{display:flex}
+/* ══ NIDO GLASSMORPHISM DIALOG ══ */
+.nd-overlay{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.48);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;transition:opacity .22s ease;
+  padding:20px;
+}
+.nd-overlay.nd-show{opacity:1}
+.nd-overlay.nd-closing{opacity:0;pointer-events:none}
+.nd-dialog{
+  background:rgba(10,18,45,.84);
+  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border:1.5px solid rgba(255,255,255,.14);
+  border-radius:24px;
+  padding:32px 26px 22px;
+  width:100%;max-width:360px;
+  text-align:center;
+  box-shadow:0 25px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.10);
+  transform:scale(.88) translateY(14px);
+  transition:transform .32s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-overlay.nd-show .nd-dialog{transform:scale(1) translateY(0)}
+.nd-overlay.nd-closing .nd-dialog{transform:scale(.92) translateY(8px);transition:transform .18s ease-in}
+[data-theme="light"] .nd-dialog{
+  background:rgba(248,250,255,.90);
+  border-color:rgba(10,26,60,.10);
+  box-shadow:0 20px 60px rgba(10,26,60,.20),inset 0 1px 0 rgba(255,255,255,.90);
+}
+.nd-icon{
+  width:62px;height:62px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;font-size:26px;
+}
+.nd-icon-question{background:rgba(99,102,241,.18);border:1.5px solid rgba(99,102,241,.35)}
+.nd-icon-warning{background:rgba(251,191,36,.15);border:1.5px solid rgba(251,191,36,.40)}
+.nd-icon-error{background:rgba(239,68,68,.15);border:1.5px solid rgba(239,68,68,.40)}
+.nd-icon-info{background:rgba(56,189,248,.15);border:1.5px solid rgba(56,189,248,.38)}
+.nd-icon-success{background:rgba(52,211,153,.15);border:1.5px solid rgba(52,211,153,.38)}
+.nd-title{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:19px;font-weight:800;letter-spacing:-.02em;
+  color:#f1f5f9;margin-bottom:8px;
+}
+[data-theme="light"] .nd-title{color:#0f172a}
+.nd-body{
+  font-size:13px;color:#94a3b8;line-height:1.6;
+  margin-bottom:24px;text-align:center;
+}
+[data-theme="light"] .nd-body{color:#475569}
+.nd-body strong{color:#f1f5f9}
+[data-theme="light"] .nd-body strong{color:#0f172a}
+.nd-btns{display:flex;gap:10px}
+.nd-btn{
+  flex:1;padding:13px 14px;border:none;border-radius:13px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:opacity .15s,transform .1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.nd-btn:active{transform:scale(.97)}
+.nd-btn-cancel{
+  background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.13);
+  color:#94a3b8;
+}
+.nd-btn-cancel:hover{background:rgba(255,255,255,.13);color:#e2e8f0}
+[data-theme="light"] .nd-btn-cancel{
+  background:rgba(10,26,60,.06);border-color:rgba(10,26,60,.13);color:#64748b;
+}
+[data-theme="light"] .nd-btn-cancel:hover{background:rgba(10,26,60,.11);color:#0f172a}
+.nd-btn-confirm{
+  background:linear-gradient(135deg,#6366f1,#818cf8);
+  color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.35);
+}
+.nd-btn-confirm:hover{opacity:.88}
+/* Dialog con formulario HTML complejo */
+.nd-has-form{max-width:430px;text-align:left}
+.nd-has-form .nd-body{text-align:left;margin-bottom:20px}
+.nd-has-form .nd-title{text-align:left}
 </style>
 </head>
 <body>
@@ -1081,7 +1213,7 @@ svg.lucide{
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="tbrand" style="cursor:pointer;user-select:none;gap:7px" onclick="openSettings()">
-      <span id="nido-topbar-icon" style="line-height:0"></span>
+      <span id="nido-topbar-icon" style="line-height:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0"></span>
       <span id="brand-name" style="background:linear-gradient(135deg,#5CE0F0,#1052C8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Nido</span>
     </div>
     <div class="tbar-right">
@@ -1572,12 +1704,28 @@ svg.lucide{
   </div>
 </div>
 
-<!-- PWA Install Banner -->
+<!-- PWA Install Banner (Android / Chrome) -->
 <div id="install-banner">
   <span style="font-size:28px">🤝</span>
-  <div style="flex:1"><div style="font-weight:700;font-size:14px">Instalar app</div><div style="font-size:12px;color:var(--mu);margin-top:1px">Agregar a pantalla de inicio</div></div>
+  <div style="flex:1"><div style="font-weight:700;font-size:14px">Instalar Nido</div><div style="font-size:12px;color:var(--mu);margin-top:1px">Agregar a pantalla de inicio</div></div>
   <button id="btn-install" class="btn" style="width:auto;padding:9px 16px;background:linear-gradient(135deg,var(--ac),#6366f1);font-size:13px">Instalar</button>
   <button id="btn-install-dismiss" style="background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;padding:4px">✕</button>
+</div>
+
+<!-- PWA Install Banner (iOS Safari) -->
+<div id="ios-install-banner">
+  <div style="display:flex;align-items:center;gap:10px">
+    <span style="font-size:26px">📲</span>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:14px">Instalar Nido en iOS</div>
+      <div class="ios-steps" style="margin-top:5px">
+        <span>1. Toca <strong style="color:var(--ac2)">Compartir</strong> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></span>
+        <span style="color:var(--bor2)">→</span>
+        <span>2. Selecciona <strong style="color:var(--ac2)">"Agregar a inicio"</strong> 🏠</span>
+      </div>
+    </div>
+    <button id="btn-ios-dismiss" style="background:none;border:none;color:var(--mu);font-size:20px;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+  </div>
 </div>
 
 <script>
@@ -1620,7 +1768,6 @@ const USE_PUSH  = true;
 // OS_API_KEY removida del cliente — vive solo en el Cloudflare Worker
 /* ════════════════════════════════════════════ */
 
-const SEED_DATA = []; // Eliminado — app pública sin datos de ejemplo
 
 const MOS=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 const MOF=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
@@ -1806,8 +1953,13 @@ function setTheme(t){
   const tog=$("set-theme-toggle"); if(tog) tog.checked=(t==="dark");
   const sub=$("set-theme-sub"); if(sub) sub.textContent=t==="dark"?"Modo oscuro activo":"Modo claro activo";
 }
-// Theme init (btn-theme moved to settings)
+// Theme init
 setTheme(document.documentElement.getAttribute("data-theme")||"dark");
+
+// Modo automático: si el usuario no fijó preferencia, seguir el sistema en tiempo real
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{
+  if(!localStorage.getItem("fp-theme")) setTheme(e.matches?"dark":"light");
+});
 
 /* ══ LocalStorage — solo tema y fallback offline ══ */
 
@@ -2306,8 +2458,8 @@ function updateTopbar(){
   if(brandEl){
     if(curCouple){
       brandEl.textContent=curCouple.name||"Mi sala";
-      // Quitar gradiente para sala activa: mostrar en blanco/texto normal
-      brandEl.style.cssText="font-size:15px;font-weight:700;opacity:.90";
+      // Sala activa: color hereda del tema (oscuro en light, blanco en dark)
+      brandEl.style.cssText="font-size:15px;font-weight:700;opacity:.95";
     }else{
       brandEl.textContent="Nido";
       brandEl.style.cssText="background:linear-gradient(135deg,#5CE0F0,#1052C8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text";
@@ -3674,20 +3826,109 @@ function toast(msg){
   tT=setTimeout(()=>t.classList.remove("show"),2800);
 }
 
-/* ── Helper para confirms con SweetAlert2 ── */
-async function swalConfirm({title,text,html,icon='question',confirmText='Confirmar',confirmColor='#818cf8'}){
-  if(!window.Swal) return window.confirm(text||title);
-  const isDk = document.documentElement.getAttribute("data-theme")!=="light";
-  const r = await Swal.fire({
-    title, icon,
+/* ══ NIDO GLASSMORPHISM DIALOG ENGINE ══ */
+const ND_ICONS={
+  question:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(129,140,248,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  warning:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(251,191,36,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  error:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(239,68,68,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+  info:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+  success:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(52,211,153,.9)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+};
+
+const nidoDialog={
+  fire(opts={}){
+    return new Promise(resolve=>{
+      /* ── Build overlay ── */
+      const ov=document.createElement('div');
+      ov.className='nd-overlay';
+
+      /* ── Build dialog ── */
+      const dlg=document.createElement('div');
+      dlg.className='nd-dialog'+(opts.html?' nd-has-form':'');
+
+      /* Icon */
+      if(opts.icon&&ND_ICONS[opts.icon]){
+        const ic=document.createElement('div');
+        ic.className='nd-icon nd-icon-'+opts.icon;
+        ic.innerHTML=ND_ICONS[opts.icon];
+        dlg.appendChild(ic);
+      }
+      /* Title */
+      if(opts.title){
+        const t=document.createElement('div');
+        t.className='nd-title';
+        t.innerHTML=opts.title;
+        dlg.appendChild(t);
+      }
+      /* Body */
+      const body=document.createElement('div');
+      body.className='nd-body';
+      if(opts.html) body.innerHTML=opts.html;
+      else if(opts.text) body.textContent=opts.text;
+      dlg.appendChild(body);
+
+      /* Buttons */
+      const btns=document.createElement('div');
+      btns.className='nd-btns';
+
+      function close(){
+        ov.classList.add('nd-closing');
+        document.body.style.overflow='';
+        document.removeEventListener('keydown',escFn);
+        setTimeout(()=>ov.remove(),220);
+      }
+
+      if(opts.showCancelButton!==false){
+        const cb=document.createElement('button');
+        cb.className='nd-btn nd-btn-cancel';
+        cb.textContent=opts.cancelButtonText||'Cancelar';
+        cb.onclick=()=>{close();resolve({isConfirmed:false,value:undefined,isDismissed:true});};
+        btns.appendChild(cb);
+      }
+
+      const cfb=document.createElement('button');
+      cfb.className='nd-btn nd-btn-confirm';
+      cfb.textContent=opts.confirmButtonText||'Confirmar';
+      if(opts.confirmButtonColor) cfb.style.background=opts.confirmButtonColor;
+      cfb.onclick=()=>{
+        let val=true;
+        if(opts.preConfirm) val=opts.preConfirm();
+        close();
+        resolve({isConfirmed:true,value:val});
+      };
+      btns.appendChild(cfb);
+      dlg.appendChild(btns);
+      ov.appendChild(dlg);
+      document.body.appendChild(ov);
+      document.body.style.overflow='hidden';
+
+      /* Animate in */
+      requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('nd-show')));
+
+      /* Close on backdrop click */
+      ov.addEventListener('click',e=>{
+        if(e.target===ov){close();resolve({isConfirmed:false,value:undefined,isDismissed:true});}
+      });
+
+      /* ESC key */
+      const escFn=e=>{if(e.key==='Escape'){close();resolve({isConfirmed:false,value:undefined,isDismissed:true});}};
+      document.addEventListener('keydown',escFn);
+
+      /* didOpen callback */
+      if(opts.didOpen) setTimeout(()=>opts.didOpen(dlg),60);
+    });
+  }
+};
+
+/* ── Helper para confirms glassmorphism ── */
+async function swalConfirm({title,text,html,icon='question',confirmText='Confirmar',confirmColor}){
+  const r=await nidoDialog.fire({
+    title,icon,
     ...(html?{html}:text?{text}:{}),
     showCancelButton:true,
     confirmButtonText:confirmText,
     cancelButtonText:'Cancelar',
-    confirmButtonColor:confirmColor,
-    background: isDk?'#0d1830':'#ffffff',
-    color:      isDk?'#dde4f5':'#0f1c3d',
-    customClass:{popup:'nido-swal-modal'},
+    ...(confirmColor?{confirmButtonColor:confirmColor}:{}),
   });
   return r.isConfirmed;
 }
@@ -4043,7 +4284,7 @@ async function cerrarViaje(){
       </label>`
     :`<div style="padding:9px 13px;border-radius:11px;border:1.5px solid var(--bor);margin-bottom:8px;color:var(--mu);font-size:12px">📊 Según ingresos — <i>Ambos deben tener ingresos registrados</i></div>`;
 
-  const { value:prop } = await Swal.fire({
+  const { value:prop } = await nidoDialog.fire({
     title:"🔒 Cerrar viaje",
     html:`
       <div style="text-align:left;font-size:13px">
@@ -4073,9 +4314,7 @@ async function cerrarViaje(){
     showCancelButton:true,
     confirmButtonText:"Cerrar y registrar",
     cancelButtonText:"Cancelar",
-    confirmButtonColor:"#6366f1",
-    background:"var(--bg)",
-    color:"var(--tx)",
+    confirmButtonColor:"linear-gradient(135deg,#6366f1,#818cf8)",
     didOpen:()=>{
       // Resaltar opción seleccionada al hacer clic
       document.querySelectorAll("input[name='vprop']").forEach(r=>{
@@ -6438,10 +6677,42 @@ document.addEventListener("DOMContentLoaded",()=>{ lockInit(); });
 
 /* ══ PWA INSTALL BANNER ══ */
 let dP=null;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dP=e;$("install-banner").style.display="flex";});
-window.addEventListener("appinstalled",()=>{$("install-banner").style.display="none";dP=null;toast("✅ App instalada en tu celular");});
-$("btn-install").addEventListener("click",()=>{if(!dP)return;dP.prompt();dP.userChoice.then(()=>{dP=null;});});
-$("btn-install-dismiss").addEventListener("click",()=>{ $("install-banner").style.display="none"; });
+const _isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const _isInStandalone=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+
+// Android / Chrome: beforeinstallprompt
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  dP=e;
+  if(!_isInStandalone && !sessionStorage.getItem("install-dismissed")){
+    $("install-banner").style.display="flex";
+  }
+});
+window.addEventListener("appinstalled",()=>{
+  $("install-banner").style.display="none";
+  $("ios-install-banner").style.display="none";
+  dP=null;
+  toast("✅ App instalada en tu celular");
+});
+$("btn-install").addEventListener("click",()=>{
+  if(!dP) return;
+  dP.prompt();
+  dP.userChoice.then(r=>{ dP=null; if(r.outcome==="accepted") $("install-banner").style.display="none"; });
+});
+$("btn-install-dismiss").addEventListener("click",()=>{
+  $("install-banner").style.display="none";
+  sessionStorage.setItem("install-dismissed","1");
+});
+
+// iOS Safari: show custom instructions if not already installed
+$("btn-ios-dismiss").addEventListener("click",()=>{
+  $("ios-install-banner").style.display="none";
+  sessionStorage.setItem("install-dismissed","1");
+});
+if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
+  // Delay slightly so the app finishes loading first
+  setTimeout(()=>{ $("ios-install-banner").style.display="flex"; }, 3000);
+}
 </script>
 
 <!--
@@ -6691,7 +6962,7 @@ $("btn-install-dismiss").addEventListener("click",()=>{ $("install-banner").styl
   (function initNidoBrand(){
     // Topbar: ícono solo (3.png, 26px)
     const topbarIcon = document.getElementById("nido-topbar-icon");
-    if(topbarIcon) topbarIcon.innerHTML = nidoIconHTML(26);
+    if(topbarIcon) topbarIcon.innerHTML = nidoIconHTML(50);
 
     // Login welcome: logo completo (2.png)
     const loginIcon = document.getElementById("nido-login-icon");
