@@ -1,0 +1,32 @@
+{
+  "name": "Nido · Construyendo Juntos",
+  "short_name": "Nido",
+  "description": "Gestión de gastos en pareja — simple, claro y en tiempo real.",
+  "start_url": "/Nido/",
+  "scope": "/Nido/",
+  "display": "standalone",
+  "background_color": "#0A1A3C",
+  "theme_color": "#0A1A3C",
+  "orientation": "portrait",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/Nido/3.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Nido/3.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Nido/3.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

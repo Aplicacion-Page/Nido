@@ -31,26 +31,9 @@
 <link rel="icon" type="image/png" href="./3.png">
 <link rel="apple-touch-icon" href="./3.png">
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<link rel="manifest" href="./manifest.json">
 <script>
 (function(){
-  const manifest={
-    name:"Nido · Construyendo Juntos",
-    short_name:"Nido",
-    description:"Gestión de gastos en pareja — simple, claro y en tiempo real.",
-    start_url:"./",
-    display:"standalone",
-    background_color:"#0A1A3C",
-    theme_color:"#0A1A3C",
-    orientation:"portrait",
-    icons:[
-      {src:"./3.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
-      {src:"./3.png",sizes:"512x512",type:"image/png",purpose:"any maskable"},
-      {src:"./3.png",sizes:"any",type:"image/png",purpose:"any"}
-    ]
-  };
-  const b=new Blob([JSON.stringify(manifest)],{type:"application/json"});
-  const l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(b);
-  document.head.appendChild(l);
   // Tema: preferencia guardada → si no hay, seguir el sistema del celular
   const _saved=localStorage.getItem("fp-theme");
   if(_saved){
@@ -6255,57 +6238,7 @@ async function resetAllData(){
    Los datos offline son manejados por Firestore enablePersistence.
 ══════════════════════════════════════════════════════════════════════ */
 if("serviceWorker" in navigator){
-  const CACHE_VER = "nido-v"+APP_VERSION.replace(/\./g,"-");
-  const sw=`
-const C="${CACHE_VER}";
-const CDN_HOSTS=["cdnjs.cloudflare.com","cdn.jsdelivr.net","unpkg.com",
-  "fonts.googleapis.com","fonts.gstatic.com","cdn.onesignal.com",
-  "assets3.lottiefiles.com"];
-const API_HOSTS=["firestore.googleapis.com","firebase.googleapis.com",
-  "identitytoolkit.googleapis.com","nido-push.trabajos-excel-co.workers.dev",
-  "onesignal.com"];
-
-self.addEventListener("install",e=>{
-  self.skipWaiting();
-});
-self.addEventListener("activate",e=>{
-  e.waitUntil(
-    caches.keys().then(ks=>Promise.all(
-      ks.filter(k=>k!==C).map(k=>caches.delete(k))
-    )).then(()=>self.clients.claim())
-  );
-});
-self.addEventListener("fetch",e=>{
-  if(e.request.method!=="GET") return;
-  const url=new URL(e.request.url);
-
-  // APIs de datos — siempre network first (nunca cachear respuestas de Firestore)
-  if(API_HOSTS.some(h=>url.hostname.includes(h))) return;
-
-  // CDN estáticos — cache first, network fallback
-  if(CDN_HOSTS.some(h=>url.hostname.includes(h))){
-    e.respondWith(
-      caches.match(e.request).then(cached=>{
-        if(cached) return cached;
-        return fetch(e.request).then(r=>{
-          if(r&&r.ok){const cl=r.clone();caches.open(C).then(ca=>ca.put(e.request,cl));}
-          return r;
-        }).catch(()=>cached||new Response("",{status:503}));
-      })
-    );
-    return;
-  }
-
-  // App shell y todo lo demás — network first, cache fallback
-  e.respondWith(
-    fetch(e.request).then(r=>{
-      if(r&&r.ok){const cl=r.clone();caches.open(C).then(ca=>ca.put(e.request,cl));}
-      return r;
-    }).catch(()=>caches.match(e.request).then(c=>c||new Response("Sin conexión",{status:503,headers:{"Content-Type":"text/plain"}})))
-  );
-});`;
-  const b=new Blob([sw],{type:"text/javascript"});
-  navigator.serviceWorker.register(URL.createObjectURL(b))
+  navigator.serviceWorker.register("./sw.js", {scope:"/Nido/"})
     .then(reg=>{ window._swReg=reg; })
     .catch(()=>{});
 }
