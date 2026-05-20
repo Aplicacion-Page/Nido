@@ -887,6 +887,10 @@ svg.lucide{
     <button class="btn btn-outline" id="btn-show-signup" style="width:100%;padding:14px;font-size:15px;font-weight:700">
       Crear cuenta nueva
     </button>
+    <div style="text-align:center;margin-top:18px;font-size:11px;color:var(--mu)">
+      Al usar Nido aceptas nuestra
+      <a href="./privacy.html" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600">Política de Privacidad</a>
+    </div>
   </div>
 
   <!-- SIGN IN -->
@@ -2115,6 +2119,18 @@ async function onUserSignedIn(user){
   }
   if(couples.length === 0){
     // No couple yet → onboarding
+    // Si hay un join pendiente (usuario en medio de unirse), no interrumpir
+    const _savedJoin=sessionStorage.getItem("nido_pending_join");
+    if(_savedJoin && !window._pendingJoin){
+      try{ window._pendingJoin=JSON.parse(_savedJoin); }catch(e){}
+    }
+    if(window._pendingJoin){
+      showAuthLoading(false);
+      $("screen-login").style.display="flex";
+      $("screen-app").style.display="none";
+      showAuthScreen("auth-salary");
+      return;
+    }
     showAuthLoading(false);
     $("couple-sub").textContent = "Hola, "+myProfile.displayName+" 👋";
     // Pre-llenar nombre de sala
@@ -2295,12 +2311,15 @@ async function shareInviteCode(code){
   const c=(code||"").trim();
   if(!c||c==="—"){ toast("⚠️ El código no está disponible aún"); return; }
   const salaName = curCouple?.name || "Nido";
+  const myName = myProfile?.displayName || "Tu pareja";
+  const appUrl = "https://aplicacion-page.github.io/Nido/";
   const msg =
     `🏠 *${salaName} · Finanzas en pareja*\n\n`+
-    `Te invito a unirte a nuestra sala en *Nido*.\n`+
-    `Usa este código de invitación:\n\n`+
+    `*${myName}* te invita a unirte a la sala en *Nido*.\n\n`+
+    `Usa este código de invitación:\n`+
     `🔑  *${c}*\n\n`+
-    `Abre la app, toca "Unirme con código" e ingresa el código.`;
+    `👇 Abre la app, toca "Unirme con código" e ingresa el código:\n`+
+    `${appUrl}`;
   if(navigator.share){
     try{
       await navigator.share({ title:"Únete a "+salaName+" en Nido", text: msg });
@@ -2308,7 +2327,6 @@ async function shareInviteCode(code){
       if(e.name!=="AbortError") toast("⚠️ No se pudo abrir el menú de compartir");
     }
   } else {
-    // Fallback para escritorio: copiar al portapapeles
     navigator.clipboard?.writeText(msg)
       .then(()=>toast("📋 Mensaje copiado — pégalo en WhatsApp o donde quieras"))
       .catch(()=>toast("Código: "+c));
@@ -2545,6 +2563,7 @@ function tearDownListeners(fullSignOut=false){
   // Limpiar pendientes de onboarding
   window._pendingJoin=null;
   window._pendingSalaryCid=null;
+  try{ sessionStorage.removeItem("nido_pending_join"); }catch(e){}
   // Limpiar datos de la sala actual
   gastos=[]; viajes=[]; saldos=[];
   curCouple=null; coupleId=null; partnerProfile=null;
@@ -2771,6 +2790,13 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
   if(raw>100000000){$("lerr-salary").textContent="⚠️ Los ingresos no pueden superar $100.000.000";return;}
   $("lerr-salary").textContent="";
   showAuthLoading(true);
+  // Restaurar _pendingJoin desde sessionStorage si se perdió por re-fire de auth
+  if(!window._pendingJoin){
+    try{
+      const saved=sessionStorage.getItem("nido_pending_join");
+      if(saved) window._pendingJoin=JSON.parse(saved);
+    }catch(e){}
+  }
   const chosenColor=window._selectedAvatarColor||AVATAR_COLORS[0];
   try{
     // Guardar color en perfil de usuario
@@ -2781,6 +2807,7 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
       // Flujo unirse: completar la unión + guardar salario
       const {cid,code,cdata,updatedMembers,finalName,firstMember}=window._pendingJoin;
       window._pendingJoin=null;
+      try{ sessionStorage.removeItem("nido_pending_join"); }catch(e){}
       const updatedSalarios={...(cdata.salarios||{}),[myProfile.uid]:raw};
       await db.collection("couples").doc(cid).update({
         members:updatedMembers,
@@ -2856,9 +2883,11 @@ $("btn-join-pareja").addEventListener("click",async()=>{
     showAuthLoading(false);
     const partnerColor=firstProf.exists?firstProf.data().avatarColor:null;
     window._pendingJoin={cid, code, cdata, updatedMembers, finalName, firstMember};
+    // Persistir en sessionStorage para sobrevivir re-fires de onAuthStateChanged
+    try{ sessionStorage.setItem("nido_pending_join", JSON.stringify(window._pendingJoin)); }catch(e){}
     const inp=$("onb-salary"); if(inp){inp.value="";setTimeout(()=>inp.focus(),200);}
     $("lerr-salary").textContent="";
-    window._selectedAvatarColor=null; // reset para que el picker elija automáticamente
+    window._selectedAvatarColor=null;
     showAuthScreen("auth-salary");
     renderOnbColorPicker(partnerColor);
   }catch(e){
@@ -6854,7 +6883,9 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
       </div>
 
       <div id="set-version-footer" style="text-align:center;padding:8px 0 4px;font-size:10px;color:var(--mu)">
-        🏠 Nido · v<span id="set-ver-num">—</span> · <span id="set-ver-date">—</span></div>
+        🏠 Nido · v<span id="set-ver-num">—</span> · <span id="set-ver-date">—</span><br>
+        <a href="./privacy.html" target="_blank" style="color:var(--ac);text-decoration:none;font-weight:600;font-size:11px">Política de Privacidad</a>
+      </div>
 
     </div><!-- /set-body -->
   </div><!-- /settings-panel -->
