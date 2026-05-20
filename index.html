@@ -2118,20 +2118,21 @@ async function onUserSignedIn(user){
     myProfile.couples = couples;
     await db.collection("users").doc(myProfile.uid).update({couples}).catch(()=>{});
   }
+  // Verificar join pendiente ANTES de evaluar couples (aplica sin importar si ya tiene sala)
+  const _savedJoin=sessionStorage.getItem("nido_pending_join");
+  if(_savedJoin && !window._pendingJoin){
+    try{ window._pendingJoin=JSON.parse(_savedJoin); }catch(e){}
+  }
+  if(window._pendingJoin){
+    showAuthLoading(false);
+    $("screen-login").style.display="flex";
+    $("screen-app").style.display="none";
+    showAuthScreen("auth-salary");
+    return;
+  }
+
   if(couples.length === 0){
     // No couple yet → onboarding
-    // Si hay un join pendiente (usuario en medio de unirse), no interrumpir
-    const _savedJoin=sessionStorage.getItem("nido_pending_join");
-    if(_savedJoin && !window._pendingJoin){
-      try{ window._pendingJoin=JSON.parse(_savedJoin); }catch(e){}
-    }
-    if(window._pendingJoin){
-      showAuthLoading(false);
-      $("screen-login").style.display="flex";
-      $("screen-app").style.display="none";
-      showAuthScreen("auth-salary");
-      return;
-    }
     showAuthLoading(false);
     $("couple-sub").textContent = "Hola, "+myProfile.displayName+" 👋";
     // Pre-llenar nombre de sala
@@ -2556,6 +2557,7 @@ function startListen(){
   }
 }
 function tearDownListeners(fullSignOut=false){
+  if(window._pendingJoin) console.warn("[Nido] tearDownListeners llamado con _pendingJoin activo — fullSignOut:", fullSignOut, new Error().stack);
   // Detener todos los listeners de Firestore
   if(unsub){unsub();unsub=null;}
   if(unsubViajes){unsubViajes();unsubViajes=null;}
@@ -2795,8 +2797,11 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
   if(!window._pendingJoin){
     try{
       const saved=sessionStorage.getItem("nido_pending_join");
+      console.log("[Nido] _pendingJoin en memoria: null — sessionStorage:", saved);
       if(saved) window._pendingJoin=JSON.parse(saved);
-    }catch(e){}
+    }catch(e){ console.error("[Nido] Error restaurando _pendingJoin:", e); }
+  } else {
+    console.log("[Nido] _pendingJoin en memoria OK, cid:", window._pendingJoin?.cid);
   }
   const chosenColor=window._selectedAvatarColor||AVATAR_COLORS[0];
   try{
