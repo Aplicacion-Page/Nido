@@ -235,6 +235,16 @@ input,select,button{font-family:inherit}
 .sala-invite-box{background:var(--s2);border:1.5px dashed var(--bor2);border-radius:13px;padding:14px;text-align:center;margin-bottom:10px}
 .sala-invite-code{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:900;letter-spacing:.15em;color:var(--ac);margin:6px 0 10px}
 .sala-section-title{font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin:16px 0 8px;padding-left:2px}
+.sala-chdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:10px 14px;margin-bottom:6px;background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;transition:background .2s,border-color .2s}
+.sala-chdr:active{background:var(--s2)}
+.sala-chdr-lbl{font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.1em;text-transform:uppercase}
+.sala-chdr-chev{color:var(--mu);transition:transform .24s cubic-bezier(.4,0,.2,1);line-height:0}
+.sala-chdr.open .sala-chdr-chev{transform:rotate(180deg)}
+.sala-chdr.open{border-color:var(--ac);background:var(--ac2)}
+.sala-chdr.open .sala-chdr-lbl{color:var(--ac)}
+.sala-cbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s cubic-bezier(.4,0,.2,1)}
+.sala-cbody.open{grid-template-rows:1fr}
+.sala-cbody>div{overflow:hidden}
 .sala-action-row{display:flex;gap:8px;margin-top:4px}
 /* Tarjetas de sala en lista */
 .sala-list-card{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--s1);border:1.5px solid var(--bor);border-radius:12px;padding:11px 13px;margin-bottom:8px;transition:var(--t)}
@@ -813,6 +823,26 @@ svg.lucide{
 }
 .nd-overlay.nd-show .nd-dialog{transform:scale(1) translateY(0)}
 .nd-overlay.nd-closing .nd-dialog{transform:scale(.92) translateY(8px);transition:transform .18s ease-in}
+/* ── Premium wall ── */
+.pw-wrap{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(168,85,247,.14));border:1.5px solid rgba(139,92,246,.35);border-radius:20px;padding:22px 18px 18px;margin-bottom:14px}
+.pw-gem{font-size:44px;margin-bottom:8px;line-height:1}
+.pw-title{font-size:18px;font-weight:800;color:var(--tx);margin-bottom:4px}
+.pw-sub{font-size:13px;color:var(--mu);margin-bottom:16px;line-height:1.5}
+.pw-sub strong{color:var(--tx)}
+.pw-list{list-style:none;padding:0;margin:0;text-align:left}
+.pw-list li{font-size:13px;color:var(--ac);padding:5px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(139,92,246,.12)}
+.pw-list li:last-child{border-bottom:none}
+.pw-list li::before{content:"💎";font-size:13px;flex-shrink:0}
+.pw-btn{width:100%;padding:14px;background:linear-gradient(135deg,#6366f1,#a855f7);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:14px;letter-spacing:.02em;box-shadow:0 4px 20px rgba(99,102,241,.4);transition:opacity .2s}
+.pw-btn:active{opacity:.85}
+/* Tab lock badge */
+.ntab-lock{position:relative}
+.ntab-lock-badge{position:absolute;top:-2px;right:-4px;font-size:9px;line-height:1;background:linear-gradient(135deg,#6366f1,#a855f7);border-radius:5px;padding:1px 3px;color:#fff;font-weight:800;pointer-events:none}
+/* Export buttons */
+.export-bar{display:flex;gap:8px;margin-top:14px}
+.export-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1.5px solid var(--bor);background:var(--s1);font-size:12px;font-weight:700;color:var(--mu);cursor:pointer;transition:var(--t);position:relative}
+.export-btn:active{background:var(--s2)}
+.export-btn .export-lock{position:absolute;top:4px;right:6px;font-size:10px}
 [data-theme="light"] .nd-dialog{
   background:rgba(248,250,255,.90);
   border-color:rgba(10,26,60,.10);
@@ -868,6 +898,50 @@ svg.lucide{
 .nd-has-form{max-width:430px;text-align:left}
 .nd-has-form .nd-body{text-align:left;margin-bottom:20px}
 .nd-has-form .nd-title{text-align:left}
+.cat-custom-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--s2);border-radius:10px;margin-bottom:6px}
+.cat-custom-name{flex:1;font-size:13px;color:var(--tx);font-weight:600}
+.cat-custom-del{background:none;border:none;color:var(--mu);cursor:pointer;font-size:16px;padding:2px 8px;border-radius:6px;transition:.15s}
+.cat-custom-del:hover{color:var(--re)}
+.cat-emoji-grid{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:var(--s1);border:1.5px solid var(--bor);border-radius:10px;margin-top:6px;max-height:120px;overflow-y:auto}
+.cat-emoji-grid span{font-size:20px;cursor:pointer;padding:4px 6px;border-radius:6px;transition:.15s;line-height:1}
+.cat-emoji-grid span:hover{background:var(--s3)}
+/* ══ GASTOS RECURRENTES ══ */
+.rec-item{background:var(--s2);border-radius:11px;padding:10px 12px;margin-bottom:8px;border:1.5px solid var(--bor);transition:border-color .2s}
+.rec-item.paused{opacity:.5}
+.rec-item-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.rec-item-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.rec-item-icon{font-size:20px;flex-shrink:0}
+.rec-item-info{flex:1;min-width:0}
+.rec-item-nombre{font-size:13px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-item-meta{font-size:11px;color:var(--mu);margin-top:1px}
+.rec-item-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.rec-item-valor{font-size:13px;font-weight:800;color:var(--ac);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.rec-toggle-btn{background:none;border:1.5px solid var(--bor2);color:var(--mu);border-radius:7px;padding:4px 7px;cursor:pointer;font-size:13px;line-height:1;transition:var(--t)}
+.rec-toggle-btn:hover{border-color:var(--ye);color:var(--ye)}
+.rec-registrar-btn{background:linear-gradient(135deg,var(--gr),#059669);border:none;color:#fff;border-radius:8px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:opacity .15s}
+.rec-registrar-btn:active{opacity:.8}
+.rec-item-next{font-size:10px;color:var(--mu);margin-top:5px;padding-left:28px}
+/* ══ FOTO DE RECIBO (premium) ══ */
+.receipt-attach-btn{display:flex;align-items:center;gap:8px;background:var(--s2);border:1.5px dashed var(--bor2);border-radius:11px;padding:10px 14px;color:var(--mu);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:left;font-family:inherit;transition:var(--t);margin-top:2px}
+.receipt-attach-btn:active{opacity:.75}
+.receipt-attach-btn.has-photo{border-color:var(--ac);border-style:solid;color:var(--ac);background:var(--ac3)}
+.receipt-preview-wrap{display:none;align-items:center;gap:10px;background:var(--s2);border:1.5px solid var(--ac);border-radius:11px;padding:8px 12px;margin-top:6px}
+.receipt-preview-wrap.visible{display:flex}
+.receipt-thumb{width:72px;height:72px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer}
+.receipt-clear-btn{background:none;border:1.5px solid var(--bor2);border-radius:8px;padding:5px 10px;color:var(--mu);font-size:12px;cursor:pointer;font-family:inherit;transition:var(--t)}
+.receipt-clear-btn:active{color:var(--re)}
+.tx-receipt-btn{background:none;border:none;font-size:15px;padding:4px;cursor:pointer;border-radius:6px;flex-shrink:0;transition:var(--t);line-height:1}
+.tx-receipt-btn:hover{transform:scale(1.15);background:var(--ac3)}
+#receipt-lightbox{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:20px}
+#receipt-lightbox.open{display:flex}
+#receipt-lightbox img{max-width:100%;max-height:80vh;border-radius:14px;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+#receipt-lightbox-close{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);border-radius:50px;padding:10px 28px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+/* ── Advanced charts premium section ── */
+#adv-premium-wall{text-align:center;padding:20px 16px}
+#adv-premium-wall .pw-btn{width:100%;max-width:240px}
+.adv-chart-section{padding:4px 14px 14px}
+.adv-chart-section+.adv-chart-section{border-top:1px solid var(--bor)}
+.adv-chart-lbl{font-size:11px;color:var(--mu);margin-bottom:8px;margin-top:6px;font-weight:600;letter-spacing:.03em}
 </style>
 </head>
 <body>
@@ -1249,21 +1323,7 @@ svg.lucide{
         </div>
         <div class="fg">
           <label class="flbl" for="f-cat">Categoría</label>
-          <select id="f-cat" class="fsel">
-            <option value="Hogar">🏠 Hogar</option>
-            <option value="Mercado">🛒 Mercado / Alimentación</option>
-            <option value="Transporte">🚗 Transporte</option>
-            <option value="Servicios">💡 Servicios (luz, gas, agua)</option>
-            <option value="Salud">🏥 Salud</option>
-            <option value="Educación">📚 Educación</option>
-            <option value="Entretenimiento">🎭 Entretenimiento</option>
-            <option value="Ropa">👗 Ropa / Accesorios</option>
-            <option value="Mascotas">🐾 Mascotas</option>
-            <option value="Ahorro">💰 Ahorro / Inversión</option>
-            <option value="Deuda">💳 Cuota / Deuda</option>
-            <option value="Viaje">✈️ Viaje</option>
-            <option value="Otro">📦 Otro</option>
-          </select>
+          <select id="f-cat" class="fsel"></select>
         </div>
         <div class="fg" style="margin-bottom:0">
           <label class="flbl">División del gasto</label>
@@ -1275,11 +1335,34 @@ svg.lucide{
         <div class="prevbox" id="prevbox">Selecciona pagador y valor para ver el cálculo</div>
       </div>
 
+      <!-- RECEIPT: adjuntar foto -->
+      <div id="receipt-section" style="margin-top:10px;margin-bottom:10px">
+        <button type="button" class="receipt-attach-btn" id="receipt-attach-btn" onclick="onReceiptAttachClick()">
+          <span>📷</span>
+          <span id="receipt-attach-label">Adjuntar foto del recibo</span>
+          <span style="margin-left:auto;font-size:10px;opacity:.7" id="receipt-premium-badge">💎 Premium</span>
+        </button>
+        <div class="receipt-preview-wrap" id="receipt-preview-wrap">
+          <img class="receipt-thumb" id="receipt-thumb" src="" alt="Recibo" onclick="openReceiptLightbox(_pendingReceipt)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:var(--ac);margin-bottom:4px">Foto adjunta ✓</div>
+            <div style="font-size:11px;color:var(--mu)" id="receipt-file-size"></div>
+          </div>
+          <button class="receipt-clear-btn" onclick="clearReceiptPreview()">✕ Quitar</button>
+        </div>
+      </div>
+
       <button class="btn" id="btn-save" style="background:linear-gradient(135deg,#f472b6,#ec4899);box-shadow:0 4px 20px rgba(244,114,182,.35)">
         Guardar gasto ✓
       </button>
     </div>
 
+    <!-- RECEIPT: elementos globales -->
+    <input type="file" id="receipt-input" accept="image/*" capture="environment" style="display:none">
+    <div id="receipt-lightbox" onclick="closeReceiptLightbox()">
+      <img id="receipt-lightbox-img" src="" alt="Recibo">
+      <button id="receipt-lightbox-close" onclick="event.stopPropagation();closeReceiptLightbox()">Cerrar ✕</button>
+    </div>
     <!-- MOVIMIENTOS -->
     <div id="pnl-transacciones" class="panel" style="display:none">
       <div class="stit">Movimientos</div>
@@ -1295,8 +1378,8 @@ svg.lucide{
         </select>
       </div>
       <div class="arow">
-        <button class="btn-outline" id="btn-xls"><i data-lucide="download"></i> Excel</button>
-        <button class="btn-outline" id="btn-pdf"><i data-lucide="file-text"></i> PDF</button>
+        <button class="btn-outline" id="btn-xls" style="position:relative"><i data-lucide="download"></i> Excel<span class="export-lock" id="xls-lock-badge">💎</span></button>
+        <button class="btn-outline" id="btn-pdf" style="position:relative"><i data-lucide="file-text"></i> PDF<span class="export-lock" id="pdf-lock-badge">💎</span></button>
         <button class="btn-outline" id="btn-sync"><i data-lucide="refresh-cw"></i> Actualizar</button>
       </div>
       <div class="txlist" id="txlist"></div>
@@ -1338,6 +1421,33 @@ svg.lucide{
       </div>
       <div class="card"><div class="clbl">Gastos por categoría (acumulado)</div><div id="catbars"></div><div id="chart-cat"></div></div>
       <div class="card"><div class="clbl">Historial mensual</div><div id="hist"></div><div id="chart-hist"></div></div>
+      <div class="card" id="card-adv-charts" style="padding:0;overflow:hidden">
+        <div style="padding:12px 14px 0;display:flex;align-items:center;gap:8px">
+          <div class="clbl" style="margin-bottom:0">📈 Gráficos avanzados</div>
+          <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;flex-shrink:0">💎 Premium</span>
+        </div>
+        <div id="adv-premium-wall">
+          <div style="font-size:32px;margin-bottom:8px">📊</div>
+          <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px">Gráficos avanzados</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.6">Tendencia semanal, gastos por persona<br>y categoría, evolución acumulada.</div>
+          <button class="pw-btn" style="padding:11px" onclick="showPremiumWall('Gráficos avanzados')">💎 Desbloquear gráficos</button>
+        </div>
+        <div id="adv-charts-content" style="display:none">
+          <div class="adv-chart-section">
+            <div class="adv-chart-lbl">Tendencia semanal — últimas 8 semanas</div>
+            <div id="chart-weekly"></div>
+          </div>
+          <div class="adv-chart-section">
+            <div class="adv-chart-lbl">Gasto por categoría · por persona (top 6)</div>
+            <div id="chart-catperson"></div>
+          </div>
+          <div class="adv-chart-section">
+            <div class="adv-chart-lbl">Evolución acumulada</div>
+            <div id="chart-acum"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
 
@@ -1430,31 +1540,29 @@ svg.lucide{
     <!-- SALA -->
     <div id="pnl-sala" class="panel" style="display:none">
 
-      <!-- ══ MIS SALAS ══ -->
-      <div class="sala-section-title">Mis salas</div>
-      <div id="sala-switch-list" style="margin-bottom:4px"></div>
-
-      <!-- ══ CREAR NUEVA SALA ══ -->
-      <div class="sala-section-title" style="margin-top:6px">Nueva sala</div>
-      <div style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
-        <div class="fg" style="margin-bottom:8px">
-          <input type="text" id="st-new-sala-name" class="finp" placeholder="Nombre de la sala" maxlength="20" style="font-size:13px;padding:9px 12px">
-        </div>
-        <button class="btn" onclick="createSalaFromTab()" style="background:linear-gradient(135deg,var(--gr),#059669);font-size:13px;padding:10px;width:100%">
-          ➕ Crear sala
-        </button>
+      <!-- ══ ACORDEÓN: MIS SALAS + NUEVA SALA + UNIRSE ══ -->
+      <div class="sala-chdr" onclick="toggleSalaSection(this)" id="sala-chdr-gestion">
+        <span class="sala-chdr-lbl">🏠 Gestionar salas</span>
+        <span class="sala-chdr-chev"><i data-lucide="chevron-down" style="width:16px;height:16px"></i></span>
       </div>
+      <div class="sala-cbody" id="sala-cbody-gestion">
+        <div>
+          <!-- Mis salas -->
+          <div class="sala-section-title" style="margin-top:8px">Mis salas</div>
+          <div id="sala-switch-list" style="margin-bottom:4px"></div>
 
-      <!-- ══ UNIRSE CON CÓDIGO ══ -->
-      <div class="sala-section-title">Unirme con código</div>
-      <div style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:18px">
-        <div class="fg" style="margin-bottom:8px">
-          <input type="text" id="st-join-code" class="finp" placeholder="XXXX-XXXX" maxlength="9" style="text-transform:uppercase;letter-spacing:.1em;font-size:15px;text-align:center;padding:9px 12px">
+          <!-- Nueva sala + Unirme -->
+          <div style="display:flex;gap:8px;margin-top:8px;margin-bottom:4px">
+            <button class="btn" onclick="createSalaFromTab()" style="flex:1;background:linear-gradient(135deg,var(--gr),#059669);font-size:12px;padding:10px 6px;position:relative;line-height:1.3">
+              ➕ Crear sala
+              <span id="new-sala-lock-badge" class="export-lock">💎</span>
+            </button>
+            <button class="btn" onclick="joinSalaFromTab()" style="flex:1;background:linear-gradient(135deg,var(--ac),#6366f1);font-size:12px;padding:10px 6px;position:relative;line-height:1.3">
+              🔗 Unirme con código
+              <span id="join-sala-lock-badge" class="export-lock">💎</span>
+            </button>
+          </div>
         </div>
-        <button class="btn" onclick="joinSalaFromTab()" style="background:linear-gradient(135deg,var(--ac),#6366f1);font-size:13px;padding:10px;width:100%">
-          🔗 Unirme
-        </button>
-        <div class="lerr" id="st-sala-err" style="margin-top:6px">&nbsp;</div>
       </div>
 
       <!-- ══ DETALLE SALA ACTIVA ══ (se muestra solo cuando hay sala activa) -->
@@ -1574,6 +1682,52 @@ svg.lucide{
           </div>
         </div>
 
+        <!-- Categorías personalizadas -->
+        <div class="sala-section-title">Categorías personalizadas <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎 Premium</span></div>
+        <div id="cats-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
+          <div id="cats-list"></div>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <button id="new-cat-emoji-btn" style="font-size:18px;background:var(--s2);border:1.5px solid var(--bor);border-radius:10px;padding:8px 10px;cursor:pointer;flex-shrink:0;line-height:1">🏷️</button>
+            <input id="new-cat-name" class="finp" placeholder="Nombre de categoría" maxlength="20" style="flex:1;font-size:13px;padding:8px 10px">
+            <button onclick="addCustomCat()" style="font-size:12px;font-weight:700;padding:9px 14px;border:none;border-radius:10px;background:#6366f1;color:#fff;cursor:pointer;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.01em;white-space:nowrap">+ Agregar</button>
+          </div>
+          <div id="cat-emoji-grid" class="cat-emoji-grid" style="display:none"></div>
+        </div>
+        <!-- Gastos recurrentes -->
+        <div class="sala-section-title">Gastos recurrentes <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎 Premium</span></div>
+        <div id="recurrentes-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
+          <div id="recurrentes-list"></div>
+          <button id="btn-show-rec-form" onclick="toggleRecurrenteForm()"
+            style="width:100%;margin-top:8px;font-size:12px;font-weight:700;padding:9px 14px;border:none;border-radius:10px;background:#6366f1;color:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.01em">
+            + Agregar recurrente
+          </button>
+          <div id="rec-form" style="display:none;margin-top:12px;border-top:1px solid var(--bor);padding-top:12px">
+            <div class="fg">
+              <input id="rec-nombre" class="finp" placeholder="Nombre (ej. Netflix, Arriendo)" maxlength="30" style="font-size:13px;padding:9px 11px">
+            </div>
+            <div class="fg">
+              <select id="rec-cat" class="fsel" style="padding:9px 30px 9px 11px;font-size:13px"></select>
+            </div>
+            <div class="fg">
+              <div class="val-wrap">
+                <input id="rec-valor" class="finp" type="text" inputmode="numeric" placeholder="0" style="font-size:13px;padding:9px 11px 9px 26px" autocomplete="off">
+                <span class="val-prefix" style="font-size:13px">$</span>
+              </div>
+            </div>
+            <div class="fg">
+              <select id="rec-frec" class="fsel" style="padding:9px 30px 9px 11px;font-size:13px">
+                <option value="mensual">📅 Mensual</option>
+                <option value="quincenal">📆 Quincenal (2x mes)</option>
+                <option value="semanal">🗓️ Semanal</option>
+              </select>
+            </div>
+            <div class="fg" id="rec-pagador-row"></div>
+            <div style="display:flex;gap:7px;margin-top:4px">
+              <button onclick="addRecurrente()" style="flex:1;font-size:12px;font-weight:700;padding:9px 10px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gr),#059669);color:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">✓ Guardar</button>
+              <button onclick="toggleRecurrenteForm()" style="font-size:12px;font-weight:700;padding:9px 14px;border:1.5px solid var(--bor2);border-radius:10px;background:none;color:var(--mu);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">✕</button>
+            </div>
+          </div>
+        </div>
         <!-- Mi color -->
         <div class="sala-section-title">Mi color</div>
         <div id="color-picker-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
@@ -1629,8 +1783,11 @@ svg.lucide{
       <span class="ntico"><i data-lucide="bar-chart-2"></i></span>
       <span class="ntlbl">Resumen</span>
     </button>
-    <button class="ntab" data-p="viajes" data-tip="Viajes compartidos">
-      <span class="ntico"><i data-lucide="plane"></i></span>
+    <button class="ntab ntab-lock" data-p="viajes" data-tip="Viajes compartidos · Premium">
+      <span class="ntico" style="position:relative">
+        <i data-lucide="plane"></i>
+        <span class="ntab-lock-badge" id="viajes-lock-badge">💎</span>
+      </span>
       <span class="ntlbl">Viajes</span>
     </button>
     <button class="ntab" data-p="sala" id="ntab-sala">
@@ -1772,6 +1929,237 @@ function nidoIconHTML(size=32,extraStyle=""){
   return `<img src="${NIDO_ICON_SRC}" alt="Nido" width="${size}" height="${size}" style="display:inline-block;vertical-align:middle;flex-shrink:0;${extraStyle}">`;
 }
 const CATI={Hogar:"🏠",Mercado:"🛒",Transporte:"🚗",Servicios:"💡","Educación":"📚",Salud:"🏥",Entretenimiento:"🎭",Ropa:"👗",Mascotas:"🐾",Ahorro:"💰",Deuda:"💳",Viaje:"✈️",Otro:"📦"};
+/* ── Categorías: merge default + custom ── */
+function getAllCats(){
+  const base={...CATI};
+  (curCouple?.cats_custom||[]).forEach(c=>{base[c.name]=c.icon;});
+  return base;
+}
+function catIcon(name){ return getAllCats()[name]||"📦"; }
+function buildCatSelects(keepVal){
+  const cats=getAllCats();
+  const opts=Object.entries(cats).map(([n,i])=>`<option value="${n}">${i} ${n}</option>`).join("");
+  ["f-cat","eg-cat","rec-cat"].forEach(id=>{
+    const el=$(id); if(!el) return;
+    const prev=keepVal?el.value:null;
+    el.innerHTML=opts;
+    if(prev&&el.querySelector(`option[value="${prev}"]`)) el.value=prev;
+    else el.selectedIndex=0;
+  });
+}
+
+/* ── Render lista categorías custom ── */
+function renderCustomCats(){
+  const list=$("cats-list"); if(!list) return;
+  const custom=curCouple?.cats_custom||[];
+  if(!custom.length){
+    list.innerHTML='<div style="color:var(--mu);font-size:12px;padding:2px 0 6px">Sin categorías personalizadas aún.</div>';
+    return;
+  }
+  list.innerHTML=custom.map((c,i)=>`
+    <div class="cat-custom-item">
+      <span style="font-size:20px">${c.icon}</span>
+      <span class="cat-custom-name">${esc(c.name)}</span>
+      <button class="cat-custom-del" onclick="deleteCustomCat(${i})">✕</button>
+    </div>`).join("");
+}
+
+/* ── Agregar categoría custom ── */
+async function addCustomCat(){
+  if(!isPremium()){ showPremiumWall("Categorías personalizadas"); return; }
+  const name=($("new-cat-name")?.value||"").trim();
+  const icon=$("new-cat-emoji-btn")?.textContent||"🏷️";
+  if(!name){ toast("⚠️ Escribe el nombre"); return; }
+  if(CATI[name]){ toast("⚠️ Esa categoría ya existe por defecto"); return; }
+  const existing=curCouple?.cats_custom||[];
+  if(existing.find(c=>c.name===name)){ toast("⚠️ Ya tienes esa categoría"); return; }
+  if(existing.length>=20){ toast("⚠️ Máximo 20 categorías personalizadas"); return; }
+  const updated=[...existing,{name,icon}];
+  await db.collection("couples").doc(coupleId).update({cats_custom:updated});
+  if(curCouple) curCouple.cats_custom=updated;
+  if($("new-cat-name")) $("new-cat-name").value="";
+  if($("new-cat-emoji-btn")) $("new-cat-emoji-btn").textContent="🏷️";
+  if($("cat-emoji-grid")) $("cat-emoji-grid").style.display="none";
+  renderCustomCats();
+  buildCatSelects(true);
+  toast("✅ Categoría '"+name+"' agregada");
+}
+
+/* ── Eliminar categoría custom ── */
+async function deleteCustomCat(idx){
+  const existing=curCouple?.cats_custom||[];
+  const updated=existing.filter((_,i)=>i!==idx);
+  await db.collection('couples').doc(coupleId).update({cats_custom:updated});
+  if(curCouple) curCouple.cats_custom=updated;
+  renderCustomCats();
+  buildCatSelects(true);
+  toast("Categoría eliminada");
+}
+
+/* ══ GASTOS RECURRENTES (premium) ══ */
+function recId(){ return "rec_"+Date.now()+"_"+Math.random().toString(36).slice(2,5); }
+function proximaFechaMes(){
+  const hoy=new Date();
+  return hoy.getFullYear()+"-"+String(hoy.getMonth()+1).padStart(2,"0");
+}
+function fmtMesRec(ym){
+  if(!ym) return "—";
+  const [y,m]=ym.split("-");
+  const meses=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  return meses[parseInt(m)-1]+" "+y;
+}
+function frecLabel(frec){
+  return frec==="mensual"?"Mensual":frec==="quincenal"?"Quincenal":"Semanal";
+}
+function getPagadorName(uid){
+  if(!uid) return "?";
+  if(uid===myProfile?.uid) return myProfile?.displayName||"Yo";
+  return partnerProfile?.displayName||"Tu pareja";
+}
+function renderRecurrentes(){
+  const list=$("recurrentes-list"); if(!list) return;
+  const recs=curCouple?.recurrentes||[];
+  if(!recs.length){
+    list.innerHTML='<div style="color:var(--mu);font-size:12px;padding:2px 0 6px">Sin gastos recurrentes aún.</div>';
+    return;
+  }
+  const sym=monedaSym(salaMoneda());
+  list.innerHTML=recs.map(r=>{
+    const icon=catIcon(r.cat);
+    const pN=getPagadorName(r.pagador);
+    return `<div class="rec-item${r.activo===false?" paused":""}">
+      <div class="rec-item-top">
+        <div class="rec-item-left">
+          <span class="rec-item-icon">${icon}</span>
+          <div class="rec-item-info">
+            <div class="rec-item-nombre">${esc(r.nombre)}</div>
+            <div class="rec-item-meta">${frecLabel(r.frecuencia)} · ${esc(pN)}</div>
+          </div>
+        </div>
+        <div class="rec-item-right">
+          <div class="rec-item-valor">${sym}${Math.round(r.valor).toLocaleString("es-CO")}</div>
+          <button class="rec-toggle-btn" onclick="toggleRecurrente('${r.id}')" title="${r.activo===false?"Activar":"Pausar"}">${r.activo===false?"▶":"⏸"}</button>
+          <button class="rec-registrar-btn" onclick="registrarRecurrente('${r.id}')">+ Registrar</button>
+          <button class="cat-custom-del" onclick="deleteRecurrente('${r.id}')">✕</button>
+        </div>
+      </div>
+      <div class="rec-item-next">Próximo: ${fmtMesRec(r.proximaFecha)}</div>
+    </div>`;
+  }).join("");
+}
+function renderRecurrenteForm(){
+  const recCat=$("rec-cat");
+  if(recCat){
+    const cats=getAllCats();
+    recCat.innerHTML=Object.entries(cats).map(([n,i])=>`<option value="${n}">${i} ${n}</option>`).join("");
+    recCat.value="Hogar";
+  }
+  const row=$("rec-pagador-row"); if(!row) return;
+  const members=curCouple?.members||{};
+  const uids=Object.keys(members);
+  const opts=uids.map(uid=>{
+    const name=uid===myProfile?.uid?(myProfile?.displayName||"Yo"):(partnerProfile?.displayName||"Tu pareja");
+    return `<option value="${uid}">${name}</option>`;
+  }).join("");
+  row.innerHTML=`<select id="rec-pagador" class="fsel" style="padding:9px 30px 9px 11px;font-size:13px">${opts}</select>`;
+  if($("rec-pagador")&&myProfile?.uid) $("rec-pagador").value=myProfile.uid;
+}
+function toggleRecurrenteForm(){
+  if(!isPremium()){ showPremiumWall("Gastos recurrentes"); return; }
+  const form=$("rec-form"), btn=$("btn-show-rec-form");
+  if(!form) return;
+  const open=form.style.display!=="none";
+  if(!open){ form.style.display="block"; renderRecurrenteForm(); if(btn) btn.style.display="none"; }
+  else { form.style.display="none"; if(btn) btn.style.display=""; }
+}
+async function addRecurrente(){
+  if(!isPremium()){ showPremiumWall("Gastos recurrentes"); return; }
+  const nombre=($("rec-nombre")?.value||"").trim();
+  const cat=$("rec-cat")?.value||"Hogar";
+  const valorRaw=($("rec-valor")?.value||"").replace(/\D/g,"");
+  const valor=parseInt(valorRaw,10)||0;
+  const frecuencia=$("rec-frec")?.value||"mensual";
+  const pagador=$("rec-pagador")?.value||myProfile?.uid;
+  if(!nombre){ toast("⚠️ Escribe el nombre del recurrente"); return; }
+  if(!valor||valor<=0){ toast("⚠️ Escribe un valor válido"); return; }
+  const existing=curCouple?.recurrentes||[];
+  if(existing.length>=30){ toast("⚠️ Máximo 30 gastos recurrentes"); return; }
+  if(existing.find(r=>r.nombre.toLowerCase()===nombre.toLowerCase())){ toast("⚠️ Ya tienes un recurrente con ese nombre"); return; }
+  const nuevo={id:recId(),nombre,cat,valor,frecuencia,pagador,activo:true,proximaFecha:proximaFechaMes(),creadoPor:myProfile?.uid,ts:Date.now()};
+  const updated=[...existing,nuevo];
+  try{
+    await db.collection("couples").doc(coupleId).update({recurrentes:updated});
+    if(curCouple) curCouple.recurrentes=updated;
+    if($("rec-nombre")) $("rec-nombre").value="";
+    if($("rec-valor"))  $("rec-valor").value="";
+    toggleRecurrenteForm();
+    renderRecurrentes();
+    toast(`✅ Recurrente '${nombre}' agregado`);
+  }catch(e){ toast("⚠️ Error: "+e.message); }
+}
+async function deleteRecurrente(id){
+  const existing=curCouple?.recurrentes||[];
+  const rec=existing.find(r=>r.id===id);
+  if(!rec) return;
+  const r=await nidoDialog.fire({title:"¿Eliminar recurrente?",html:`<b>${esc(rec.nombre)}</b> será removido.`,confirmButtonText:"Eliminar",showCancelButton:true});
+  if(!r?.isConfirmed) return;
+  const updated=existing.filter(r=>r.id!==id);
+  try{
+    await db.collection("couples").doc(coupleId).update({recurrentes:updated});
+    if(curCouple) curCouple.recurrentes=updated;
+    renderRecurrentes();
+    toast("Recurrente eliminado");
+  }catch(e){ toast("⚠️ "+e.message); }
+}
+async function toggleRecurrente(id){
+  const existing=curCouple?.recurrentes||[];
+  const updated=existing.map(r=>r.id===id?{...r,activo:r.activo===false?true:false}:r);
+  try{
+    await db.collection("couples").doc(coupleId).update({recurrentes:updated});
+    if(curCouple) curCouple.recurrentes=updated;
+    renderRecurrentes();
+    const rec=updated.find(r=>r.id===id);
+    toast(rec?.activo===false?"⏸ Recurrente pausado":"▶ Recurrente activado");
+  }catch(e){ toast("⚠️ "+e.message); }
+}
+async function registrarRecurrente(id){
+  const existing=curCouple?.recurrentes||[];
+  const r=existing.find(x=>x.id===id);
+  if(!r){ toast("⚠️ Recurrente no encontrado"); return; }
+  if(r.activo===false){ toast("⚠️ Este recurrente está pausado"); return; }
+  const debe=Math.round(r.valor*0.5);
+  const hoy=new Date();
+  const anio=hoy.getFullYear(), mes=hoy.getMonth()+1;
+  const fecha=anio+"-"+String(mes).padStart(2,"0");
+  const g={desc:r.nombre+" (recurrente)",valor:r.valor,fecha,mes,anio,cat:r.cat,pagador:r.pagador,split:50,debe,ts:Date.now(),addedBy:myProfile?.uid,recurrenteId:r.id};
+  const siguienteMes=new Date(anio,mes,1);
+  const nextFecha=siguienteMes.getFullYear()+"-"+String(siguienteMes.getMonth()+1).padStart(2,"0");
+  const updatedRecs=existing.map(x=>x.id===id?{...x,proximaFecha:nextFecha}:x);
+  try{
+    await dbAdd(g);
+    await db.collection("couples").doc(coupleId).update({recurrentes:updatedRecs});
+    if(curCouple) curCouple.recurrentes=updatedRecs;
+    renderRecurrentes();
+    toast(`✅ '${r.nombre}' registrado como gasto de ${fmtMesRec(fecha)}`);
+  }catch(e){ toast("⚠️ Error: "+e.message); }
+}
+
+/* ── Emoji picker ── */
+const CAT_EMOJIS=["🏠","🛒","🚗","💡","🏥","📚","🎭","👗","🐾","💰","💳","✈️","📦","🍕","🎮","🏋️","💊","🎁","🚿","⚡","🌱","🏖️","🎵","🍺","☕","🚌","🏫","🏪","💼","🔧","🎨","🌟","🐶","🐱","🌺","🍿","📱","💻","🏡","🌊","🎯","🧴","🧹","🛋️","🪴","🐟","🎪","⚽","🎸","🎓"];
+function initCatEmojiPicker(){
+  const grid=$("cat-emoji-grid");
+  const btn=$("new-cat-emoji-btn");
+  if(!grid||!btn) return;
+  if(!grid.innerHTML){
+    grid.innerHTML=CAT_EMOJIS.map(e=>`<span onclick="selectCatEmoji('${e}')">${e}</span>`).join("");
+  }
+  btn.onclick=()=>{ grid.style.display=grid.style.display==="none"?"flex":"none"; };
+}
+function selectCatEmoji(e){
+  if($("new-cat-emoji-btn")) $("new-cat-emoji-btn").textContent=e;
+  if($("cat-emoji-grid")) $("cat-emoji-grid").style.display="none";
+}
+
 
 /* ══ MONEDAS ══ */
 const MONEDAS={
@@ -1882,6 +2270,7 @@ async function waitForAuth(){
 }
 
 let gastos=[], curUser=null, curPag=null, curSplit=50, sumMes=null;
+let _pendingReceipt=null; // base64 foto de recibo pendiente
 let db=null, auth=null, fbAuth=null, unsub=null;
 // Multi-couple
 let curCouple=null, coupleId=null, myProfile=null, partnerProfile=null;
@@ -2386,6 +2775,8 @@ async function enterCouple(cid){
     }
 
     curCouple = {id:cid,...coupleSnap.data()};
+    updatePremiumBadges();
+    buildCatSelects(false); renderCustomCats(); initCatEmojiPicker(); renderRecurrentes(); initReceiptPicker();
 
     // Verificar que el usuario es miembro de esta sala
     const members = curCouple.members || {};
@@ -3054,7 +3445,8 @@ $("btn-save").addEventListener("click",async()=>{
   const needsValidation = val >= UMBRAL_VALIDACION && !!db && !!partnerProfile;
   const g={desc,valor:val,fecha:fec,mes:parseInt(mesS),anio:parseInt(anioS),
     cat,pagador:curPag,split:curSplit,debe:debeVal,ts:Date.now(),addedBy:myProfile?.uid,
-    ...(needsValidation ? {pendiente:true} : {})};
+    ...(needsValidation ? {pendiente:true} : {}),
+    ...(_pendingReceipt ? {recibo:_pendingReceipt} : {})};
   const btn=$("btn-save");
   btn.textContent="Guardando..."; btn.style.opacity=".7";
   try{
@@ -3068,12 +3460,91 @@ $("btn-save").addEventListener("click",async()=>{
       pushOtro("🤝 Nuevo gasto registrado",
         (myProfile?.displayName||"Tu pareja")+" agregó "+desc+": "+fmt(val));
     }
+    clearReceiptPreview();
     $("f-desc").value=""; $("f-val").value=""; $("f-fec").value=mesHoy();
     $("f-cat").value="Hogar"; setSplit(50); updatePrev();
     $("f-desc").focus();
   }catch(e){ toast("⚠️ Error: "+e.message); }
   finally{ btn.textContent="Guardar gasto ✓"; btn.style.opacity="1"; }
 });
+
+/* ══ FOTO DE RECIBO (premium) ══ */
+function initReceiptPicker(){
+  const inp=document.getElementById("receipt-input");
+  if(!inp||inp.dataset.initialized) return;
+  inp.dataset.initialized="1";
+  inp.addEventListener("change",async e=>{
+    const file=e.target.files[0]; if(!file) return;
+    try{
+      const b64=await compressImage(file);
+      _pendingReceipt=b64;
+      const thumb=document.getElementById("receipt-thumb");
+      const wrap=document.getElementById("receipt-preview-wrap");
+      const btn=document.getElementById("receipt-attach-btn");
+      const sz=document.getElementById("receipt-file-size");
+      const lbl=document.getElementById("receipt-attach-label");
+      if(thumb) thumb.src=b64;
+      if(wrap) wrap.classList.add("visible");
+      if(btn) btn.classList.add("has-photo");
+      if(lbl) lbl.textContent="Foto adjunta";
+      if(sz) sz.textContent=`~${Math.round(b64.length*0.75/1024)} KB`;
+    }catch(err){ toast("⚠️ No se pudo procesar la imagen: "+err.message); }
+    inp.value="";
+  });
+  const badge=document.getElementById("receipt-premium-badge");
+  if(badge) badge.style.display=isPremium()?"none":"";
+}
+function onReceiptAttachClick(){
+  if(!isPremium()){ showPremiumWall("Foto de recibo"); return; }
+  document.getElementById("receipt-input").click();
+}
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const MAX_W=800, QUALITY=0.60;
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error("Error leyendo archivo"));
+    reader.onload=e=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error("Imagen inválida"));
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        if(w>MAX_W){h=Math.round(h*MAX_W/w);w=MAX_W;}
+        const canvas=document.createElement("canvas");
+        canvas.width=w;canvas.height=h;
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL("image/jpeg",QUALITY));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function clearReceiptPreview(){
+  _pendingReceipt=null;
+  const thumb=document.getElementById("receipt-thumb");
+  const wrap=document.getElementById("receipt-preview-wrap");
+  const btn=document.getElementById("receipt-attach-btn");
+  const lbl=document.getElementById("receipt-attach-label");
+  if(thumb) thumb.src="";
+  if(wrap) wrap.classList.remove("visible");
+  if(btn) btn.classList.remove("has-photo");
+  if(lbl) lbl.textContent="Adjuntar foto del recibo";
+}
+function openReceiptLightbox(base64){
+  if(!base64) return;
+  const lb=document.getElementById("receipt-lightbox");
+  const img=document.getElementById("receipt-lightbox-img");
+  if(!lb||!img) return;
+  img.src=base64;
+  lb.classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closeReceiptLightbox(){
+  const lb=document.getElementById("receipt-lightbox");
+  if(lb) lb.classList.remove("open");
+  document.body.style.overflow="";
+}
 
 /* ══ VALIDACIÓN DE GASTOS ALTOS (≥ $500.000) ══ */
 async function aceptarGasto(id){
@@ -3278,7 +3749,7 @@ function renderTx(){
   function txCardConfirmed(g){
     const col=getUserColor(g.pagador);
     const ds=MOF[g.mes-1]+" "+g.anio;
-    const ico=CATI[g.cat]||"📦";
+    const ico=catIcon(g.cat);
     const oName=getOtherName(g.pagador);
     const debt=`${oName} debe ${fmt(g.debe)}`;
     return`<div class="txi">
@@ -3291,6 +3762,7 @@ function renderTx(){
         <div class="txval" style="color:${col}">${fmt(g.valor)}</div>
         <div class="txd">${debt}</div>
       </div>
+      ${g.recibo?`<button class="tx-receipt-btn" onclick="openReceiptLightbox(gastos.find(x=>x.id==='${g.id}')?.recibo)" title="Ver recibo">📷</button>`:''}
       <button class="txedit" onclick="abrirEditarGasto('${g.id}')" title="Editar">✏️</button>
       <button class="txdel" data-id="${g.id}" onclick="eliminar('${g.id}')">🗑</button>
     </div>`;
@@ -3300,7 +3772,7 @@ function renderTx(){
   function txCardPending(g, tipo){
     const col=getUserColor(g.pagador);
     const ds=MOF[g.mes-1]+" "+g.anio;
-    const ico=CATI[g.cat]||"📦";
+    const ico=catIcon(g.cat);
     const oName=getOtherName(g.pagador);
     const debt=`${oName} debe ${fmt(g.debe)}`;
     const isPartner=tipo==="partner";
@@ -3503,7 +3975,7 @@ function renderResumen(){
   const catS=Object.entries(catT).sort((a,b)=>b[1]-a[1]), maxC=catS[0]?.[1]||1;
   $("catbars").innerHTML=catS.length
     ?catS.map(([cat,tot])=>`<div class="catrow">
-        <div class="catico">${CATI[cat]||"📦"}</div>
+        <div class="catico">${catIcon(cat)}</div>
         <div class="catinfo">
           <div class="catname">${cat}</div>
           <div class="catbar"><div class="catfill" style="width:${Math.round(tot/maxC*100)}%"></div></div>
@@ -3574,7 +4046,7 @@ function renderStats(gFiltrados, myName, prtName, isPagMe){
   const topCatName =topEntry?topEntry[0]:"—";
   const topCatTotal=topEntry?topEntry[1]:0;
   const topCatPct  =totalGastado>0?Math.round(topCatTotal/totalGastado*100):0;
-  const topCatIco  =topEntry?(CATI[topCatName]||"📦"):"—";
+  const topCatIco=topEntry?catIcon(topCatName):"—";
 
   // ── D3: Este mes vs mes anterior ──
   const now=new Date();
@@ -3652,7 +4124,7 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
       window._chartCat=new ApexCharts(chartCatEl,{
         chart:{type:'donut',height:300,background:bg,toolbar:{show:false},fontFamily:font},
         series:catE.map(([,v])=>v),
-        labels:catE.map(([c])=>(CATI[c]||'📦')+' '+c),
+        labels:catE.map(([c])=>catIcon(c)+' '+c),
         colors:CLRS.slice(0,catE.length),
         dataLabels:{enabled:false},
         legend:{position:'bottom',labels:{colors:textClr},fontSize:'11px'},
@@ -3691,6 +4163,113 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
   } else if(chartHistEl && !months.length){
     chartHistEl.innerHTML='<div style="color:var(--mu);font-size:13px;text-align:center;padding:12px">Sin historial</div>';
   }
+
+  // ── Gráficos avanzados (premium) ──
+  renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, isPagMe);
+}
+
+/* ══ GRÁFICOS AVANZADOS — premium ══ */
+function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, isPagMe){
+  if(!window.ApexCharts) return;
+  const wall=$("adv-premium-wall"), content=$("adv-charts-content");
+  if(!isPremium()){
+    if(wall) wall.style.display="block";
+    if(content) content.style.display="none";
+    return;
+  }
+  if(wall) wall.style.display="none";
+  if(content) content.style.display="block";
+
+  const isDk = document.documentElement.getAttribute("data-theme")!=="light";
+  const textClr  = isDk?'#8898c0':'#4a5a82';
+  const gridClr  = isDk?'rgba(255,255,255,0.06)':'rgba(10,26,60,0.08)';
+  const bg       = 'transparent';
+  const font     = "'JetBrains Mono',monospace";
+  const fmtV = v => v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+Math.round(v).toLocaleString('es-CO');
+
+  // ── 1. Tendencia semanal (line chart, últimas 8 semanas) ──
+  const weeklyEl=$("chart-weekly");
+  if(weeklyEl){
+    if(window._chartWeekly){window._chartWeekly.destroy();window._chartWeekly=null;}
+    const now=new Date(); const weeks=[];
+    for(let i=7;i>=0;i--){
+      const wEnd=new Date(now); wEnd.setDate(now.getDate()-i*7);
+      const wStart=new Date(wEnd); wStart.setDate(wEnd.getDate()-6);
+      weeks.push({ms:wStart.getTime(), me:wEnd.getTime()+86400000, lbl:'S'+(8-i)});
+    }
+    const myW =weeks.map(w=>gFiltrados.filter(g=>g.ts>=w.ms&&g.ts<w.me&& isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0));
+    const prtW=weeks.map(w=>gFiltrados.filter(g=>g.ts>=w.ms&&g.ts<w.me&&!isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0));
+    window._chartWeekly=new ApexCharts(weeklyEl,{
+      chart:{type:'line',height:200,background:bg,toolbar:{show:false},fontFamily:font},
+      series:[{name:myName,data:myW,color:myColor},{name:prtName,data:prtW,color:prtColor}],
+      xaxis:{categories:weeks.map(w=>w.lbl),labels:{style:{colors:textClr,fontSize:'10px'}},axisBorder:{show:false},axisTicks:{show:false}},
+      yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
+      stroke:{curve:'smooth',width:2.5},markers:{size:4,hover:{size:6}},
+      grid:{borderColor:gridClr,strokeDashArray:4},
+      dataLabels:{enabled:false},
+      tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+      legend:{labels:{colors:textClr},fontSize:'11px'},
+      theme:{mode:isDk?'dark':'light'},
+    });
+    window._chartWeekly.render();
+  }
+
+  // ── 2. Gasto por categoría · por persona (grouped bar) ──
+  const catPersonEl=$("chart-catperson");
+  if(catPersonEl){
+    if(window._chartCatPerson){window._chartCatPerson.destroy();window._chartCatPerson=null;}
+    const catMy={},catPrt={};
+    gFiltrados.forEach(g=>{ if(isPagMe(g.pagador)) catMy[g.cat]=(catMy[g.cat]||0)+g.valor; else catPrt[g.cat]=(catPrt[g.cat]||0)+g.valor; });
+    const allCats=[...new Set([...Object.keys(catMy),...Object.keys(catPrt)])].sort((a,b)=>(catMy[b]||0)+(catPrt[b]||0)-(catMy[a]||0)-(catPrt[a]||0)).slice(0,6);
+    if(allCats.length){
+      window._chartCatPerson=new ApexCharts(catPersonEl,{
+        chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font},
+        series:[{name:myName,data:allCats.map(c=>catMy[c]||0),color:myColor},{name:prtName,data:allCats.map(c=>catPrt[c]||0),color:prtColor}],
+        xaxis:{categories:allCats.map(c=>catIcon(c)+' '+c),labels:{style:{colors:textClr,fontSize:'9px'},rotate:-30,trim:true},axisBorder:{show:false},axisTicks:{show:false}},
+        yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
+        grid:{borderColor:gridClr,strokeDashArray:4},
+        plotOptions:{bar:{borderRadius:4,columnWidth:'55%'}},
+        dataLabels:{enabled:false},
+        tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+        legend:{labels:{colors:textClr},fontSize:'11px'},
+        theme:{mode:isDk?'dark':'light'},
+      });
+      window._chartCatPerson.render();
+    }else{
+      catPersonEl.innerHTML='<div style="color:var(--mu);font-size:13px;text-align:center;padding:12px">Sin datos suficientes</div>';
+    }
+  }
+
+  // ── 3. Evolución acumulada (area chart) ──
+  const acumEl=$("chart-acum");
+  if(acumEl){
+    if(window._chartAcum){window._chartAcum.destroy();window._chartAcum=null;}
+    const sorted=[...gFiltrados].sort((a,b)=>a.ts-b.ts);
+    if(sorted.length>=2){
+      let myAcum=0,prtAcum=0;
+      const myPts=[],prtPts=[];
+      sorted.forEach(g=>{
+        if(isPagMe(g.pagador)){myAcum+=g.valor;myPts.push({x:g.ts,y:Math.round(myAcum)});}
+        else{prtAcum+=g.valor;prtPts.push({x:g.ts,y:Math.round(prtAcum)});}
+      });
+      window._chartAcum=new ApexCharts(acumEl,{
+        chart:{type:'area',height:200,background:bg,toolbar:{show:false},fontFamily:font},
+        series:[{name:myName,data:myPts,color:myColor},{name:prtName,data:prtPts,color:prtColor}],
+        xaxis:{type:'datetime',labels:{style:{colors:textClr,fontSize:'10px'},datetimeFormatter:{month:'MMM yy',day:'dd MMM'}},axisBorder:{show:false},axisTicks:{show:false}},
+        yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
+        stroke:{curve:'smooth',width:2},
+        fill:{type:'gradient',gradient:{opacityFrom:.35,opacityTo:.03}},
+        grid:{borderColor:gridClr,strokeDashArray:4},
+        dataLabels:{enabled:false},
+        tooltip:{x:{format:'dd MMM yyyy'},y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+        legend:{labels:{colors:textClr},fontSize:'11px'},
+        theme:{mode:isDk?'dark':'light'},
+      });
+      window._chartAcum.render();
+    }else{
+      acumEl.innerHTML='<div style="color:var(--mu);font-size:13px;text-align:center;padding:12px">Agrega más gastos para ver la evolución</div>';
+    }
+  }
 }
 
 /* ══ NAV ══ */
@@ -3708,7 +4287,20 @@ document.querySelectorAll(".ntab").forEach(btn=>{
         el.style.display="none";
       }
     });
-    if(p==="viajes") renderViajes();
+    if(p==="viajes"){
+      if(!isPremium()){
+        // Volver al tab anterior y mostrar muro premium
+        document.querySelectorAll(".ntab").forEach(b=>b.classList.remove("on"));
+        document.querySelectorAll(".ntab")[0]?.classList.add("on");
+        ["agregar","transacciones","resumen","viajes","sala"].forEach(n=>{
+          const el=$("pnl-"+n); if(!el) return;
+          el.style.display = n==="agregar" ? "block" : "none";
+        });
+        showPremiumWall('Viajes compartidos');
+        return;
+      }
+      renderViajes();
+    }
     if(p==="sala")   renderSalaTab();
     if(p==="transacciones" && gastos.length===0){
       // U4 — show skeleton while data hasn't loaded yet
@@ -3761,6 +4353,7 @@ function getExportRows(){
 
 /* ══ EXPORT EXCEL ══ */
 $("btn-xls").addEventListener("click",()=>{
+  if(!isPremium()){ showPremiumWall('Exportar a Excel'); return; }
   const mf=$("flt-mes").value;
   const rows=getExportRows();
   if(!rows.length){toast("⚠️ Sin datos para exportar");return;}
@@ -3802,6 +4395,7 @@ $("btn-xls").addEventListener("click",()=>{
 
 /* ══ EXPORT PDF ══ */
 $("btn-pdf").addEventListener("click",()=>{
+  if(!isPremium()){ showPremiumWall('Exportar a PDF'); return; }
   const rows=getExportRows();
   if(!rows.length){toast("⚠️ Sin datos para exportar");return;}
   function loadPDF(){
@@ -4797,7 +5391,7 @@ function buildCatFilter(){
   row.style.display="";
   let html=`<span class="fcat${_catFilter===""?" on":""}" onclick="setCatFilter('')">Todos</span>`;
   usedCats.forEach(c=>{
-    const ico=CATI[c]||"📦";
+    const ico=catIcon(c);
     html+=`<span class="fcat${_catFilter===c?" on":""}" onclick="setCatFilter('${c.replace(/'/g,"\\'")}')">${ico} ${c}</span>`;
   });
   row.innerHTML=html;
@@ -4817,8 +5411,9 @@ function abrirEditarGasto(id){
   $("eg-val").value=Math.round(g.valor).toLocaleString("es-CO");
   $("eg-fec").value=g.anio+"-"+String(g.mes).padStart(2,"0");
   // categorías
+  buildCatSelects(false);
   const sel=$("eg-cat");
-  sel.innerHTML=Object.keys(CATI).map(c=>`<option value="${c}"${c===g.cat?" selected":""}>${CATI[c]} ${c}</option>`).join("");
+  if(g.cat&&sel.querySelector(`option[value="${g.cat}"]`)) sel.value=g.cat;
   // split buttons
   document.querySelectorAll(".eg-split-btn").forEach(btn=>{
     const v=btn.dataset.v;
@@ -4962,8 +5557,190 @@ function switchCouple(){
 
 /* ── Lista de salas: ahora siempre visible, no hay panel toggle ── */
 function toggleSalaSwitchPanel(){
-  // La lista de salas ahora es permanentemente visible — no-op
   renderSalaSwitchList();
+}
+
+function toggleSalaSection(hdr){
+  const body = hdr.nextElementSibling;
+  const isOpen = hdr.classList.contains('open');
+  hdr.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+  if(window.lucide) lucide.createIcons();
+}
+
+/* ══════════════════════════════════════════════
+   PREMIUM — Sistema de monetización por sala
+   ══════════════════════════════════════════════ */
+function isPremium(){
+  if(!curCouple) return false;
+  if(!curCouple.premium) return false;
+  if(curCouple.premiumExpiry && curCouple.premiumExpiry < Date.now()) return false;
+  return true;
+}
+
+function showPremiumWall(featureLabel){
+  const ov=document.createElement('div');
+  ov.className='nd-overlay';
+  ov.innerHTML=`
+    <div class="nd-dialog" style="max-width:340px">
+      <div class="pw-wrap">
+        <div class="pw-gem">&#x1F48E;</div>
+        <div class="pw-title">Nido Premium</div>
+        <div class="pw-sub">Desbloquea <strong>${featureLabel}</strong> y todas las funciones premium para tu sala.</div>
+        <ul class="pw-list">
+          <li>Viajes compartidos</li>
+          <li>Cambio de moneda con conversi&oacute;n</li>
+          <li>Exportar a Excel y PDF</li>
+          <li>Acceso para ambos integrantes</li>
+        </ul>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="pw-btn" style="flex:1;font-size:12px;padding:12px 6px;line-height:1.4"
+            onclick="this.closest('.nd-overlay').classList.add('nd-closing');setTimeout(()=>this.closest('.nd-overlay')?.remove(),200);showActivarPremium('mensual')">
+            Mensual<br><span style="font-size:18px;font-weight:900">$3.50</span><br><span style="font-size:10px;opacity:.8">USD / mes</span>
+          </button>
+          <button class="pw-btn" style="flex:1;font-size:12px;padding:12px 6px;line-height:1.4;background:linear-gradient(135deg,#a855f7,#6366f1)"
+            onclick="this.closest('.nd-overlay').classList.add('nd-closing');setTimeout(()=>this.closest('.nd-overlay')?.remove(),200);showActivarPremium('anual')">
+            Anual<br><span style="font-size:18px;font-weight:900">$25</span><br><span style="font-size:10px;opacity:.8">USD / a&ntilde;o &middot; ahorra 40%</span>
+          </button>
+        </div>
+        <button onclick="this.closest('.nd-overlay').classList.add('nd-closing');setTimeout(()=>this.closest('.nd-overlay')?.remove(),200);showActivarPremium('codigo')"
+          style="background:none;border:none;color:var(--ac);font-size:12px;cursor:pointer;padding:8px;width:100%;margin-top:4px">
+          &#x1F511; Ya tengo un c&oacute;digo de activaci&oacute;n
+        </button>
+      </div>
+      <button onclick="this.closest('.nd-overlay').classList.add('nd-closing');setTimeout(()=>this.closest('.nd-overlay')?.remove(),200)"
+        style="background:none;border:none;color:var(--mu);font-size:13px;cursor:pointer;padding:6px 16px;width:100%">
+        Ahora no
+      </button>
+    </div>`;
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>ov.classList.add('nd-show')));
+  ov.addEventListener('click',e=>{if(e.target===ov){ov.classList.add('nd-closing');setTimeout(()=>ov.remove(),200);}});
+}
+
+function showActivarPremium(plan='codigo'){
+  nidoDialog.fire({
+    icon:'info',
+    title:'Activar Premium 💎',
+    html:`<div style="font-size:13px;color:var(--mu);margin-bottom:12px;line-height:1.6">
+      Ingresa tu código de activación.<br>
+      <span style="font-size:11px">¿No tienes código? <a href="mailto:john.anderson.co@gmail.com" style="color:var(--ac)">Contáctanos</a> para obtenerlo.</span>
+    </div>
+    <input id="nd-promo-inp" class="finp" placeholder="XXXX-XXXX-XXXX" style="text-align:center;font-size:15px;letter-spacing:.08em;text-transform:uppercase" maxlength="14">`,
+    confirmButtonText:'Activar',
+    showCancelButton:true,
+    didOpen:dlg=>{ setTimeout(()=>dlg.querySelector('#nd-promo-inp')?.focus(),60); },
+    preConfirm:async()=>{
+      const code=document.getElementById('nd-promo-inp')?.value.trim().toUpperCase();
+      if(!code) throw new Error('Ingresa un código');
+      const snap=await db.collection('promo_codes').doc(code).get();
+      if(!snap.exists) throw new Error('Código inválido o ya utilizado');
+      const d=snap.data();
+      if(d.used) throw new Error('Este código ya fue utilizado');
+      const expiry=d.durationDays ? Date.now()+d.durationDays*86400000 : null;
+      await db.collection('couples').doc(coupleId).update({
+        premium:true, premiumExpiry:expiry,
+        premiumActivatedAt:Date.now(), premiumActivatedBy:myProfile.uid, premiumCode:code
+      });
+      await db.collection('promo_codes').doc(code).update({used:true,usedBy:myProfile.uid,usedAt:Date.now()});
+      if(curCouple){ curCouple.premium=true; curCouple.premiumExpiry=expiry; }
+      return true;
+    }
+  }).then(r=>{
+    if(r?.isConfirmed){
+      document.querySelectorAll('.ntab-lock-badge,.export-lock').forEach(el=>el.style.display='none');
+      toast('🎉 ¡Premium activado! Disfruta todas las funciones.');
+    }
+  });
+}
+
+
+/* ── Activación de prueba (solo para testing) ── */
+window.activarPremiumTest = async function(dias=30){
+  if(!coupleId){ console.error('No hay sala activa'); return; }
+  const expiry = dias===0 ? null : Date.now() + dias*86400000;
+  await db.collection('couples').doc(coupleId).update({
+    premium:true, premiumExpiry:expiry,
+    premiumActivatedAt:Date.now(), premiumActivatedBy:'test', premiumCode:'TEST'
+  });
+  if(curCouple){ curCouple.premium=true; curCouple.premiumExpiry=expiry; }
+  updatePremiumBadges();
+  console.log('[Nido] Premium activado por', dias===0?'siempre':dias+' dias');
+  if(typeof toast==='function') toast('💎 Premium de prueba activado');
+};
+window.desactivarPremiumTest = async function(){
+  if(!coupleId){ console.error('No hay sala activa'); return; }
+  await db.collection('couples').doc(coupleId).update({premium:false,premiumExpiry:null});
+  if(curCouple){ curCouple.premium=false; }
+  updatePremiumBadges();
+  console.log('[Nido] Premium desactivado');
+  if(typeof toast==='function') toast('Premium desactivado');
+};
+function updatePremiumBadges(){
+  const active=isPremium();
+  const badge=document.getElementById('viajes-lock-badge');
+  if(badge) badge.style.display=active?'none':'';
+  ['xls-lock-badge','pdf-lock-badge','new-sala-lock-badge','join-sala-lock-badge'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.display=active?'none':'';
+  });
+  // Advanced charts: show wall or content based on premium
+  const advWall=$("adv-premium-wall"), advContent=$("adv-charts-content");
+  if(advWall) advWall.style.display=active?'none':'block';
+  if(advContent) advContent.style.display=active?'block':'none';
+  const rcptBadge=document.getElementById("receipt-premium-badge");
+  if(rcptBadge) rcptBadge.style.display=active?'none':'';
+}
+
+/* ── Exportar Excel ── */
+function exportarExcel(){
+  if(!isPremium()){ showPremiumWall('Exportar a Excel'); return; }
+  if(!gastos||!gastos.length){ toast('⚠️ No hay gastos para exportar'); return; }
+  const rows=[['Fecha','Descripción','Categoría','Monto','Pagó','Split','Notas']];
+  gastos.forEach(g=>{
+    const fecha=g.fecha||new Date(g.ts).toLocaleDateString('es-CO');
+    const pago=g.paidBy===myProfile?.uid ? (myProfile?.displayName||'Yo') : (partnerProfile?.displayName||'Pareja');
+    rows.push([fecha, g.desc||'', g.cat||'', g.amount||0, pago, g.split||50+'%', g.note||'']);
+  });
+  let csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const BOM='﻿';
+  const blob=new Blob([BOM+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`Nido-${curCouple?.name||'gastos'}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('✅ Archivo descargado');
+}
+
+/* ── Exportar PDF ── */
+function exportarPDF(){
+  if(!isPremium()){ showPremiumWall('Exportar a PDF'); return; }
+  if(!gastos||!gastos.length){ toast('⚠️ No hay gastos para exportar'); return; }
+  const w=window.open('','_blank');
+  const salaName=curCouple?.name||'Mi Sala';
+  const fecha=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const filas=gastos.map(g=>{
+    const d=g.fecha||new Date(g.ts).toLocaleDateString('es-CO');
+    const pago=g.paidBy===myProfile?.uid?(myProfile?.displayName||'Yo'):(partnerProfile?.displayName||'Pareja');
+    const monto=typeof g.amount==='number'?g.amount.toLocaleString('es-CO'):g.amount;
+    return`<tr><td>${d}</td><td>${g.desc||''}</td><td>${g.cat||''}</td><td style="text-align:right">$${monto}</td><td>${pago}</td></tr>`;
+  }).join('');
+  const total=gastos.reduce((s,g)=>s+(g.amount||0),0).toLocaleString('es-CO');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Nido — ${salaName}</title>
+  <style>body{font-family:system-ui,sans-serif;padding:32px;color:#1e293b}
+  h1{font-size:22px;margin-bottom:4px}p{color:#64748b;font-size:13px;margin:0 0 20px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#0f172a;color:#fff;padding:8px 10px;text-align:left}
+  td{padding:7px 10px;border-bottom:1px solid #e2e8f0}
+  tr:nth-child(even) td{background:#f8fafc}
+  .total{text-align:right;font-weight:700;padding:10px;font-size:14px}
+  @media print{body{padding:16px}}</style></head><body>
+  <h1>🏠 ${salaName}</h1><p>Exportado el ${fecha} · ${gastos.length} gastos</p>
+  <table><thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Monto</th><th>Pagó</th></tr></thead>
+  <tbody>${filas}</tbody></table>
+  <div class="total">Total: $${total}</div>
+  <script>window.onload=()=>{window.print();}<\/script><\/body><\/html>`);
+  w.document.close();
 }
 
 async function renderSalaSwitchList(){
@@ -5020,59 +5797,107 @@ async function renderSalaSwitchList(){
 }
 
 async function createSalaFromTab(){
-  const name=$("st-new-sala-name")?.value.trim();
-  const errEl=$("st-sala-err");
-  errEl.textContent=" ";
-  if(!name){errEl.textContent="⚠️ Escribe el nombre de la sala";return;}
-  showAuthLoading(true);
-  try{
-    await fbReady;
-    const code=genCode();
-    const now=Date.now();
-    const data={name,members:{[myProfile.uid]:myProfile.uid},salarios:{[myProfile.uid]:(curCouple?.salarios?.[myProfile.uid]||0)},inviteCode:code,createdBy:myProfile.uid,createdAt:now};
-    const ref=await db.collection("couples").add(data);
-    await db.collection("invite_codes").doc(code).set({coupleId:ref.id,createdAt:now}).catch(()=>{});
-    const newCouples=[...(myProfile.couples||[]),ref.id];
-    await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
-    myProfile.couples=newCouples;
-    showAuthLoading(false);
-    $("st-new-sala-name").value="";
+  if(!isPremium()){ showPremiumWall('Crear salas adicionales'); return; }
+  const r = await nidoDialog.fire({
+    title:'Nueva sala',
+    html:`<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div>
+        <label class="flbl" style="margin-bottom:4px;display:block">Nombre de la sala</label>
+        <input id="nd-sala-name" class="finp" placeholder="Ej: Ana & Carlos ❤️" maxlength="20" style="font-size:13px;padding:9px 12px">
+      </div>
+      <div>
+        <label class="flbl" style="margin-bottom:4px;display:block">Mi salario en esta sala</label>
+        <input id="nd-sala-sal" class="finp" type="number" min="0" placeholder="0" style="font-size:13px;padding:9px 12px">
+      </div>
+      <div>
+        <label class="flbl" style="margin-bottom:4px;display:block">Moneda</label>
+        <select id="nd-sala-mon" class="fsel" style="font-size:13px">
+          <option value="COP">🇨🇴 COP — Peso colombiano</option>
+          <option value="USD">🇺🇸 USD — Dólar estadounidense</option>
+          <option value="MXN">🇲🇽 MXN — Peso mexicano</option>
+          <option value="EUR">🇪🇺 EUR — Euro</option>
+        </select>
+      </div>
+    </div>`,
+    confirmButtonText:'➕ Crear sala',
+    showCancelButton:true,
+    didOpen:dlg=>{ setTimeout(()=>dlg.querySelector('#nd-sala-name')?.focus(),60); },
+    preConfirm:async()=>{
+      const name=document.getElementById('nd-sala-name')?.value.trim();
+      const salStr=document.getElementById('nd-sala-sal')?.value;
+      const moneda=document.getElementById('nd-sala-mon')?.value||'COP';
+      if(!name) throw new Error('Escribe el nombre de la sala');
+      const salario=parseFloat(salStr)||0;
+      if(salario<0||salario>100000000) throw new Error('Salario debe estar entre 0 y 100,000,000');
+      showAuthLoading(true);
+      try{
+        await fbReady;
+        const code=genCode();
+        const now=Date.now();
+        const data={name,moneda,members:{[myProfile.uid]:myProfile.uid},salarios:{[myProfile.uid]:salario},inviteCode:code,createdBy:myProfile.uid,createdAt:now};
+        const ref=await db.collection("couples").add(data);
+        await db.collection("invite_codes").doc(code).set({coupleId:ref.id,createdAt:now}).catch(()=>{});
+        const newCouples=[...(myProfile.couples||[]),ref.id];
+        await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
+        myProfile.couples=newCouples;
+        showAuthLoading(false);
+        return {name,ref};
+      }catch(e){ showAuthLoading(false); throw e; }
+    }
+  });
+  if(r?.isConfirmed && r.value){
+    const {name,ref}=r.value;
     toggleSalaSwitchPanel();
-    toast("✅ Sala '"+name+"' creada · código: "+code);
+    toast(`✅ Sala '${name}' creada`);
     await _doSwitchToCouple(ref.id);
-  }catch(e){showAuthLoading(false);errEl.textContent="⚠️ "+e.message;}
+  }
 }
 
 async function joinSalaFromTab(){
-  const rawCode=$("st-join-code")?.value.trim().toUpperCase();
-  const errEl=$("st-sala-err");
-  errEl.textContent=" ";
-  if(!rawCode||rawCode.length<9){errEl.textContent="⚠️ Código inválido (XXXX-XXXX)";return;}
-  showAuthLoading(true);
-  try{
-    await fbReady;
-    const lookup=await db.collection("invite_codes").doc(rawCode).get();
-    if(!lookup.exists){showAuthLoading(false);errEl.textContent="⚠️ Código no encontrado";return;}
-    const cid=lookup.data().coupleId;
-    const coupleSnap=await db.collection("couples").doc(cid).get();
-    if(!coupleSnap.exists){showAuthLoading(false);errEl.textContent="⚠️ Sala no encontrada";return;}
-    const cdata=coupleSnap.data();
-    const mems=cdata.members||{};
-    if(mems[myProfile.uid]){showAuthLoading(false);errEl.textContent="⚠️ Ya eres miembro de esta sala";return;}
-    if(Object.keys(mems).length>=2){showAuthLoading(false);errEl.textContent="⚠️ Esta sala ya está completa";return;}
-    const updatedMembers={...mems,[myProfile.uid]:myProfile.uid};
-    const updatedSalarios={...(cdata.salarios||{}),[myProfile.uid]:(curCouple?.salarios?.[myProfile.uid]||0)};
-    await db.collection("couples").doc(cid).update({members:updatedMembers,salarios:updatedSalarios,inviteCode:null});
-    await db.collection("invite_codes").doc(rawCode).delete().catch(()=>{});
-    const newCouples=[...(myProfile.couples||[]).filter(c=>c!==cid),cid];
-    await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
-    myProfile.couples=newCouples;
-    showAuthLoading(false);
-    $("st-join-code").value="";
+  if(!isPremium()){ showPremiumWall('Unirte a salas adicionales'); return; }
+  const r = await nidoDialog.fire({
+    title:'Unirme con código',
+    html:`<div style="margin-top:4px">
+      <label class="flbl" style="margin-bottom:6px;display:block">Código de invitación</label>
+      <input id="nd-join-code" class="finp" placeholder="XXXX-XXXX" maxlength="9"
+        style="text-transform:uppercase;letter-spacing:.12em;font-size:17px;text-align:center;padding:11px 12px">
+    </div>`,
+    confirmButtonText:'🔗 Unirme',
+    showCancelButton:true,
+    didOpen:dlg=>{ setTimeout(()=>dlg.querySelector('#nd-join-code')?.focus(),60); },
+    preConfirm:async()=>{
+      const rawCode=document.getElementById('nd-join-code')?.value.trim().toUpperCase();
+      if(!rawCode||rawCode.length<9) throw new Error('Código inválido (XXXX-XXXX)');
+      showAuthLoading(true);
+      try{
+        await fbReady;
+        const lookup=await db.collection("invite_codes").doc(rawCode).get();
+        if(!lookup.exists){ showAuthLoading(false); throw new Error('Código no encontrado'); }
+        const cid=lookup.data().coupleId;
+        const coupleSnap=await db.collection("couples").doc(cid).get();
+        if(!coupleSnap.exists){ showAuthLoading(false); throw new Error('Sala no encontrada'); }
+        const cdata=coupleSnap.data();
+        const mems=cdata.members||{};
+        if(mems[myProfile.uid]){ showAuthLoading(false); throw new Error('Ya eres miembro de esta sala'); }
+        if(Object.keys(mems).length>=2){ showAuthLoading(false); throw new Error('Esta sala ya está completa'); }
+        const updatedMembers={...mems,[myProfile.uid]:myProfile.uid};
+        const updatedSalarios={...(cdata.salarios||{}),[myProfile.uid]:(curCouple?.salarios?.[myProfile.uid]||0)};
+        await db.collection("couples").doc(cid).update({members:updatedMembers,salarios:updatedSalarios,inviteCode:null});
+        await db.collection("invite_codes").doc(rawCode).delete().catch(()=>{});
+        const newCouples=[...(myProfile.couples||[]).filter(c=>c!==cid),cid];
+        await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
+        myProfile.couples=newCouples;
+        showAuthLoading(false);
+        return {cid, name:cdata.name};
+      }catch(e){ showAuthLoading(false); throw e; }
+    }
+  });
+  if(r?.isConfirmed && r.value){
+    const {cid, name}=r.value;
     toggleSalaSwitchPanel();
-    toast("🎉 ¡Te uniste a '"+cdata.name+"'!");
+    toast(`🎉 ¡Te uniste a '${name}'!`);
     await _doSwitchToCouple(cid);
-  }catch(e){showAuthLoading(false);errEl.textContent="⚠️ "+e.message;}
+  }
 }
 async function _doSwitchToCouple(cid){
   if(cid === (curCouple?.id || coupleId)){ return; }
@@ -5706,6 +6531,9 @@ function toggleThemeFromSettings(el){
   if(window.ApexCharts){
     if(window._chartCat){window._chartCat.destroy();window._chartCat=null;}
     if(window._chartHist){window._chartHist.destroy();window._chartHist=null;}
+    if(window._chartWeekly){window._chartWeekly.destroy();window._chartWeekly=null;}
+    if(window._chartCatPerson){window._chartCatPerson.destroy();window._chartCatPerson=null;}
+    if(window._chartAcum){window._chartAcum.destroy();window._chartAcum=null;}
     const hEl=$("hist"), cEl=$("catbars");
     if(hEl) hEl.style.display="";
     if(cEl) cEl.style.display="";
@@ -5863,6 +6691,7 @@ function renderSalaMoneda(){
   if(sel)  sel.value=code;
 }
 function openMonedaEdit(){
+  if(!isPremium()){ showPremiumWall('Cambio de moneda con conversión'); return; }
   const pan=$("moneda-edit-panel");
   if(pan) pan.style.display="block";
   // Actualizar selector al valor actual
@@ -6715,6 +7544,11 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
 ║      match /os_tokens/{userId} {                              ║
 ║        allow read, write: if request.auth != null             ║
 ║          && request.auth.uid == userId;                       ║
+║      }                                                        ║
+║      match /promo_codes/{code} {                              ║
+║        allow get: if request.auth != null;                    ║
+║        allow list: if false;                                  ║
+║        allow write: if request.auth != null;                  ║
 ║      }                                                        ║
 ║    }                                                          ║
 ║  }                                                            ║
