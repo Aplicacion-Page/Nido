@@ -8180,15 +8180,16 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
   function startNotifListener(userIsPremium) {
     if (_unsubAdminNotif) { _unsubAdminNotif(); _unsubAdminNotif = null; }
     if (!db) return;
+    // Sin where('active') para evitar requerir índice compuesto — se filtra en cliente
     _unsubAdminNotif = db.collection('app_notifications')
-      .where('active', '==', true)
       .orderBy('createdAt', 'desc')
-      .limit(10)
+      .limit(20)
       .onSnapshot(function(snap) {
         var now = Date.now();
         var found = null;
         snap.docs.some(function(doc) {
           var n = Object.assign({ id: doc.id }, doc.data());
+          if (!n.active)                                   return false; // inactiva
           if (n.expiresAt && n.expiresAt < now)            return false; // expirada
           if (n.target === 'premium' && !userIsPremium)    return false; // no aplica
           if (n.target === 'free'    &&  userIsPremium)    return false; // no aplica
@@ -8198,7 +8199,7 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
         });
         if (found) showNotifBanner(found);
       }, function(err) {
-        console.warn('app_notifications listener:', err.message);
+        console.warn('app_notifications error:', err.code, err.message);
       });
   }
 
