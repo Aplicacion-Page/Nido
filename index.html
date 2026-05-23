@@ -107,6 +107,7 @@ input,select,button{font-family:inherit}
 #screen-login{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:flex-start;justify-content:center;padding:20px;padding-top:max(20px,env(safe-area-inset-top));overflow-y:auto;transition:background .3s}
 .lcard{width:100%;max-width:340px;background:var(--s1);border:1px solid var(--bor);border-radius:24px;padding:28px 24px 24px;box-shadow:var(--shadow);animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);margin:auto}
 @keyframes slideUp{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes notifSlide{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
 .ltitle{font-family:'Plus Jakarta Sans',sans-serif;font-size:27px;font-weight:700;text-align:center;margin-bottom:3px;background:linear-gradient(135deg,var(--pk),var(--ac),var(--gr));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lsub{text-align:center;color:var(--mu);font-size:13px;margin-bottom:24px}
 .upills{display:flex;gap:10px;margin-bottom:18px}
@@ -1352,6 +1353,12 @@ svg.lucide{
 <!-- ══ APP ══ -->
 <div id="screen-app">
 
+  <!-- ── Banner notificaciones admin ── -->
+  <div id="app-notif-banner" style="display:none;padding:10px 16px;font-size:.875rem;font-weight:600;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);animation:notifSlide .25s ease">
+    <span id="app-notif-text" style="flex:1"></span>
+    <button onclick="dismissNotifBanner()" style="background:none;border:none;cursor:pointer;font-size:1rem;opacity:.6;padding:2px 6px;color:inherit;flex-shrink:0">✕</button>
+  </div>
+
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="tbrand" style="cursor:pointer;user-select:none;gap:7px" onclick="openSettings()">
@@ -1415,13 +1422,8 @@ svg.lucide{
         <div class="prevbox" id="prevbox">Selecciona pagador y valor para ver el cálculo</div>
       </div>
 
-      <!-- RECEIPT: adjuntar foto -->
-      <div id="receipt-section" style="margin-top:10px;margin-bottom:10px">
-        <button type="button" class="receipt-attach-btn" id="receipt-attach-btn" onclick="onReceiptAttachClick()">
-          <span>📷</span>
-          <span id="receipt-attach-label">Adjuntar foto del recibo</span>
-          <span style="margin-left:auto;font-size:10px;opacity:.7" id="receipt-premium-badge">💎 Premium</span>
-        </button>
+      <!-- RECEIPT + GUARDAR: misma fila -->
+      <div id="receipt-section" style="margin-top:10px">
         <div class="receipt-preview-wrap" id="receipt-preview-wrap">
           <img class="receipt-thumb" id="receipt-thumb" src="" alt="Recibo" onclick="openReceiptLightbox(_pendingReceipt)">
           <div style="flex:1;min-width:0">
@@ -1430,11 +1432,17 @@ svg.lucide{
           </div>
           <button class="receipt-clear-btn" onclick="clearReceiptPreview()">✕ Quitar</button>
         </div>
+        <div style="display:flex;gap:8px;align-items:stretch;margin-top:8px">
+          <button type="button" class="receipt-attach-btn" id="receipt-attach-btn" onclick="onReceiptAttachClick()" style="flex:1;margin-top:0">
+            <span>📷</span>
+            <span id="receipt-attach-label">Adjuntar recibo</span>
+            <span style="margin-left:auto;font-size:10px;opacity:.7" id="receipt-premium-badge">💎</span>
+          </button>
+          <button class="btn" id="btn-save" style="background:linear-gradient(135deg,#f472b6,#ec4899);box-shadow:0 4px 20px rgba(244,114,182,.35);flex-shrink:0;white-space:nowrap">
+            Guardar ✓
+          </button>
+        </div>
       </div>
-
-      <button class="btn" id="btn-save" style="background:linear-gradient(135deg,#f472b6,#ec4899);box-shadow:0 4px 20px rgba(244,114,182,.35)">
-        Guardar gasto ✓
-      </button>
     </div>
 
     <!-- RECEIPT: elementos globales -->
@@ -2831,6 +2839,8 @@ function enterAppUI(cid){
   updateMyPresence();
   toast("✅ "+curCouple.name);
   renderSalasInSettings();
+  // Notificaciones del admin
+  startNotifListener(isPremium());
   // Precargar avatares en background para que el picker los muestre al instante
   setTimeout(preloadAvatarImages, 1500);
 }
@@ -8160,6 +8170,68 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
     btn.appendChild(r);
     setTimeout(() => r.remove(), 600);
   });
+
+  /* ══════════════════════════════════════════════
+     NOTIFICACIONES DEL ADMIN (app_notifications)
+     ══════════════════════════════════════════════ */
+  var _shownNotifIds = JSON.parse(localStorage.getItem('nido_shown_notifs') || '[]');
+  var _unsubAdminNotif = null;
+
+  function startNotifListener(userIsPremium) {
+    if (_unsubAdminNotif) { _unsubAdminNotif(); _unsubAdminNotif = null; }
+    if (!db) return;
+    _unsubAdminNotif = db.collection('app_notifications')
+      .where('active', '==', true)
+      .orderBy('createdAt', 'desc')
+      .limit(10)
+      .onSnapshot(function(snap) {
+        var now = Date.now();
+        var found = null;
+        snap.docs.some(function(doc) {
+          var n = Object.assign({ id: doc.id }, doc.data());
+          if (n.expiresAt && n.expiresAt < now)            return false; // expirada
+          if (n.target === 'premium' && !userIsPremium)    return false; // no aplica
+          if (n.target === 'free'    &&  userIsPremium)    return false; // no aplica
+          if (_shownNotifIds.indexOf(n.id) !== -1)         return false; // ya vista
+          found = n;
+          return true;
+        });
+        if (found) showNotifBanner(found);
+      }, function(err) {
+        console.warn('app_notifications listener:', err.message);
+      });
+  }
+
+  function showNotifBanner(notif) {
+    var themes = {
+      info:    { bg:'#1e3a5f', border:'#2563eb', color:'#93c5fd' },
+      warning: { bg:'#3b2a00', border:'#d97706', color:'#fcd34d' },
+      success: { bg:'#052e16', border:'#16a34a', color:'#86efac' },
+      promo:   { bg:'#2e1065', border:'#9333ea', color:'#d8b4fe' }
+    };
+    var icons  = { info:'ℹ️', warning:'⚠️', success:'✅', promo:'🎉' };
+    var th     = themes[notif.type] || themes.info;
+    var banner = document.getElementById('app-notif-banner');
+    var text   = document.getElementById('app-notif-text');
+    if (!banner || !text) return;
+    banner.style.background   = th.bg;
+    banner.style.color        = th.color;
+    banner.style.borderBottom = '2px solid ' + th.border;
+    banner._notifId = notif.id;
+    text.textContent = (icons[notif.type] || 'ℹ️') + '  ' + notif.title +
+      (notif.body ? '  —  ' + notif.body : '');
+    banner.style.display = 'flex';
+  }
+
+  function dismissNotifBanner() {
+    var banner = document.getElementById('app-notif-banner');
+    if (!banner) return;
+    if (banner._notifId) {
+      _shownNotifIds.push(banner._notifId);
+      localStorage.setItem('nido_shown_notifs', JSON.stringify(_shownNotifIds.slice(-30)));
+    }
+    banner.style.display = 'none';
+  }
 </script>
 <!-- Privacy policy link — visible to crawlers -->
 <footer style="position:fixed;bottom:0;left:0;right:0;text-align:center;padding:6px;font-size:10px;color:rgba(255,255,255,.25);pointer-events:none;z-index:1">
