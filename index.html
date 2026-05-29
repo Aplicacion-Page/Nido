@@ -8641,7 +8641,54 @@ async function _callGemini(prompt, imageBase64) {
       throw e;
     }
   }
+  // Fallback a Groq si el fallo fue por cuota y hay key configurada
+  if (lastErr && (window._appConfig || {}).groq_api_key) {
+    var em = lastErr.message || '';
+    if (em.indexOf('quota') !== -1 || em.indexOf('Quota') !== -1) {
+      return _callGroq(prompt, imageBase64);
+    }
+  }
   throw lastErr || new Error('No se pudo conectar con Gemini. Verifica la API key o espera 1 min (límite de solicitudes del plan gratuito).');
+}
+
+// ── Fallback IA: Groq (OpenAI-compatible) ──────────────────
+async function _callGroq(prompt, imageBase64) {
+  var apiKey = (window._appConfig || {}).groq_api_key;
+  if (!apiKey) throw new Error('Groq no configurado');
+
+  var model   = imageBase64 ? 'meta-llama/llama-4-scout-17b-16e-instruct' : 'llama-3.3-70b-versatile';
+  var content = imageBase64
+    ? [{ type:'image_url', image_url:{ url: imageBase64 } }, { type:'text', text: prompt }]
+    : prompt;
+
+  var bodyObj = {
+    model:       model,
+    messages:    [{ role:'user', content: content }],
+    temperature: 0.1,
+    max_tokens:  imageBase64 ? 512 : 300
+  };
+  if (!imageBase64) bodyObj.response_format = { type:'json_object' };
+
+  var res  = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + apiKey },
+    body:    JSON.stringify(bodyObj)
+  });
+  var data = await res.json();
+
+  if (!res.ok) {
+    var em = (data.error && data.error.message) || ('Error ' + res.status);
+    throw new Error('Groq: ' + em);
+  }
+
+  var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+  if (!text) throw new Error('Respuesta vacía de Groq');
+
+  try { return JSON.parse(text); } catch(e) {
+    var m = text.match(/\{[^{}]*\}/);
+    if (m) try { return JSON.parse(m[0]); } catch(e2) {}
+    throw new Error('Groq: respuesta no es JSON válido');
+  }
 }
 
 // ── Prompt para VOZ (incluye división del gasto) ───────────
