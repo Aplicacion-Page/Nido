@@ -2985,7 +2985,7 @@ async function shareInviteCode(code){
   if(!c||c==="—"){ toast("⚠️ El código no está disponible aún"); return; }
   const salaName = curCouple?.name || "Nido";
   const myName = myProfile?.displayName || "Tu pareja";
-  const appUrl = "https://aplicacion-page.github.io/Nido/";
+  const appUrl = "https://balance-group.github.io/Nido/";
   const msg =
     `🏠 *${salaName} · Finanzas en pareja*\n\n`+
     `*${myName}* te invita a unirte a la sala en *Nido*.\n\n`+
@@ -8547,8 +8547,8 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
 
 // Modelos gratuitos de AI Studio en orden de preferencia (mayo 2026).
 var _GEMINI_MODELS = [
-  { model: 'gemini-2.5-flash-lite', api: 'v1beta' }
-  // Respaldo con Groq pendiente de integrar
+  { model: 'gemini-2.5-flash-lite', api: 'v1beta' }, // principal
+  { model: 'gemini-2.5-flash',      api: 'v1beta' }  // fallback cuota agotada — reemplazar por Groq
 ];
 
 // ── Llamada central a Gemini REST API (con fallback automático) ──
