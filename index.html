@@ -17,6 +17,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:wght@300..800&display=swap" rel="stylesheet">
 <!-- Lucide icons -->
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- Bootstrap Icons (solo iconos, sin CSS de Bootstrap para no conflictuar) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <!-- GSAP — animaciones de paneles y cards -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <!-- AutoAnimate — animación automática de listas -->
@@ -108,6 +110,61 @@ input,select,button{font-family:inherit}
 .lcard{width:100%;max-width:340px;background:var(--s1);border:1px solid var(--bor);border-radius:24px;padding:28px 24px 24px;box-shadow:var(--shadow);animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);margin:auto}
 @keyframes slideUp{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes notifSlide{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
+/* ── Banners admin — estilo Bootstrap 5 Alert ── */
+.nido-alert{display:none;align-items:center;gap:10px;padding:11px 48px 11px 16px;font-size:.875rem;font-weight:500;border:1px solid transparent;border-radius:0;line-height:1.4;animation:bsAlertIn .28s ease;position:relative}
+.nido-alert.show{display:flex}
+.nido-alert .bi{font-size:1rem;flex-shrink:0}
+.nido-alert-text{flex:1}
+.nido-alert-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;opacity:.55;font-size:1.25rem;line-height:1;padding:2px 4px;color:inherit;transition:opacity .15s}
+.nido-alert-close:hover{opacity:1}
+.nido-alert-info   {color:#055160;background:#cff4fc;border-color:#9eeaf9}
+.nido-alert-success{color:#0f5132;background:#d1e7dd;border-color:#a3cfbb}
+.nido-alert-warning{color:#664d03;background:#fff3cd;border-color:#ffe69c}
+.nido-alert-danger {color:#842029;background:#f8d7da;border-color:#f1aeb5}
+.nido-alert-primary{color:#084298;background:#cfe2ff;border-color:#9ec5fe}
+.nido-alert-purple {color:#3d0a91;background:#e9d8fd;border-color:#d0b0fa}
+@keyframes bsAlertIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+/* ── IA: Icon Card buttons (horizontal) ── */
+.icard-row{display:flex;gap:7px;margin-bottom:12px}
+.icard-btn{display:flex;flex-direction:row;align-items:center;gap:8px;padding:9px 11px;flex:1;border-radius:12px;border:1px solid var(--bor);background:var(--s2);cursor:pointer;transition:all .2s ease;text-align:left;min-width:0}
+.icard-btn:hover{border-color:var(--bor2);box-shadow:0 4px 16px rgba(0,0,0,.25);background:var(--s3)}
+.icard-btn:active{transform:scale(.97)}
+.icard-icon-wrap{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .2s ease;flex-shrink:0;position:relative}
+.icard-btn.mic .icard-icon-wrap{background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(236,72,153,.18))}
+.icard-btn.cam .icard-icon-wrap{background:linear-gradient(135deg,rgba(59,130,246,.3),rgba(6,182,212,.18))}
+.icard-btn.att .icard-icon-wrap{background:linear-gradient(135deg,rgba(16,185,129,.3),rgba(20,184,166,.18))}
+.icard-label{font-size:12.5px;font-weight:700;color:var(--mu);line-height:1.3;min-width:0}
+.icard-btn.mic:hover .icard-label{color:#c084fc}
+.icard-btn.cam:hover .icard-label{color:#60a5fa}
+.icard-btn.att:hover .icard-label{color:#34d399}
+/* Estado: escuchando */
+.icard-btn.listening .icard-icon-wrap{background:linear-gradient(135deg,rgba(239,68,68,.35),rgba(249,115,22,.2));animation:icardPulse 1.6s ease-in-out infinite}
+.icard-btn.listening .icard-label{color:#f87171}
+@keyframes icardPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
+/* Estado: cargando */
+.icard-btn.ai-loading{opacity:.7;pointer-events:none}
+.icard-btn.ai-loading .icard-icon-wrap{animation:icardSpin .9s linear infinite}
+@keyframes icardSpin{to{transform:rotate(360deg)}}
+/* Foto adjunta */
+.icard-btn.att.has-photo .icard-icon-wrap{background:linear-gradient(135deg,rgba(16,185,129,.45),rgba(20,184,166,.3))}
+.icard-btn.att.has-photo .icard-label{color:#34d399}
+.ai-chip{display:none;align-items:center;gap:7px;background:var(--ac3);border:1px solid var(--ac2);border-radius:10px;padding:7px 12px;font-size:.8rem;color:var(--ac);margin-bottom:10px;animation:bsAlertIn .2s ease}
+.ai-chip.show{display:flex}
+/* ── Tarjeta confirmación voz ── */
+.vcc-wrap{display:none;background:var(--s1);border:1.5px solid var(--ac2);border-radius:14px;padding:14px 14px 12px;margin-bottom:12px;animation:bsAlertIn .25s ease}
+.vcc-wrap.show{display:block}
+.vcc-header{display:flex;align-items:center;gap:7px;font-size:.875rem;font-weight:700;color:var(--ac);margin-bottom:10px}
+.vcc-table{width:100%;border-collapse:collapse;font-size:.8375rem;margin-bottom:12px}
+.vcc-table td{padding:5px 4px;vertical-align:middle}
+.vcc-table td:first-child{color:var(--mu);font-size:.775rem;width:90px}
+.vcc-table td:last-child{font-weight:600;color:var(--so)}
+.vcc-table tr{border-bottom:1px solid var(--bor)}
+.vcc-table tr:last-child{border-bottom:none}
+.vcc-actions{display:flex;gap:8px;align-items:center}
+.vcc-actions .btn{flex:1;font-size:.8375rem;padding:10px 8px}
+.vcc-actions .btn-outline{flex:1;font-size:.8375rem;padding:9px 8px}
+.vcc-cancel{background:none;border:none;cursor:pointer;opacity:.45;font-size:1.2rem;padding:4px 6px;color:var(--so);line-height:1;flex-shrink:0}
+.vcc-cancel:hover{opacity:.9}
 .ltitle{font-family:'Plus Jakarta Sans',sans-serif;font-size:27px;font-weight:700;text-align:center;margin-bottom:3px;background:linear-gradient(135deg,var(--pk),var(--ac),var(--gr));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lsub{text-align:center;color:var(--mu);font-size:13px;margin-bottom:24px}
 .upills{display:flex;gap:10px;margin-bottom:18px}
@@ -213,7 +270,9 @@ input,select,button{font-family:inherit}
 .sala-status-ok{background:var(--gr2);color:var(--gr)}
 .sala-status-wait{background:rgba(251,191,36,.15);color:var(--ye)}
 .sala-status-solo{background:var(--s3);color:var(--mu)}
-.integrante-card{background:var(--s1);border:1.5px solid var(--bor);border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:13px;transition:var(--t)}
+#sala-integrantes{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
+.integrante-card{background:var(--s1);border:1.5px solid var(--bor);border-radius:14px;padding:12px;margin-bottom:0;display:flex;align-items:center;gap:10px;transition:var(--t);flex:2;min-width:0}
+.integrante-card.me-card{flex:3}
 .int-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2px solid var(--bor2);cursor:pointer;transition:transform .2s;position:relative}
 .int-avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .int-av-edit{position:absolute;bottom:-3px;right:-3px;width:18px;height:18px;border-radius:50%;background:var(--ac);border:2px solid var(--s1);display:flex;align-items:center;justify-content:center;font-size:9px;line-height:1;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.3)}
@@ -302,7 +361,7 @@ input,select,button{font-family:inherit}
 /* Value input with prefix */
 .val-wrap{position:relative}
 .val-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:700;color:var(--mu);pointer-events:none;transition:color .2s;z-index:1}
-.val-wrap .finp{padding-left:28px}
+.val-wrap .finp{padding-left:46px}
 .val-wrap .finp:focus~.val-prefix,.val-wrap:focus-within .val-prefix{color:var(--ac)}
 
 /* Month input — compact */
@@ -638,7 +697,7 @@ input[inputmode="numeric"]::placeholder,
 .vgasto-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .vform-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px}
 .vform-row .finp{flex:1;padding:10px 12px;font-size:14px}
-.vform-row .val-wrap .finp{padding-left:28px}
+.vform-row .val-wrap .finp{padding-left:46px}
 .vform-row .fsel{flex:1;padding:10px 12px 10px 12px;font-size:14px;padding-right:28px}
 
 /* ══════════════════ SETTLEMENT ══════════════════ */
@@ -659,7 +718,7 @@ input[inputmode="numeric"]::placeholder,
   #pnl-agregar .fg{margin-bottom:8px}
   #pnl-agregar .flbl{margin-bottom:3px}
   #pnl-agregar .finp{padding:9px 12px;font-size:15px}
-  #pnl-agregar .val-wrap .finp{padding-left:26px}
+  #pnl-agregar .val-wrap .finp{padding-left:46px}
   #pnl-agregar .fsel{padding:9px 34px 9px 12px;font-size:14px}
   #pnl-agregar .opt{padding:8px 6px;font-size:13px}
   #pnl-agregar .osub{font-size:9px;margin-top:1px}
@@ -951,6 +1010,34 @@ svg.lucide{
 .adv-chart-section{padding:4px 14px 14px}
 .adv-chart-section+.adv-chart-section{border-top:1px solid var(--bor)}
 .adv-chart-lbl{font-size:11px;color:var(--mu);margin-bottom:8px;margin-top:6px;font-weight:600;letter-spacing:.03em}
+
+/* ── AI Anomaly Detection ── */
+#btn-ai-analysis{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(99,102,241,.12));border:1.5px solid rgba(168,85,247,.35);border-radius:10px;padding:6px 11px;font-size:11.5px;font-weight:700;color:#c084fc;cursor:pointer;transition:all .2s ease;flex-shrink:0}
+#btn-ai-analysis:hover{background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(99,102,241,.2));border-color:rgba(168,85,247,.6)}
+#btn-ai-analysis.ai-loading{opacity:.65;pointer-events:none}
+.ai-modal-overlay{position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;padding-bottom:0;animation:fadeIn .2s ease}
+.ai-modal-sheet{background:var(--s1);border-radius:22px 22px 0 0;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;animation:sheetUp .3s cubic-bezier(.34,1.4,.64,1);padding-bottom:env(safe-area-inset-bottom,0)}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ai-modal-handle{width:36px;height:4px;border-radius:2px;background:var(--bor2);margin:12px auto 0}
+.ai-modal-header{padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bor)}
+.ai-modal-title{font-size:1rem;font-weight:800;color:var(--tx)}
+.ai-modal-close{background:none;border:none;cursor:pointer;font-size:1.25rem;color:var(--mu);padding:4px;line-height:1}
+.ai-modal-body{padding:16px 20px 24px;display:flex;flex-direction:column;gap:12px}
+.ai-anomaly-card{border-radius:12px;padding:12px 14px;border:1px solid transparent;display:flex;gap:12px;align-items:flex-start}
+.ai-anomaly-card.alta{background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.3)}
+.ai-anomaly-card.media{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25)}
+.ai-anomaly-card.baja{background:var(--ac3);border-color:var(--ac2)}
+.ai-anomaly-icon{font-size:1.25rem;flex-shrink:0;margin-top:1px}
+.ai-anomaly-title{font-size:.875rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.ai-anomaly-detail{font-size:.8125rem;color:var(--mu);line-height:1.5}
+.ai-summary-box{background:var(--s2);border-radius:12px;padding:12px 14px;font-size:.8125rem;color:var(--so);line-height:1.6;border:1px solid var(--bor)}
+.ai-modal-loading{text-align:center;padding:32px 20px;color:var(--mu);font-size:.875rem}
+.ai-modal-loading .ai-spin{display:inline-block;font-size:2rem;animation:icardSpin 1s linear infinite;margin-bottom:12px}
+.ai-auto-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#c084fc;margin-bottom:8px}
+.ai-ok-box{text-align:center;padding:16px 0 8px}
+.ai-ok-box .ai-ok-icon{font-size:2.5rem;margin-bottom:8px}
+.ai-ok-box .ai-ok-title{font-size:.9375rem;font-weight:800;color:var(--tx);margin-bottom:6px}
+.ai-ok-box .ai-ok-sub{font-size:.8125rem;color:var(--mu);line-height:1.5}
 
 /* ── Splash Screen ── */
 #splash{
@@ -1350,13 +1437,36 @@ svg.lucide{
   </button>
 </div>
 
+<!-- ══ MAINTENANCE OVERLAY ══ -->
+<div id="maintenance-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:#0d1117;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:32px">
+  <div style="font-size:4rem">🔧</div>
+  <div style="font-size:1.375rem;font-weight:800;color:#e2e8f0">En mantenimiento</div>
+  <div style="font-size:.9375rem;color:#94a3b8;max-width:300px;line-height:1.6">Estamos mejorando Nido para ti.<br>Vuelve en unos minutos.</div>
+  <div style="margin-top:8px;font-size:.8rem;color:#475569">Equipo Nido · Construyendo Juntos 🏡</div>
+</div>
+
 <!-- ══ APP ══ -->
 <div id="screen-app">
 
-  <!-- ── Banner notificaciones admin ── -->
-  <div id="app-notif-banner" style="display:none;padding:10px 16px;font-size:.875rem;font-weight:600;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);animation:notifSlide .25s ease">
-    <span id="app-notif-text" style="flex:1"></span>
-    <button onclick="dismissNotifBanner()" style="background:none;border:none;cursor:pointer;font-size:1rem;opacity:.6;padding:2px 6px;color:inherit;flex-shrink:0">✕</button>
+  <!-- ── Banner bienvenida (show_welcome_banner) ── -->
+  <div id="app-welcome-banner" class="nido-alert nido-alert-success" role="alert">
+    <i class="bi bi-house-heart-fill"></i>
+    <span class="nido-alert-text">¡Bienvenido a Nido · Construyendo Juntos! Explora todas las funciones de tu sala.</span>
+    <button class="nido-alert-close" onclick="document.getElementById('app-welcome-banner').classList.remove('show')" aria-label="Cerrar">×</button>
+  </div>
+
+  <!-- ── Banner de anuncio del admin (app_config) — permanente mientras esté activo ── -->
+  <div id="app-announcement-banner" class="nido-alert" role="alert">
+    <i id="app-announcement-icon" class="bi bi-info-circle-fill"></i>
+    <span id="app-announcement-text" class="nido-alert-text"></span>
+    <button class="nido-alert-close" onclick="dismissAnnouncementBanner()" aria-label="Cerrar">×</button>
+  </div>
+
+  <!-- ── Banner notificaciones admin (app_notifications) — se descarta permanentemente ── -->
+  <div id="app-notif-banner" class="nido-alert" role="alert">
+    <i id="app-notif-icon" class="bi bi-bell-fill"></i>
+    <span id="app-notif-text" class="nido-alert-text"></span>
+    <button class="nido-alert-close" onclick="dismissNotifBanner()" aria-label="Cerrar">×</button>
   </div>
 
   <!-- TOPBAR -->
@@ -1384,13 +1494,50 @@ svg.lucide{
         <div class="stit">Nuevo gasto</div>
         <div style="color:var(--mu);font-size:13px">Registra un gasto de cualquiera</div>
       </div>
-      <div id="ultimo-gasto-banner" style="display:none;background:var(--ac3);border:1px solid var(--ac2);border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:13px;color:var(--so);line-height:1.5"></div>
-
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:10px 13px">
-        <div id="cur-user-badge-form" style="font-weight:700;font-size:14px"></div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;align-items:stretch">
+        <div id="ultimo-gasto-banner" style="display:none;flex:2;background:var(--ac3);border:1px solid var(--ac2);border-radius:12px;padding:9px 12px;font-size:12px;color:var(--so);line-height:1.5;min-width:0;white-space:normal;word-break:break-word"></div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--s1);border:1.5px solid var(--bor);border-radius:12px;padding:8px 10px;min-width:0">
+          <div id="cur-user-badge-form" style="font-weight:700;font-size:12px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center"></div>
+        </div>
       </div>
 
       <div class="card">
+        <!-- ── IA: Icon Card buttons ── -->
+        <div class="icard-row">
+          <button type="button" class="icard-btn mic" id="btn-voice-ai" onclick="startVoiceInput()">
+            <div class="icard-icon-wrap" id="btn-voice-ai-icon"><i class="bi bi-mic-fill"></i></div>
+            <span class="icard-label" id="btn-voice-ai-label">Por voz</span>
+          </button>
+          <button type="button" class="icard-btn cam" id="btn-scan-ai" onclick="startAIScan()">
+            <div class="icard-icon-wrap" id="btn-scan-ai-icon"><i class="bi bi-camera-fill"></i></div>
+            <span class="icard-label" id="btn-scan-ai-label">Escanear</span>
+          </button>
+          <button type="button" class="icard-btn att" id="receipt-attach-btn" onclick="onReceiptAttachClick()">
+            <div class="icard-icon-wrap"><i class="bi bi-paperclip"></i></div>
+            <span class="icard-label" id="receipt-attach-label">Adjuntar factura</span>
+          </button>
+        </div>
+        <div class="ai-chip" id="ai-status-chip">
+          <i class="bi bi-stars"></i>
+          <span id="ai-status-text">Analizando…</span>
+        </div>
+
+        <!-- ── Confirmación de voz ── -->
+        <div class="vcc-wrap" id="voice-confirm-card">
+          <div class="vcc-header"><i class="bi bi-stars"></i> ¿Registrar este gasto?</div>
+          <table class="vcc-table">
+            <tr><td>Descripción</td><td id="vcc-desc">—</td></tr>
+            <tr><td>Valor</td><td id="vcc-monto">—</td></tr>
+            <tr><td>Categoría</td><td id="vcc-cat">—</td></tr>
+            <tr><td>División</td><td id="vcc-split">—</td></tr>
+          </table>
+          <div class="vcc-actions">
+            <button class="btn" id="vcc-btn-save" onclick="_saveFromVoice()">✅ Agregar ahora</button>
+            <button class="btn-outline" onclick="_editFromVoice()">✏️ Editar</button>
+            <button class="vcc-cancel" onclick="_dismissVoiceConfirm()" title="Cancelar">×</button>
+          </div>
+        </div>
+
         <div class="fg">
           <label class="flbl" for="f-desc">Descripción</label>
           <input type="text" id="f-desc" class="finp" placeholder="Ej: Gas, Mercado, Clase Pipe...">
@@ -1432,13 +1579,8 @@ svg.lucide{
           </div>
           <button class="receipt-clear-btn" onclick="clearReceiptPreview()">✕ Quitar</button>
         </div>
-        <div style="display:flex;gap:8px;align-items:stretch;margin-top:8px">
-          <button type="button" class="receipt-attach-btn" id="receipt-attach-btn" onclick="onReceiptAttachClick()" style="flex:1;margin-top:0">
-            <span>📷</span>
-            <span id="receipt-attach-label">Adjuntar recibo</span>
-            <span style="margin-left:auto;font-size:10px;opacity:.7" id="receipt-premium-badge">💎</span>
-          </button>
-          <button class="btn" id="btn-save" style="background:linear-gradient(135deg,#f472b6,#ec4899);box-shadow:0 4px 20px rgba(244,114,182,.35);flex-shrink:0;white-space:nowrap">
+        <div style="margin-top:8px">
+          <button class="btn" id="btn-save" style="background:linear-gradient(135deg,#f472b6,#ec4899);box-shadow:0 4px 20px rgba(244,114,182,.35);width:100%">
             Guardar ✓
           </button>
         </div>
@@ -1447,14 +1589,24 @@ svg.lucide{
 
     <!-- RECEIPT: elementos globales -->
     <input type="file" id="receipt-input" accept="image/*" capture="environment" style="display:none">
+    <input type="file" id="ai-scan-input" accept="image/*" capture="environment" style="display:none">
     <div id="receipt-lightbox" onclick="closeReceiptLightbox()">
       <img id="receipt-lightbox-img" src="" alt="Recibo">
       <button id="receipt-lightbox-close" onclick="event.stopPropagation();closeReceiptLightbox()">Cerrar ✕</button>
     </div>
     <!-- MOVIMIENTOS -->
     <div id="pnl-transacciones" class="panel" style="display:none">
-      <div class="stit">Movimientos</div>
-      <div class="ssub" id="txsub">—</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div>
+          <div class="stit" style="margin-bottom:0">Movimientos</div>
+          <div class="ssub" id="txsub" style="margin-top:1px">—</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn-outline" id="btn-xls" style="position:relative;padding:6px 10px;font-size:12px;gap:4px"><i data-lucide="download"></i> Excel<span class="export-lock" id="xls-lock-badge">💎</span></button>
+          <button class="btn-outline" id="btn-pdf" style="position:relative;padding:6px 10px;font-size:12px;gap:4px"><i data-lucide="file-text"></i> PDF<span class="export-lock" id="pdf-lock-badge">💎</span></button>
+          <button class="btn-outline" id="btn-sync" style="padding:6px 10px;font-size:12px" title="Actualizar"><i data-lucide="refresh-cw"></i></button>
+        </div>
+      </div>
       <div style="position:relative;margin-bottom:10px">
         <input id="tx-search" class="finp" type="text" placeholder="🔍 Buscar por descripción…" oninput="renderTx()" autocomplete="off">
       </div>
@@ -1464,11 +1616,6 @@ svg.lucide{
         <select id="flt-per" class="fsel">
           <option value="">Ambos</option>
         </select>
-      </div>
-      <div class="arow">
-        <button class="btn-outline" id="btn-xls" style="position:relative"><i data-lucide="download"></i> Excel<span class="export-lock" id="xls-lock-badge">💎</span></button>
-        <button class="btn-outline" id="btn-pdf" style="position:relative"><i data-lucide="file-text"></i> PDF<span class="export-lock" id="pdf-lock-badge">💎</span></button>
-        <button class="btn-outline" id="btn-sync"><i data-lucide="refresh-cw"></i> Actualizar</button>
       </div>
       <div class="txlist" id="txlist"></div>
     </div>
@@ -1504,7 +1651,12 @@ svg.lucide{
       </div>
       <div id="settle-section"></div>
       <div class="card" id="stats-card">
-        <div class="clbl">📊 Estadísticas del período</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="clbl" style="margin-bottom:0">📊 Estadísticas del período</div>
+          <button id="btn-ai-analysis" onclick="openAIAnalysisModal(false)" title="Analizar gastos del mes con IA">
+            <i class="bi bi-stars"></i> Analizar <span style="font-size:9px;opacity:.8">💎</span>
+          </button>
+        </div>
         <div id="stats-inner"></div>
       </div>
       <div class="card"><div class="clbl">Gastos por categoría (acumulado)</div><div id="catbars"></div><div id="chart-cat"></div></div>
@@ -1512,13 +1664,13 @@ svg.lucide{
       <div class="card" id="card-adv-charts" style="padding:0;overflow:hidden">
         <div style="padding:12px 14px 0;display:flex;align-items:center;gap:8px">
           <div class="clbl" style="margin-bottom:0">📈 Gráficos avanzados</div>
-          <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;flex-shrink:0">💎 Premium</span>
+          <span style="font-size:12px;flex-shrink:0">💎</span>
         </div>
         <div id="adv-premium-wall">
           <div style="font-size:32px;margin-bottom:8px">📊</div>
           <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px">Gráficos avanzados</div>
           <div style="font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.6">Tendencia semanal, gastos por persona<br>y categoría, evolución acumulada.</div>
-          <button class="pw-btn" style="padding:11px" onclick="showPremiumWall('Gráficos avanzados')">💎 Desbloquear gráficos</button>
+          <button class="pw-btn" style="padding:11px" onclick="showPremiumWall('Gráficos avanzados')">💎 Desbloquear</button>
         </div>
         <div id="adv-charts-content" style="display:none">
           <div class="adv-chart-section">
@@ -1538,6 +1690,25 @@ svg.lucide{
 
     </div>
 
+    <!-- ── Modal Análisis IA ── -->
+    <div id="ai-analysis-modal" style="display:none" onclick="if(event.target===this)closeAIModal()">
+      <div class="ai-modal-overlay" style="position:fixed;inset:0;z-index:950;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center">
+        <div class="ai-modal-sheet" id="ai-modal-sheet">
+          <div class="ai-modal-handle"></div>
+          <div class="ai-modal-header">
+            <div class="ai-modal-title" id="ai-modal-title">🤖 Analizando gastos…</div>
+            <button class="ai-modal-close" onclick="closeAIModal()">×</button>
+          </div>
+          <div class="ai-modal-body" id="ai-modal-body">
+            <div class="ai-modal-loading">
+              <div class="ai-spin">⚙️</div>
+              <div>¡Hola! estaré revisando los gastos compartidos como alertas y anomalías</div>
+              <div style="font-size:.75rem;margin-top:6px;opacity:.7">Esto puede tardar unos segundos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- VIAJES -->
     <div id="pnl-viajes" class="panel" style="display:none">
@@ -1586,9 +1757,21 @@ svg.lucide{
         <!-- Agregar gasto al viaje -->
         <div class="card" id="v-add-form">
           <div class="clbl">Agregar gasto</div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;background:var(--s2);border:1.5px solid var(--bor);border-radius:11px;padding:9px 12px">
-            <div id="vpag-badge" style="font-weight:700;font-size:13px"></div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;align-items:stretch">
+            <div style="flex:1;display:flex;align-items:center;background:var(--s2);border:1.5px solid var(--bor);border-radius:11px;padding:9px 12px;min-width:0">
+              <div id="vpag-badge" style="font-weight:700;font-size:13px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"></div>
+            </div>
+            <!-- ── Voz para gastos de viaje ── -->
+            <button type="button" class="icard-btn mic" id="btn-voice-viaje" onclick="startVoiceInputViaje()" style="flex:1;min-width:0">
+              <div class="icard-icon-wrap" id="btn-voice-viaje-icon"><i class="bi bi-mic-fill"></i></div>
+              <span class="icard-label" id="btn-voice-viaje-label">Registrar por voz</span>
+            </button>
           </div>
+          <div class="ai-chip" id="ai-chip-viaje" style="margin-bottom:8px">
+            <i class="bi bi-stars"></i>
+            <span id="ai-chip-viaje-text">Analizando…</span>
+          </div>
+
           <div class="vform-row">
             <div style="flex:2">
               <label class="flbl">Descripción</label>
@@ -1753,7 +1936,7 @@ svg.lucide{
               <div id="sala-moneda-display" style="font-size:16px;font-weight:700"></div>
               <div style="font-size:11px;color:var(--mu);margin-top:2px">Los gastos de viaje en otras monedas se convierten al cerrar</div>
             </div>
-            <button class="int-edit-btn" onclick="openMonedaEdit()" id="btn-moneda-edit">💱 Cambiar</button>
+            <button class="int-edit-btn" onclick="openMonedaEdit()" id="btn-moneda-edit">💱 Cambiar <span style="font-size:10px">💎</span></button>
           </div>
           <div id="moneda-edit-panel" style="display:none;margin-top:12px">
             <select id="sala-moneda-select" class="fsel" style="margin-bottom:8px">
@@ -1771,7 +1954,7 @@ svg.lucide{
         </div>
 
         <!-- Categorías personalizadas -->
-        <div class="sala-section-title">Categorías personalizadas <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎 Premium</span></div>
+        <div class="sala-section-title">Categorías personalizadas <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎</span></div>
         <div id="cats-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
           <div id="cats-list"></div>
           <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
@@ -1782,7 +1965,7 @@ svg.lucide{
           <div id="cat-emoji-grid" class="cat-emoji-grid" style="display:none"></div>
         </div>
         <!-- Gastos recurrentes -->
-        <div class="sala-section-title">Gastos recurrentes <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎 Premium</span></div>
+        <div class="sala-section-title">Gastos recurrentes <span style="font-size:10px;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;padding:1px 6px;border-radius:20px;vertical-align:middle">💎</span></div>
         <div id="recurrentes-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
           <div id="recurrentes-list"></div>
           <button id="btn-show-rec-form" onclick="toggleRecurrenteForm()"
@@ -2839,8 +3022,11 @@ function enterAppUI(cid){
   updateMyPresence();
   toast("✅ "+curCouple.name);
   renderSalasInSettings();
-  // Notificaciones del admin
+  // Notificaciones y config del admin
+  startAppConfigListener();
   startNotifListener(isPremium());
+  // Contadores de uso IA
+  _updateAIButtonCounters();
   // Precargar avatares en background para que el picker los muestre al instante
   setTimeout(preloadAvatarImages, 1500);
 }
@@ -3354,10 +3540,27 @@ $("btn-join-pareja").addEventListener("click",async()=>{
   try{
     await fbReady; // ensure db is ready
 
-    // Buscar coupleId via lookup público (evita reglas de permisos)
-    const lookupSnap=await db.collection("invite_codes").doc(code).get();
-    if(!lookupSnap.exists){$("lerr-couple").textContent="Código no encontrado";showAuthLoading(false);return;}
-    const cid=lookupSnap.data().coupleId;
+    // Buscar coupleId via invite_codes
+    let cid=null;
+    try{
+      const lookupSnap=await db.collection("invite_codes").doc(code).get();
+      if(lookupSnap.exists) cid=lookupSnap.data().coupleId;
+    }catch(e){
+      // Sin regla para invite_codes — instruir al usuario
+      $("lerr-couple").textContent="⚠️ Error de permisos. Agrega la regla invite_codes en Firestore.";
+      showAuthLoading(false); return;
+    }
+
+    // Fallback: buscar en couples si invite_codes no tenía el doc
+    if(!cid){
+      try{
+        const fallback=await db.collection("couples").where("inviteCode","==",code).limit(1).get();
+        if(!fallback.empty) cid=fallback.docs[0].id;
+      }catch(fe){ /* sin permisos para query en couples, continúa */ }
+    }
+
+    if(!cid){$("lerr-couple").textContent="Código no encontrado — verifica que sea correcto";showAuthLoading(false);return;}
+
     const coupleDoc=await db.collection("couples").doc(cid).get();
     if(!coupleDoc.exists){$("lerr-couple").textContent="Sala no encontrada";showAuthLoading(false);return;}
     const cdata=coupleDoc.data();
@@ -3593,8 +3796,7 @@ function initReceiptPicker(){
     }catch(err){ toast("⚠️ No se pudo procesar la imagen: "+err.message); }
     inp.value="";
   });
-  const badge=document.getElementById("receipt-premium-badge");
-  if(badge) badge.style.display=isPremium()?"none":"";
+  // Adjuntar factura es gratis para todos — sin badge premium
 }
 function onReceiptAttachClick(){
   if(!isPremium()){ showPremiumWall("Foto de recibo"); return; }
@@ -3631,7 +3833,7 @@ function clearReceiptPreview(){
   if(thumb) thumb.src="";
   if(wrap) wrap.classList.remove("visible");
   if(btn) btn.classList.remove("has-photo");
-  if(lbl) lbl.textContent="Adjuntar foto del recibo";
+  if(lbl) lbl.textContent="Adjuntar factura";
 }
 function openReceiptLightbox(base64){
   if(!base64) return;
@@ -3744,7 +3946,7 @@ function _updateHideBtn(){
 }
 
 /* ══ RENDER ══ */
-function render(){ buildCatFilter(); renderTx(); renderResumen(); renderViajes(); updateUltimoBanner(); }
+function render(){ buildCatFilter(); renderTx(); renderResumen(); renderViajes(); updateUltimoBanner(); checkAIMonthlyAutoAnalysis(); }
 
 function updateUltimoBanner(){
   const banner=document.getElementById("ultimo-gasto-banner");
@@ -3761,7 +3963,8 @@ function updateUltimoBanner(){
   const yy=String(dt.getFullYear()).slice(2);
   const fechaStr=dd+"-"+mm+"-"+yy;
   banner.innerHTML='⏰ <b>Último registro:</b> '+esc(last.desc)+' · <b>'+fmt(last.valor)+'</b> · '+pN+' · '+fechaStr;
-  banner.style.display="block";
+  banner.style.display="flex";
+  banner.style.alignItems="center";
 }
 
 function getMonths(){
@@ -5797,7 +6000,11 @@ function showPremiumWall(featureLabel){
           <li>Viajes compartidos</li>
           <li>Cambio de moneda con conversi&oacute;n</li>
           <li>Exportar a Excel y PDF</li>
-          <li>Acceso para ambos integrantes</li>
+          <li>Categor&iacute;as y gastos recurrentes</li>
+          <li>Registro de gastos por voz con IA <span style="font-size:10px;opacity:.7">(ilimitado)</span></li>
+          <li>Escaneo de facturas con IA <span style="font-size:10px;opacity:.7">(ilimitado)</span></li>
+          <li>Detecci&oacute;n de anomal&iacute;as mensual con IA</li>
+          <li>Gr&aacute;ficos avanzados e historial</li>
         </ul>
         <div style="display:flex;gap:8px;margin-top:14px">
           <button class="pw-btn" style="flex:1;font-size:12px;padding:12px 6px;line-height:1.4"
@@ -5830,7 +6037,7 @@ function showActivarPremium(plan='codigo'){
     title:'Activar Premium 💎',
     html:`<div style="font-size:13px;color:var(--mu);margin-bottom:12px;line-height:1.6">
       Ingresa tu código de activación.<br>
-      <span style="font-size:11px">¿No tienes código? <a href="mailto:john.anderson.co@gmail.com" style="color:var(--ac)">Contáctanos</a> para obtenerlo.</span>
+      <span style="font-size:11px">¿No tienes código? <a href="mailto:balancegroup@zohomail.com" style="color:var(--ac)">Contáctanos</a> para obtenerlo.</span>
     </div>
     <input id="nd-promo-inp" class="finp" placeholder="XXXX-XXXX-XXXX" style="text-align:center;font-size:15px;letter-spacing:.08em;text-transform:uppercase" maxlength="14">`,
     confirmButtonText:'Activar',
@@ -5877,7 +6084,7 @@ window.activarPremiumTest = async function(dias=30, plan='mensual'){
   updatePremiumBadges();
   if(typeof populateSettings==='function' && document.getElementById('settings-drawer')?.classList.contains('open')) populateSettings();
   console.log('[Nido] Premium activado:', planType, dias===0?'permanente':dias+' dias');
-  if(typeof toast==='function') toast('💎 Premium de prueba activado ('+planType+')');
+  if(typeof toast==='function') toast('💎 de prueba activado ('+planType+')');
 };
 window.desactivarPremiumTest = async function(){
   if(!coupleId){ console.error('No hay sala activa'); return; }
@@ -6172,11 +6379,19 @@ async function joinSalaFromTab(){
       showAuthLoading(true);
       try{
         await fbReady;
-        const lookup=await db.collection("invite_codes").doc(rawCode).get();
-        if(!lookup.exists){ showAuthLoading(false); throw new Error('Código no encontrado'); }
-        const cid=lookup.data().coupleId;
-        const coupleSnap=await db.collection("couples").doc(cid).get();
+        let cid2=null;
+        try{
+          const lookup=await db.collection("invite_codes").doc(rawCode).get();
+          if(lookup.exists) cid2=lookup.data().coupleId;
+        }catch(e){}
+        if(!cid2){
+          const fb=await db.collection("couples").where("inviteCode","==",rawCode).limit(1).get();
+          if(fb.empty){ showAuthLoading(false); throw new Error('Código no encontrado'); }
+          cid2=fb.docs[0].id;
+        }
+        const coupleSnap=await db.collection("couples").doc(cid2).get();
         if(!coupleSnap.exists){ showAuthLoading(false); throw new Error('Sala no encontrada'); }
+        const cid=cid2;
         const cdata=coupleSnap.data();
         const mems=cdata.members||{};
         if(mems[myProfile.uid]){ showAuthLoading(false); throw new Error('Ya eres miembro de esta sala'); }
@@ -7142,17 +7357,20 @@ async function renderIntegrantes(){
       : "";
     const userColor = getUserColor(uid);
     const card = document.createElement("div");
-    card.className = "integrante-card";
+    card.className = "integrante-card" + (isMe ? " me-card" : "");
     card.style.position="relative";
-    // Avatar: emoji on a colored circle that reflects the user's chosen avatarColor
     const clickHandler = isMe ? ' onclick="openAvatarPicker()"' : '';
+    const avSz   = isMe ? 42 : 34;
+    const avWH   = isMe ? "46px" : "38px";
+    const avBord = isMe ? `3px solid ${userColor}` : `2px solid ${userColor}`;
+    const avHTML2 = peepImg(avatarSeed, avSz);
     card.innerHTML = `
-      <div class="int-avatar" style="position:relative;background:${userColor}33;border:3px solid ${userColor}"${clickHandler}>
-        ${avatarHTML}${editIcon}
+      <div class="int-avatar" style="position:relative;width:${avWH};height:${avWH};background:${userColor}33;border:${avBord}"${clickHandler}>
+        ${avHTML2}${editIcon}
       </div>
       <div class="int-info">
-        <div class="int-name">${name}${isMe?" <span style='font-size:10px;color:var(--mu);font-weight:400'>(tú)</span>":""}</div>
-        <div class="int-salary" style="color:${salaryColor}">${salaryStr}</div>
+        <div class="int-name" style="${isMe?"":"font-size:13px"}">${name}${isMe?" <span style='font-size:10px;color:var(--mu);font-weight:400'>(tú)</span>":""}</div>
+        <div class="int-salary" style="color:${salaryColor};${isMe?"":"font-size:12px"}">${salaryStr}</div>
       </div>
       ${editBtn}
     `;
@@ -8174,13 +8392,99 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
   /* ══════════════════════════════════════════════
      NOTIFICACIONES DEL ADMIN (app_notifications)
      ══════════════════════════════════════════════ */
-  var _shownNotifIds = JSON.parse(localStorage.getItem('nido_shown_notifs') || '[]');
+  /* ══════════════════════════════════════════════
+     ANUNCIO GLOBAL (app_config.show_announcement)
+     ══════════════════════════════════════════════ */
+  var _unsubAppConfig        = null;
+  var _announcementDismissed = false; // solo dura la sesión — reaparece al reabrir la app
+  var _welcomeShown          = false; // resetea en cada carga de página
+
+  var _BANNER_THEMES = {
+    info:    { bg:'#1e3a5f', border:'#2563eb', color:'#93c5fd' },
+    warning: { bg:'#3b2a00', border:'#d97706', color:'#fcd34d' },
+    success: { bg:'#052e16', border:'#16a34a', color:'#86efac' },
+    promo:   { bg:'#2e1065', border:'#9333ea', color:'#d8b4fe' }
+  };
+  var _BANNER_ICONS = { info:'ℹ️', warning:'⚠️', success:'✅', promo:'🎉' };
+
+  function startAppConfigListener() {
+    if (_unsubAppConfig) return;
+    if (!db) return;
+    _unsubAppConfig = db.collection('app_config').doc('main')
+      .onSnapshot(function(doc) {
+        if (!doc.exists) return;
+        var cfg = doc.data() || {};
+
+        // Guardar globalmente para que otros handlers lo lean
+        window._appConfig = cfg;
+
+        // 1. Anuncio en app
+        if (cfg.show_announcement && cfg.announcement_text && !_announcementDismissed) {
+          _showAnnouncementBanner(cfg);
+        } else {
+          _hideAnnouncementBanner();
+        }
+
+        // 2. Modo mantenimiento — overlay full-screen
+        var maint = document.getElementById('maintenance-overlay');
+        if (maint) maint.style.display = cfg.maintenance_mode ? 'flex' : 'none';
+
+        // 3. Banner de bienvenida — aparece cada vez que se carga la app mientras el flag esté activo
+        var wb = document.getElementById('app-welcome-banner');
+        if (wb) {
+          if (cfg.show_welcome_banner && !_welcomeShown) {
+            wb.classList.add('show');
+            _welcomeShown = true;
+          } else if (!cfg.show_welcome_banner) {
+            wb.classList.remove('show');
+            _welcomeShown = false;
+          }
+        }
+
+      }, function(err) {
+        console.warn('app_config listener:', err.message);
+      });
+  }
+
+  function _showAnnouncementBanner(cfg) {
+    var typeMap = {
+      info:    { cls: 'nido-alert-info',    icon: 'bi-info-circle-fill' },
+      warning: { cls: 'nido-alert-warning', icon: 'bi-exclamation-triangle-fill' },
+      success: { cls: 'nido-alert-success', icon: 'bi-check-circle-fill' },
+      promo:   { cls: 'nido-alert-purple',  icon: 'bi-megaphone-fill' }
+    };
+    var t   = typeMap[cfg.announcement_type] || typeMap.info;
+    var b   = document.getElementById('app-announcement-banner');
+    var txt = document.getElementById('app-announcement-text');
+    var ico = document.getElementById('app-announcement-icon');
+    if (!b || !txt) return;
+    b.className = 'nido-alert ' + t.cls + ' show';
+    if (ico) ico.className = 'bi ' + t.icon;
+    txt.textContent = cfg.announcement_text;
+  }
+
+  function _hideAnnouncementBanner() {
+    var b = document.getElementById('app-announcement-banner');
+    if (b) b.classList.remove('show');
+  }
+
+  function dismissAnnouncementBanner() {
+    _announcementDismissed = true;
+    _hideAnnouncementBanner();
+  }
+
+  var _shownNotifKeys = JSON.parse(localStorage.getItem('nido_shown_notifs') || '[]');
   var _unsubAdminNotif = null;
+
+  // Clave única por notificación: id + timestamp de última activación
+  // Así si el admin la desactiva y reactiva, aparece de nuevo
+  function _notifKey(n) {
+    return n.id + '_' + (n.activatedAt || n.createdAt || 0);
+  }
 
   function startNotifListener(userIsPremium) {
     if (_unsubAdminNotif) { _unsubAdminNotif(); _unsubAdminNotif = null; }
     if (!db) return;
-    // Sin where('active') para evitar requerir índice compuesto — se filtra en cliente
     _unsubAdminNotif = db.collection('app_notifications')
       .orderBy('createdAt', 'desc')
       .limit(20)
@@ -8189,50 +8493,943 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
         var found = null;
         snap.docs.some(function(doc) {
           var n = Object.assign({ id: doc.id }, doc.data());
-          if (!n.active)                                   return false; // inactiva
-          if (n.expiresAt && n.expiresAt < now)            return false; // expirada
-          if (n.target === 'premium' && !userIsPremium)    return false; // no aplica
-          if (n.target === 'free'    &&  userIsPremium)    return false; // no aplica
-          if (_shownNotifIds.indexOf(n.id) !== -1)         return false; // ya vista
+          if (!n.active)                                        return false; // inactiva
+          if (n.expiresAt && n.expiresAt < now)                 return false; // expirada
+          if (n.target === 'premium' && !userIsPremium)         return false; // no aplica
+          if (n.target === 'free'    &&  userIsPremium)         return false; // no aplica
+          if (_shownNotifKeys.indexOf(_notifKey(n)) !== -1)     return false; // ya vista en esta versión
           found = n;
           return true;
         });
         if (found) showNotifBanner(found);
+        else {
+          // Ocultar si no hay nada pendiente
+          var banner = document.getElementById('app-notif-banner');
+          if (banner) banner.classList.remove('show');
+        }
       }, function(err) {
         console.warn('app_notifications error:', err.code, err.message);
       });
   }
 
   function showNotifBanner(notif) {
-    var themes = {
-      info:    { bg:'#1e3a5f', border:'#2563eb', color:'#93c5fd' },
-      warning: { bg:'#3b2a00', border:'#d97706', color:'#fcd34d' },
-      success: { bg:'#052e16', border:'#16a34a', color:'#86efac' },
-      promo:   { bg:'#2e1065', border:'#9333ea', color:'#d8b4fe' }
+    var typeMap = {
+      info:    { cls: 'nido-alert-info',    icon: 'bi-info-circle-fill' },
+      warning: { cls: 'nido-alert-warning', icon: 'bi-exclamation-triangle-fill' },
+      success: { cls: 'nido-alert-success', icon: 'bi-check-circle-fill' },
+      promo:   { cls: 'nido-alert-purple',  icon: 'bi-megaphone-fill' }
     };
-    var icons  = { info:'ℹ️', warning:'⚠️', success:'✅', promo:'🎉' };
-    var th     = themes[notif.type] || themes.info;
+    var t      = typeMap[notif.type] || typeMap.info;
     var banner = document.getElementById('app-notif-banner');
     var text   = document.getElementById('app-notif-text');
+    var ico    = document.getElementById('app-notif-icon');
     if (!banner || !text) return;
-    banner.style.background   = th.bg;
-    banner.style.color        = th.color;
-    banner.style.borderBottom = '2px solid ' + th.border;
-    banner._notifId = notif.id;
-    text.textContent = (icons[notif.type] || 'ℹ️') + '  ' + notif.title +
-      (notif.body ? '  —  ' + notif.body : '');
-    banner.style.display = 'flex';
+    banner.className = 'nido-alert ' + t.cls + ' show';
+    if (ico) ico.className = 'bi ' + t.icon;
+    banner._notifKey = _notifKey(notif);
+    text.textContent = notif.title + (notif.body ? ' — ' + notif.body : '');
   }
 
   function dismissNotifBanner() {
     var banner = document.getElementById('app-notif-banner');
     if (!banner) return;
-    if (banner._notifId) {
-      _shownNotifIds.push(banner._notifId);
-      localStorage.setItem('nido_shown_notifs', JSON.stringify(_shownNotifIds.slice(-30)));
+    if (banner._notifKey) {
+      _shownNotifKeys.push(banner._notifKey);
+      // Guardar solo las últimas 50 para no llenar el localStorage
+      localStorage.setItem('nido_shown_notifs', JSON.stringify(_shownNotifKeys.slice(-50)));
     }
-    banner.style.display = 'none';
+    banner.classList.remove('show');
   }
+
+/* ═══════════════════════════════════════════════════════════
+   IA — GEMINI VOICE & SCAN  (Google AI Studio · plan free)
+   ═══════════════════════════════════════════════════════════ */
+
+// Modelos gratuitos de AI Studio en orden de preferencia (mayo 2026).
+var _GEMINI_MODELS = [
+  { model: 'gemini-2.5-flash-lite', api: 'v1beta' }
+  // Respaldo con Groq pendiente de integrar
+];
+
+// ── Llamada central a Gemini REST API (con fallback automático) ──
+async function _callGemini(prompt, imageBase64) {
+  var apiKey = (window._appConfig || {}).gemini_api_key;
+  if (!apiKey) throw new Error('Gemini no configurado. Pide al administrador que agregue la API key en ⚙️ Configuración.');
+
+  var parts = [];
+  if (imageBase64) {
+    var mime = imageBase64.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+    parts.push({ inline_data: { mime_type: mime, data: imageBase64.split(',')[1] } });
+  }
+  parts.push({ text: prompt });
+
+  // Para vision (imagen) no se usa responseMimeType — soporte inconsistente en v1beta multimodal
+  var genConfig = imageBase64
+    ? { temperature: 0.1, maxOutputTokens: 512 }
+    : { temperature: 0.1, maxOutputTokens: 300, responseMimeType: 'application/json' };
+
+  var body = JSON.stringify({
+    contents: [{ parts: parts }],
+    generationConfig: genConfig
+  });
+
+  var lastErr = null;
+  for (var i = 0; i < _GEMINI_MODELS.length; i++) {
+    var entry = _GEMINI_MODELS[i];
+    try {
+      var url = 'https://generativelanguage.googleapis.com/' + entry.api +
+                '/models/' + entry.model + ':generateContent?key=' + apiKey;
+      var res = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body
+      });
+      var data = await res.json();
+      if (!res.ok) {
+        var errMsg = (data.error && data.error.message) || ('Error ' + res.status);
+        var lower  = errMsg.toLowerCase();
+        // Modelo no disponible o cuota → siguiente
+        if (res.status === 429 || lower.indexOf('quota') !== -1 ||
+            lower.indexOf('not found') !== -1 || lower.indexOf('not supported') !== -1) {
+          lastErr = new Error(entry.model + ': ' + errMsg);
+          continue;
+        }
+        // API key inválida — no tiene sentido reintentar
+        if (res.status === 400 && lower.indexOf('api key') !== -1) {
+          throw new Error('API Key inválida. Verifica la key en ⚙️ Configuración del admin.');
+        }
+        if (res.status === 403) {
+          throw new Error('Sin acceso. Verifica que la API key sea de Google AI Studio (aistudio.google.com).');
+        }
+        throw new Error(errMsg);
+      }
+      var text = data.candidates && data.candidates[0] && data.candidates[0].content &&
+                 data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
+                 data.candidates[0].content.parts[0].text;
+      if (!text) throw new Error('Respuesta vacía de Gemini');
+      _logAIUsage(imageBase64 ? 'scan' : 'voice', data.usageMetadata);
+      var cleaned = text.trim();
+      // 1. Quitar fences markdown (``` json ... ```)
+      if (cleaned.includes('```')) {
+        cleaned = cleaned.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+      }
+      // 2. Extraer el bloque JSON (sin objetos anidados) — maneja texto antes/después
+      var jsonMatch = cleaned.match(/\{[^{}]*\}/);
+      if (jsonMatch) {
+        try { return JSON.parse(jsonMatch[0]); } catch(e0) {}
+      }
+      // 3. Cortar desde el primer '{' por si hay texto introductorio
+      var braceIdx = cleaned.indexOf('{');
+      if (braceIdx > 0) cleaned = cleaned.slice(braceIdx);
+      try {
+        return JSON.parse(cleaned);
+      } catch(pe) {
+        // 4. Reparar JSON truncado
+        var opens = (cleaned.match(/\[/g)||[]).length - (cleaned.match(/\]/g)||[]).length;
+        for (var fi = 0; fi < opens; fi++) cleaned += ']';
+        if (cleaned[cleaned.length-1] !== '}') cleaned += '}';
+        try { return JSON.parse(cleaned); }
+        catch(e2) { throw new Error('La respuesta de Gemini no es JSON válido. Intenta de nuevo.'); }
+      }
+    } catch(e) {
+      // Solo continuar si el error es de modelo/cuota/JSON — no para errores de key
+      if (lastErr && lastErr === e) continue;
+      var m = e.message || '';
+      if (m.indexOf('not found') !== -1 || m.indexOf('not supported') !== -1 ||
+          m.indexOf('Cuota') !== -1 || m.indexOf('quota') !== -1 ||
+          m.indexOf('JSON') !== -1 || m.indexOf('vacía') !== -1) {
+        lastErr = e; continue;
+      }
+      throw e;
+    }
+  }
+  throw lastErr || new Error('No se pudo conectar con Gemini. Verifica la API key o espera 1 min (límite de solicitudes del plan gratuito).');
+}
+
+// ── Prompt para VOZ (incluye división del gasto) ───────────
+function _geminiVoicePrompt(transcript) {
+  var cats = Object.keys(CATI).join(', ');
+  return 'Eres un asistente de finanzas del hogar para usuarios colombianos.\n' +
+    'El usuario dijo por voz: "' + transcript + '"\n\n' +
+    'Extrae:\n' +
+    '- descripcion: nombre claro y corto del gasto (máx 35 caracteres)\n' +
+    '- monto: valor total como número entero en pesos colombianos, sin puntos ni comas. Si no está claro, usa null.\n' +
+    '- categoria: elige UNA de estas opciones exactas: ' + cats + '\n' +
+    '- division: cómo dividir el gasto entre los dos. Elige UNA opción:\n' +
+    '  * "proporcional" → si dice "según ingresos", "según salarios", "proporcional", "según lo que gana cada uno", o si NO menciona nada sobre la división\n' +
+    '  * "50" → si dice "a mitad", "mitades", "50/50", "partes iguales", "compartido"\n' +
+    '  * "100" → si dice "completo", "todo", "lo debo todo", "el otro paga todo", "me lo deben todo"\n\n' +
+    'Responde ÚNICAMENTE con JSON válido sin explicaciones:\n' +
+    '{"descripcion":"Recibo luz","monto":50000,"categoria":"Servicios","division":"proporcional"}';
+}
+
+// ── Prompt para ESCANEO de imagen ──────────────────────────
+function _geminiPrompt(contexto) {
+  var cats = Object.keys(CATI).join(', ');
+  return 'Eres un asistente de finanzas del hogar para usuarios colombianos.\n' +
+    contexto + '\n\n' +
+    'Extrae:\n' +
+    '- descripcion: nombre claro y corto del gasto (máx 35 caracteres)\n' +
+    '- monto: valor total como número entero en pesos colombianos, sin puntos ni comas. Si no está claro, usa null.\n' +
+    '- categoria: elige UNA de estas opciones exactas: ' + cats + '\n\n' +
+    'Responde ÚNICAMENTE con JSON válido sin explicaciones:\n' +
+    '{"descripcion":"...","monto":150000,"categoria":"..."}';
+}
+
+// ── Rellenar formulario con el resultado ────────────────────
+function _capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function _fillFormFromAI(parsed) {
+  if (!parsed) return;
+  if (parsed.descripcion) $('f-desc').value = _capitalize(parsed.descripcion);
+  if (parsed.monto && parsed.monto > 0) {
+    $('f-val').value = fmtInput(String(Math.round(parsed.monto)));
+    $('f-val').dispatchEvent(new Event('input'));
+  }
+  if (parsed.categoria && CATI[parsed.categoria]) $('f-cat').value = parsed.categoria;
+  updatePrev();
+}
+
+// ── Chip de estado visual ───────────────────────────────────
+function _aiChip(msg, show) {
+  var chip = document.getElementById('ai-status-chip');
+  var txt  = document.getElementById('ai-status-text');
+  if (!chip || !txt) return;
+  if (show) { txt.textContent = msg; chip.classList.add('show'); }
+  else chip.classList.remove('show');
+}
+
+// ── Tarjeta de confirmación de voz ─────────────────────────
+var _SPLIT_LABELS = {
+  '50':          '50% / 50% — mitad cada uno',
+  '100':         '100% — el otro debe todo',
+  'proporcional':'Proporcional a ingresos de cada uno'
+};
+
+function _showVoiceConfirm(parsed) {
+  _parsedVoiceData = parsed;
+  var sym  = typeof monedaSym === 'function' ? monedaSym(salaMoneda ? salaMoneda() : 'COP') : '$';
+  var cat  = parsed.categoria || 'Otro';
+  var icon = (typeof CATI !== 'undefined' && CATI[cat]) ? CATI[cat] : '📦';
+  var monto = parsed.monto ? sym + parseInt(parsed.monto).toLocaleString('es-CO') : '— (no detectado)';
+  var divLabel = _SPLIT_LABELS[parsed.division] || _SPLIT_LABELS['50'];
+
+  var el = function(id) { return document.getElementById(id); };
+  el('vcc-desc').textContent  = _capitalize(parsed.descripcion) || '—';
+  el('vcc-monto').textContent = monto;
+  el('vcc-cat').textContent   = icon + '  ' + cat;
+  el('vcc-split').textContent = divLabel;
+
+  var card = document.getElementById('voice-confirm-card');
+  if (card) card.classList.add('show');
+}
+
+function _dismissVoiceConfirm() {
+  var card = document.getElementById('voice-confirm-card');
+  if (card) card.classList.remove('show');
+  _parsedVoiceData = null;
+}
+
+function _editFromVoice() {
+  var p = _parsedVoiceData;
+  if (!p) return;
+  _fillFormFromAI(p);
+  // Aplicar división en el formulario
+  var div = p.division || 'proporcional';
+  if      (div === '100')          setSplit(100);
+  else if (div === '50')           setSplit(50);
+  else                             setSplit('custom'); // proporcional = default
+  _dismissVoiceConfirm();
+  $('f-desc').focus();
+}
+
+async function _saveFromVoice() {
+  var p = _parsedVoiceData;
+  if (!p || !p.monto || p.monto <= 0) { toast('⚠️ No se detectó un valor válido. Usa ✏️ Editar.'); return; }
+
+  var btn = document.getElementById('vcc-btn-save');
+  if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
+
+  try {
+    var desc = p.descripcion || 'Gasto';
+    var val  = Math.round(p.monto);
+    var cat  = (typeof CATI !== 'undefined' && CATI[p.categoria]) ? p.categoria : 'Otro';
+    var fec  = typeof mesHoy === 'function' ? mesHoy() : '';
+    var parts = fec.split('-');
+    var mes  = parseInt(parts[1] || 0);
+    var anio = parseInt(parts[0] || 0);
+    var pag  = curPag || (myProfile && myProfile.uid);
+
+    // Calcular división
+    var split, debeVal;
+    var div = p.division || 'proporcional';
+    if (div === '100') {
+      split = 100; debeVal = val;
+    } else if (div === 'proporcional') {
+      split = 'custom';
+      var sals   = (curCouple && curCouple.salarios) ? curCouple.salarios : {};
+      var myS    = (myProfile && sals[myProfile.uid]) ? sals[myProfile.uid] : 0;
+      var totalS = Object.values(sals).reduce(function(a,b){ return a+b; }, 0);
+      var theirPct = totalS > 0 ? Math.round((totalS - myS) / totalS * 100) : 50;
+      debeVal = Math.round(val * theirPct / 100);
+    } else {
+      split = 50; debeVal = Math.round(val * 0.5);
+    }
+
+    // ¿Requiere validación?
+    var salTotal = Object.values((curCouple && curCouple.salarios) || {}).reduce(function(a,b){return a+b;},0);
+    var umbral   = salTotal > 0 ? Math.round(salTotal * 0.05) : 500000;
+    var needsVal = val >= umbral && !!db && !!partnerProfile;
+
+    var g = {
+      desc: desc, valor: val, fecha: fec, mes: mes, anio: anio,
+      cat: cat, pagador: pag, split: split, debe: debeVal,
+      ts: Date.now(), addedBy: myProfile && myProfile.uid,
+      fuente: 'voz'
+    };
+    if (needsVal) g.pendiente = true;
+
+    await dbAdd(g);
+
+    _dismissVoiceConfirm();
+    if (needsVal) {
+      toast('⏳ Gasto alto enviado — esperando validación de ' + ((partnerProfile && partnerProfile.displayName) || 'tu pareja'));
+      if (typeof pushOtro === 'function')
+        pushOtro('⚠️ Gasto alto pendiente', (myProfile && myProfile.displayName || 'Tu pareja') + ' registró "' + desc + '" por $' + val.toLocaleString('es-CO'));
+    } else {
+      toast('✅ Gasto guardado por voz');
+      if (typeof pushOtro === 'function')
+        pushOtro('🎤 Nuevo gasto por voz', (myProfile && myProfile.displayName || 'Tu pareja') + ' agregó ' + desc + ': $' + val.toLocaleString('es-CO'));
+    }
+  } catch(err) {
+    toast('⚠️ Error al guardar: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Agregar ahora'; }
+  }
+}
+
+/* ── VOZ ───────────────────────────────────────────────────── */
+var _voiceRec       = null;
+var _parsedVoiceData = null; // datos actuales de la tarjeta de confirmación
+
+async function startVoiceInput() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('⚠️ Tu navegador no soporta reconocimiento de voz. Usa Chrome.'); return; }
+  var btn = document.getElementById('btn-voice-ai');
+
+  // Si ya está escuchando, detener
+  if (_voiceRec) { _voiceRec.stop(); return; }
+
+  // Verificar cuota (sin consumir aún — se consume al completar exitosamente)
+  if (!_checkAILimit('voice')) return;
+
+  _voiceRec = new SR();
+  _voiceRec.lang            = 'es-CO';
+  _voiceRec.continuous      = false;
+  _voiceRec.interimResults  = false;
+  _voiceRec.maxAlternatives = 1;
+
+  _voiceRec.onstart = function() {
+    if (btn) {
+      btn.classList.add('listening');
+      var ico = document.getElementById('btn-voice-ai-icon');
+      var lbl = document.getElementById('btn-voice-ai-label');
+      if (ico) ico.innerHTML = '<i class="bi bi-stop-circle-fill"></i>';
+      if (lbl) lbl.textContent = 'Parar';
+    }
+    _dismissVoiceConfirm();
+    _aiChip('🎤 Di el gasto, valor y cómo dividirlo…', true);
+  };
+
+  _voiceRec.onresult = async function(e) {
+    var transcript = e.results[0][0].transcript;
+    var preview = transcript.length > 60 ? transcript.slice(0, 60) + '…' : transcript;
+    _aiChip('✨ Analizando: "' + preview + '"', true);
+    try {
+      var parsed = await _callGemini(_geminiVoicePrompt(transcript), null);
+      _aiChip('', false);
+      _showVoiceConfirm(parsed);
+      _consumeAIUse('voice'); // uso efectivo: Gemini respondió correctamente
+    } catch(err) {
+      _aiChip('', false);
+      toast('⚠️ ' + err.message);
+      // NO se consume si la IA falló
+    }
+  };
+
+  _voiceRec.onerror = function(e) {
+    var msgs = {
+      'no-speech':   'No escuché nada. Intenta de nuevo.',
+      'not-allowed': 'Permite el acceso al micrófono.',
+      'network':     'Error de red al procesar voz.'
+    };
+    _aiChip('', false);
+    toast('⚠️ ' + (msgs[e.error] || 'Error de micrófono: ' + e.error));
+  };
+
+  _voiceRec.onend = function() {
+    _voiceRec = null;
+    if (btn) {
+      btn.classList.remove('listening');
+      var ico = document.getElementById('btn-voice-ai-icon');
+      if (ico) ico.innerHTML = '<i class="bi bi-mic-fill"></i>';
+    }
+    _updateAIButtonCounters(); // restaura label con contador correcto
+  };
+
+  _voiceRec.start();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IA — LÍMITE DE USOS GRATUITOS (voz + cámara)
+   5 usos/persona/mes · se guarda en users/{uid}.ai_uses
+   ═══════════════════════════════════════════════════════════ */
+var AI_FREE_LIMIT = 5;
+
+function _getAIUseCount(type) {
+  if (!myProfile || !myProfile.ai_uses) return 0;
+  return myProfile.ai_uses[type + '_' + mesHoy()] || 0;
+}
+
+async function _incrementAIUse(type) {
+  var key      = type + '_' + mesHoy();
+  var newCount = _getAIUseCount(type) + 1;
+  if (!myProfile.ai_uses) myProfile.ai_uses = {};
+  myProfile.ai_uses[key] = newCount;
+  if (db && myProfile.uid) {
+    var upd = {}; upd['ai_uses.' + key] = newCount;
+    await db.collection('users').doc(myProfile.uid).update(upd).catch(function() {});
+  }
+  return newCount;
+}
+
+// Solo verifica el límite — NO consume todavía
+function _checkAILimit(type) {
+  if (isPremium()) return true;
+  var count = _getAIUseCount(type);
+  if (count >= AI_FREE_LIMIT) {
+    var feat = type === 'voice' ? 'Registro por voz' : 'Escaneo de facturas';
+    showPremiumWall(feat + ' — agotaste tus 5 usos gratuitos de este mes');
+    return false;
+  }
+  return true;
+}
+
+// Consume un uso DESPUÉS de procesamiento exitoso
+async function _consumeAIUse(type) {
+  if (isPremium()) return;
+  var newCount = await _incrementAIUse(type);
+  var remaining = AI_FREE_LIMIT - newCount;
+  var typeLabel = type === 'voice' ? 'voz' : 'cámara';
+  if (remaining === 1) {
+    toast('💡 Te queda 1 uso gratuito de ' + typeLabel + ' este mes');
+  } else if (remaining === 0) {
+    toast('⚠️ Usaste tu último registro gratuito de ' + typeLabel + ' este mes — considera Premium ✨');
+  }
+  _updateAIButtonCounters();
+}
+
+// Compatibilidad — mantener nombre antiguo como alias
+async function _checkAndConsumeAIUse(type) {
+  return _checkAILimit(type);
+}
+
+function _updateAIButtonCounters() {
+  var voiceLbl = document.getElementById('btn-voice-ai-label');
+  var scanLbl  = document.getElementById('btn-scan-ai-label');
+  var voiceBtn = document.getElementById('btn-voice-ai');
+  var scanBtn  = document.getElementById('btn-scan-ai');
+  if (!voiceLbl || !scanLbl) return;
+
+  if (isPremium()) {
+    // Premium: sin contador, botones normales
+    voiceLbl.textContent = 'Por voz';
+    scanLbl.textContent  = 'Escanear';
+    if (voiceBtn) voiceBtn.style.opacity = '';
+    if (scanBtn)  scanBtn.style.opacity  = '';
+    return;
+  }
+
+  var vLeft = AI_FREE_LIMIT - _getAIUseCount('voice');
+  var sLeft = AI_FREE_LIMIT - _getAIUseCount('scan');
+
+  voiceLbl.textContent = vLeft > 0 ? 'Por voz (' + vLeft + '/5)' : 'Por voz (0/5)';
+  scanLbl.textContent  = sLeft > 0 ? 'Escanear (' + sLeft + '/5)' : 'Escanear (0/5)';
+
+  // Atenuar botón agotado
+  if (voiceBtn) voiceBtn.style.opacity = vLeft <= 0 ? '.45' : '';
+  if (scanBtn)  scanBtn.style.opacity  = sLeft <= 0 ? '.45' : '';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IA — DETECCIÓN DE ANOMALÍAS MENSUALES  (gemini-2.5-flash)
+   ═══════════════════════════════════════════════════════════ */
+
+var _aiModalOpen = false;
+
+// ── Abre el modal y dispara el análisis ────────────────────
+function openAIAnalysisModal(isAuto) {
+  if (_aiModalOpen) return;
+  // Verificar premium
+  if (!isPremium()) { showPremiumWall('Detección de anomalías con IA'); return; }
+  var apiKey = (window._appConfig || {}).gemini_api_key;
+  if (!apiKey) { toast('⚠️ Configura la Gemini API Key en el admin para usar esta función.'); return; }
+
+  _aiModalOpen = true;
+  var modal = document.getElementById('ai-analysis-modal');
+  if (modal) modal.style.display = 'block';
+
+  // Determinar mes a analizar: si estamos en primeros días del mes, analiza el mes anterior; sino, el mes actual
+  var now = new Date();
+  var analyzeDate;
+  if (isAuto || now.getDate() <= 7) {
+    analyzeDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  } else {
+    analyzeDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+  var monthKey = analyzeDate.getFullYear() + '-' + String(analyzeDate.getMonth() + 1).padStart(2, '0');
+  var monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var monthLabel = monthNames[analyzeDate.getMonth()] + ' ' + analyzeDate.getFullYear();
+
+  var titleEl = document.getElementById('ai-modal-title');
+  if (titleEl) titleEl.textContent = '🤖 Análisis — ' + monthLabel;
+
+  var bodyEl = document.getElementById('ai-modal-body');
+  if (bodyEl) bodyEl.innerHTML = '<div class="ai-modal-loading"><div class="ai-spin">⚙️</div><div>¡Hola! estaré revisando los gastos compartidos como alertas y anomalías</div><div style="font-size:.75rem;margin-top:6px;opacity:.7">Esto puede tardar unos segundos</div></div>';
+
+  // Botón manual — marcar como cargando
+  var btn = document.getElementById('btn-ai-analysis');
+  if (btn) btn.classList.add('ai-loading');
+
+  _runAIAnomalyAnalysis(monthKey, monthLabel, isAuto)
+    .then(function(result) { _renderAIResults(result, monthLabel, isAuto); })
+    .catch(function(err) {
+      if (bodyEl) bodyEl.innerHTML = '<div class="ai-summary-box">⚠️ ' + (err.message || 'Error al analizar') + '</div>';
+    })
+    .finally(function() {
+      if (btn) btn.classList.remove('ai-loading');
+    });
+}
+
+function closeAIModal() {
+  _aiModalOpen = false;
+  var modal = document.getElementById('ai-analysis-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+// ── Prepara datos y llama a Gemini ─────────────────────────
+async function _runAIAnomalyAnalysis(monthKey, monthLabel, isAuto) {
+  var monthGastos = gastos.filter(function(g) { return g.fecha === monthKey && !g.pendiente; });
+  if (monthGastos.length < 2) {
+    return { todo_bien: true, anomalias: [], resumen: 'No hay suficientes gastos en ' + monthLabel + ' para analizar.', mes: monthLabel };
+  }
+
+  // Promedios de los 3 meses anteriores por categoría
+  var parts = monthKey.split('-');
+  var yr = parseInt(parts[0]), mo = parseInt(parts[1]);
+  var prevKeys = [];
+  for (var i = 1; i <= 3; i++) {
+    var d = new Date(yr, mo - 1 - i, 1);
+    prevKeys.push(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'));
+  }
+  var prevCatMap = {};
+  prevKeys.forEach(function(pk) {
+    var pg = gastos.filter(function(g) { return g.fecha === pk && !g.pendiente; });
+    var ct = {};
+    pg.forEach(function(g) { ct[g.cat] = (ct[g.cat] || 0) + g.valor; });
+    Object.keys(ct).forEach(function(cat) {
+      if (!prevCatMap[cat]) prevCatMap[cat] = [];
+      prevCatMap[cat].push(ct[cat]);
+    });
+  });
+  var prevAvg = {};
+  Object.keys(prevCatMap).forEach(function(cat) {
+    var arr = prevCatMap[cat];
+    prevAvg[cat] = Math.round(arr.reduce(function(a,b){return a+b;},0) / arr.length);
+  });
+
+  // Totales del mes por categoría
+  var catTotals = {};
+  monthGastos.forEach(function(g) { catTotals[g.cat] = (catTotals[g.cat] || 0) + g.valor; });
+
+  var sym = typeof monedaSym === 'function' ? monedaSym(salaMoneda()) : '$';
+
+  // Lista de gastos para Gemini
+  var gastosList = monthGastos.map(function(g) {
+    return '- ' + g.desc + ' | ' + sym + g.valor.toLocaleString('es-CO') + ' | ' + (g.cat||'Otro') + ' | ' + getPagadorName(g.pagador);
+  }).join('\n');
+
+  // Comparativa categorías
+  var catComp = Object.keys(catTotals).map(function(cat) {
+    var total = catTotals[cat];
+    var avg = prevAvg[cat];
+    if (avg) {
+      var pct = Math.round((total - avg) / avg * 100);
+      return cat + ': ' + sym + total.toLocaleString('es-CO') + ' (promedio 3 meses previos: ' + sym + avg.toLocaleString('es-CO') + ', variación: ' + (pct > 0 ? '+' : '') + pct + '%)';
+    }
+    return cat + ': ' + sym + total.toLocaleString('es-CO') + ' (sin historial previo)';
+  }).join('\n');
+
+  var prompt = 'Eres un asistente financiero para parejas colombianas. Revisa la lista de gastos del mes de ' + monthLabel + ' y reporta ÚNICAMENTE anomalías reales y concretas.\n\n' +
+    'REGLAS ESTRICTAS — solo reporta si se cumple alguna de estas condiciones:\n' +
+    '  A) Gasto duplicado: dos o más gastos con descripción igual o muy similar en el mismo mes.\n' +
+    '  B) Suscripción cobrada dos veces: Netflix, Spotify, Disney+, o similares aparecen más de una vez.\n' +
+    '  C) Incremento real: una categoría supera en más del 30% su promedio histórico (solo si hay datos previos reales, NO si dice "sin historial").\n' +
+    '  D) Gasto individual sospechosamente alto: un solo gasto que sea más del doble del gasto típico en esa categoría.\n\n' +
+    'PROHIBIDO reportar:\n' +
+    '  - Categorías sin historial previo (no es anomalía, es simplemente un gasto nuevo).\n' +
+    '  - Observaciones generales o resúmenes del mes.\n' +
+    '  - Variaciones menores al 30%.\n' +
+    '  - Cualquier cosa que no sea una alerta concreta y accionable.\n\n' +
+    'Si no hay anomalías reales, devuelve lista vacía y todo_bien:true.\n\n' +
+    'LISTA DE GASTOS:\n' + gastosList + '\n\n' +
+    'COMPARATIVA POR CATEGORÍA (solo usar si hay historial real, ignorar "sin historial"):\n' + catComp + '\n\n' +
+    'Responde ÚNICAMENTE con JSON válido, detalle máx 120 caracteres:\n' +
+    '{"mes":"' + monthLabel + '","anomalias":[{"tipo":"duplicado|aumento|inusual|suscripcion","titulo":"Título corto max 50 chars","detalle":"Alerta concisa y específica","severidad":"alta|media|baja"}],"resumen":"Una frase corta","todo_bien":true_o_false}';
+
+  return await _callGeminiAnalysis(prompt);
+}
+
+// Llama a Gemini con modelo específico para análisis (con fallback)
+async function _callGeminiAnalysis(prompt) {
+  var apiKey = (window._appConfig || {}).gemini_api_key;
+  if (!apiKey) throw new Error('API Key no configurada');
+
+  var models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
+  var lastErr = null;
+
+  for (var m = 0; m < models.length; m++) {
+    try {
+      var res = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/' + models[m] + ':generateContent?key=' + apiKey,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.3, maxOutputTokens: 2048, responseMimeType: 'application/json' }
+          })
+        }
+      );
+      var data = await res.json();
+      if (!res.ok) {
+        var em = (data.error && data.error.message) || 'Error ' + res.status;
+        if (res.status === 429 || em.toLowerCase().indexOf('quota') !== -1 ||
+            em.toLowerCase().indexOf('not found') !== -1) { lastErr = new Error(em); continue; }
+        throw new Error(em);
+      }
+      var text = data.candidates && data.candidates[0] && data.candidates[0].content &&
+                 data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
+                 data.candidates[0].content.parts[0].text;
+      if (!text) throw new Error('Respuesta vacía');
+      _logAIUsage('analysis', data.usageMetadata);
+      // Parser defensivo: reparar JSON truncado si es necesario
+      try {
+        return JSON.parse(text);
+      } catch(pe) {
+        var fixed = text.trim();
+        var opens = (fixed.match(/\[/g)||[]).length - (fixed.match(/\]/g)||[]).length;
+        for (var i = 0; i < opens; i++) fixed += ']';
+        if (fixed[fixed.length-1] !== '}') fixed += '}';
+        try { return JSON.parse(fixed); }
+        catch(e2) { return { todo_bien: false, anomalias: [], resumen: 'No se pudo interpretar la respuesta. Intenta de nuevo.', mes: '' }; }
+      }
+    } catch(e) { lastErr = e; }
+  }
+  throw lastErr || new Error('No se pudo conectar con Gemini');
+}
+
+// ── Log de uso IA → users/{uid}.ai_uses (fire-and-forget) ─
+function _logAIUsage(type, usageMeta) {
+  try {
+    var tokens = (usageMeta && usageMeta.totalTokenCount) || 0;
+    if (!db || !myProfile || !myProfile.uid) return;
+    var mk  = new Date().toISOString().slice(0, 7); // "2026-05"
+    var upd = {};
+    upd['ai_uses.' + type + '_' + mk + '_tok'] = firebase.firestore.FieldValue.increment(tokens || 0);
+    if (type === 'analysis') {
+      upd['ai_uses.analysis_' + mk] = firebase.firestore.FieldValue.increment(1);
+    }
+    db.collection('users').doc(myProfile.uid).update(upd).catch(function() {});
+  } catch(e) {}
+}
+
+// ── Renderiza los resultados en el modal ───────────────────
+function _renderAIResults(result, monthLabel, isAuto) {
+  var bodyEl = document.getElementById('ai-modal-body');
+  if (!bodyEl) return;
+
+  var ICONS = { duplicado:'🔄', aumento:'📈', inusual:'💡', suscripcion:'📱' };
+  var SEVER = { alta:'⚠️', media:'💛', baja:'ℹ️' };
+
+  var html = '';
+  if (isAuto) html += '<div class="ai-auto-badge"><i class="bi bi-stars"></i> Análisis automático de cierre de mes</div>';
+
+  if (result.todo_bien || !result.anomalias || result.anomalias.length === 0) {
+    html += '<div class="ai-ok-box">' +
+      '<div class="ai-ok-icon">✅</div>' +
+      '<div class="ai-ok-title">¡Todo en orden!</div>' +
+      '<div class="ai-ok-sub">' + (result.resumen || 'No se detectaron anomalías en ' + monthLabel + '.') + '</div>' +
+      '</div>';
+  } else {
+    result.anomalias.forEach(function(a) {
+      var sev = a.severidad || 'baja';
+      var icon = ICONS[a.tipo] || '💡';
+      html += '<div class="ai-anomaly-card ' + sev + '">' +
+        '<div class="ai-anomaly-icon">' + icon + '</div>' +
+        '<div style="min-width:0">' +
+          '<div class="ai-anomaly-title">' + (a.titulo || '') + '</div>' +
+          '<div class="ai-anomaly-detail">' + (a.detalle || '') + '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    if (result.resumen) {
+      html += '<div class="ai-summary-box">🤖 ' + result.resumen + '</div>';
+    }
+  }
+
+  html += '<button class="btn" onclick="closeAIModal()" style="width:100%;background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(99,102,241,.2));color:#c084fc;border:1.5px solid rgba(168,85,247,.4);box-shadow:none;margin-top:4px">Entendido ✓</button>';
+
+  bodyEl.innerHTML = html;
+}
+
+// ── Disparo automático al inicio de mes ───────────────────
+function checkAIMonthlyAutoAnalysis() {
+  if (!isPremium()) return; // solo premium
+  if (!(window._appConfig || {}).gemini_api_key) return;
+  var now = new Date();
+  if (now.getDate() > 7) return; // solo primeros 7 días del mes
+
+  var prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  var prevKey  = prevDate.getFullYear() + '-' + String(prevDate.getMonth() + 1).padStart(2, '0');
+
+  var storageKey = 'nido_ai_auto_' + (coupleId || '') + '_' + prevKey;
+  if (localStorage.getItem(storageKey)) return; // ya se mostró
+
+  var prevGastos = gastos.filter(function(g) { return g.fecha === prevKey && !g.pendiente; });
+  if (prevGastos.length < 3) return; // pocos datos
+
+  localStorage.setItem(storageKey, '1');
+  setTimeout(function() { openAIAnalysisModal(true); }, 2500);
+}
+
+/* ── VOZ PARA VIAJES ───────────────────────────────────────── */
+var _voiceRecViaje = null;
+
+function _aiChipViaje(msg, show) {
+  var chip = document.getElementById('ai-chip-viaje');
+  var txt  = document.getElementById('ai-chip-viaje-text');
+  if (!chip || !txt) return;
+  if (show) { txt.textContent = msg; chip.classList.add('show'); }
+  else chip.classList.remove('show');
+}
+
+function _geminiViajePrompt(transcript) {
+  var monedaActual = ($('v-moneda') && $('v-moneda').value) || salaMoneda() || 'COP';
+  return 'Eres un asistente de finanzas para viajes.\n' +
+    'El usuario dijo: "' + transcript + '"\n\n' +
+    'Extrae:\n' +
+    '- descripcion: nombre claro del gasto (máx 35 caracteres)\n' +
+    '- monto: valor numérico. Para COP usa entero sin decimales; para otras monedas acepta decimales.\n' +
+    '- moneda: detecta la moneda en el texto. Reglas ESTRICTAS:\n' +
+    '  * Si menciona "dólar", "dólares", "dolar", "dolares", "USD" → devuelve exactamente "USD"\n' +
+    '  * Si menciona "euro", "euros", "EUR" → devuelve exactamente "EUR"\n' +
+    '  * Si menciona "peso mexicano", "pesos mexicanos", "MXN" → devuelve exactamente "MXN"\n' +
+    '  * Si menciona "peso", "pesos", "pesos colombianos", "COP" → devuelve exactamente "COP"\n' +
+    '  * Si NO menciona ninguna moneda → devuelve exactamente "' + monedaActual + '"\n\n' +
+    'IMPORTANTE: moneda SIEMPRE debe ser una de: "COP", "USD", "EUR", "MXN"\n\n' +
+    'Responde ÚNICAMENTE con JSON válido:\n' +
+    '{"descripcion":"Comida","monto":10,"moneda":"USD"}';
+}
+
+// Detección de moneda directamente del texto — no depende de Gemini
+function _detectMonedaDeTexto(text) {
+  var raw = text || '';
+  // Normalización Unicode robusta (quita tildes y diacríticos)
+  var t = raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  console.log('[Nido voz] transcript:', raw, '| normalizado:', t);
+
+  // Palabras explícitas
+  if (/dol[ae]r|usd/.test(t))  return 'USD';
+  if (/euro|eur/.test(t))       return 'EUR';
+  if (/mexican|mxn/.test(t))   return 'MXN';
+  if (/colombian|cop/.test(t)) return 'COP';
+
+  // El reconocimiento de voz a veces convierte "dólares" → símbolo "$"
+  // En contexto de viajes, $ acompañado de número = USD
+  if (/\$\s*\d/.test(raw))     return 'USD';
+
+  return null; // sin mención → conservar moneda del viaje
+}
+
+// Cambia la moneda del selector reconstruyendo las opciones (método más fiable)
+function _setVMonedaForce(moneda) {
+  var sel = $('v-moneda');
+  if (!sel) { console.warn('[Nido voz] v-moneda no encontrado'); return; }
+  var opts = [
+    ['COP', '🇨🇴 COP — Peso colombiano'],
+    ['USD', '🇺🇸 USD — Dólar'],
+    ['MXN', '🇲🇽 MXN — Peso mexicano'],
+    ['EUR', '🇪🇺 EUR — Euro']
+  ];
+  sel.innerHTML = opts.map(function(o) {
+    return '<option value="' + o[0] + '"' + (o[0] === moneda ? ' selected' : '') + '>' + o[1] + '</option>';
+  }).join('');
+  updateVMonedaPrefix();
+  console.log('[Nido voz] Moneda aplicada:', moneda, '→ sel.value =', sel.value);
+}
+
+function startVoiceInputViaje() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('⚠️ Tu navegador no soporta reconocimiento de voz. Usa Chrome.'); return; }
+  var btn = document.getElementById('btn-voice-viaje');
+
+  if (_voiceRecViaje) { _voiceRecViaje.stop(); return; }
+
+  _voiceRecViaje = new SR();
+  _voiceRecViaje.lang            = 'es-CO';
+  _voiceRecViaje.continuous      = false;
+  _voiceRecViaje.interimResults  = false;
+  _voiceRecViaje.maxAlternatives = 1;
+
+  _voiceRecViaje.onstart = function() {
+    if (btn) {
+      btn.classList.add('listening');
+      var ico = document.getElementById('btn-voice-viaje-icon');
+      var lbl = document.getElementById('btn-voice-viaje-label');
+      if (ico) ico.innerHTML = '<i class="bi bi-stop-circle-fill"></i>';
+      if (lbl) lbl.textContent = 'Escuchando…';
+    }
+    _aiChipViaje('🎤 Di el gasto, valor y moneda…', true);
+  };
+
+  _voiceRecViaje.onresult = async function(e) {
+    var transcript = e.results[0][0].transcript;
+    var preview = transcript.length > 55 ? transcript.slice(0, 55) + '…' : transcript;
+    _aiChipViaje('✨ Analizando: "' + preview + '"', true);
+    try {
+      var parsed = await _callGemini(_geminiViajePrompt(transcript), null);
+
+      // ── 1. Moneda: detección del texto → reconstrucción forzada del select ──
+      var monedaDet   = _detectMonedaDeTexto(transcript);
+      var monedaFinal = ($('v-moneda') && $('v-moneda').value) || salaMoneda() || 'COP';
+      if (monedaDet) {
+        _setVMonedaForce(monedaDet); // reconstruye opciones con selected correcto
+        monedaFinal = monedaDet;
+      }
+
+      // ── 2. Descripción ──
+      if (parsed.descripcion) $('v-desc').value = _capitalize(parsed.descripcion);
+
+      // ── 3. Valor — DESPUÉS del cambio de moneda para que no sea limpiado ──
+      if (parsed.monto && parsed.monto > 0) {
+        var valEl = $('v-val');
+        if (valEl) {
+          valEl.value = monedaFinal === 'COP'
+            ? fmtInput(String(Math.round(parsed.monto)))
+            : parseFloat(parsed.monto).toFixed(2);
+        }
+      }
+
+      _aiChipViaje('✅ Listo — revisa y toca Agregar ✓', true);
+      setTimeout(function() { _aiChipViaje('', false); }, 3500);
+      $('v-desc').focus();
+    } catch(err) {
+      _aiChipViaje('', false);
+      toast('⚠️ ' + err.message);
+    }
+  };
+
+  _voiceRecViaje.onerror = function(e) {
+    var msgs = {
+      'no-speech':   'No escuché nada. Intenta de nuevo.',
+      'not-allowed': 'Permite el acceso al micrófono.',
+      'network':     'Error de red al procesar voz.'
+    };
+    _aiChipViaje('', false);
+    toast('⚠️ ' + (msgs[e.error] || 'Error: ' + e.error));
+  };
+
+  _voiceRecViaje.onend = function() {
+    _voiceRecViaje = null;
+    if (btn) {
+      btn.classList.remove('listening');
+      var ico = document.getElementById('btn-voice-viaje-icon');
+      var lbl = document.getElementById('btn-voice-viaje-label');
+      if (ico) ico.innerHTML = '<i class="bi bi-mic-fill"></i>';
+      if (lbl) lbl.textContent = 'Registrar por voz';
+    }
+  };
+
+  _voiceRecViaje.start();
+}
+
+/* ── CÁMARA / ESCANEO DE FACTURA ───────────────────────────── */
+function startAIScan() {
+  var inp = document.getElementById('ai-scan-input');
+  if (inp) inp.click();
+}
+
+(function() {
+  var inp = document.getElementById('ai-scan-input');
+  if (!inp) return;
+
+  inp.addEventListener('change', async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    e.target.value = ''; // resetear para permitir escanear de nuevo
+
+    // Verificar cuota (sin consumir aún)
+    if (!_checkAILimit('scan')) return;
+
+    var btn = document.getElementById('btn-scan-ai');
+    if (btn) {
+      btn.classList.add('ai-loading');
+      var ico = document.getElementById('btn-scan-ai-icon');
+      if (ico) ico.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+    }
+    _aiChip('📷 Leyendo factura con Gemini Vision…', true);
+
+    try {
+      // Comprimir imagen (reutiliza compressImage del módulo de recibos)
+      var b64 = await compressImage(file);
+
+      var prompt = _geminiPrompt(
+        'El usuario tomó una foto de una factura o recibo. ' +
+        'Busca el TOTAL a pagar (palabras clave: TOTAL, Total a pagar, Valor total, Gran total). ' +
+        'Ignora subtotales parciales e impuestos por separado.'
+      );
+      var parsed = await _callGemini(prompt, b64);
+      _fillFormFromAI(parsed);
+      _consumeAIUse('scan'); // uso efectivo: Gemini respondió correctamente
+
+      // Adjuntar también como foto de recibo (usando el mismo mecanismo que el flujo normal)
+      _pendingReceipt = b64;
+      var thumb = document.getElementById('receipt-thumb');
+      var wrap  = document.getElementById('receipt-preview-wrap');
+      var sz    = document.getElementById('receipt-file-size');
+      var lbl   = document.getElementById('receipt-attach-label');
+      if (thumb) thumb.src = b64;
+      if (wrap)  wrap.classList.add('visible');
+      if (sz)    sz.textContent = Math.round(b64.length * 0.75 / 1024) + ' KB';
+      if (lbl)   lbl.textContent = 'Adjuntada ✓';
+      var attachBtn = document.getElementById('receipt-attach-btn');
+      if (attachBtn) attachBtn.classList.add('has-photo');
+
+      _aiChip('✅ Factura analizada y adjuntada — revisa los datos', true);
+      setTimeout(function() { _aiChip('', false); }, 4000);
+      $('f-desc').focus();
+    } catch(err) {
+      _aiChip('', false);
+      toast('⚠️ ' + err.message);
+    } finally {
+      if (btn) {
+        btn.classList.remove('ai-loading');
+        var ico = document.getElementById('btn-scan-ai-icon');
+        if (ico) ico.innerHTML = '<i class="bi bi-camera-fill"></i>';
+      }
+      _updateAIButtonCounters(); // restaura label con contador correcto
+    }
+  });
+})();
 </script>
 <!-- Privacy policy link — visible to crawlers -->
 <footer style="position:fixed;bottom:0;left:0;right:0;text-align:center;padding:6px;font-size:10px;color:rgba(255,255,255,.25);pointer-events:none;z-index:1">

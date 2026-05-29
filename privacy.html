@@ -16,6 +16,7 @@
   ul li{margin-bottom:6px}
   a{color:#818cf8;text-decoration:none}
   .back{display:inline-block;margin-top:40px;padding:10px 20px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#818cf8;font-size:13px;font-weight:600}
+  .note{background:rgba(99,102,241,.08);border-left:3px solid #818cf8;border-radius:4px;padding:10px 14px;margin-bottom:10px;color:#94a3b8;font-size:13px}
 </style>
 </head>
 <body>
@@ -28,39 +29,57 @@
   <ul>
     <li><strong>Información de cuenta:</strong> nombre, dirección de correo electrónico y foto de perfil proporcionados mediante Google Sign-In.</li>
     <li><strong>Datos financieros:</strong> gastos, ingresos, viajes y balances que tú y tu pareja registran voluntariamente en la app.</li>
-    <li><strong>Datos de uso:</strong> información básica sobre cómo interactúas con la app para mejorar la experiencia.</li>
+    <li><strong>Fotos de recibos:</strong> imágenes opcionales que adjuntas a un gasto (función gratuita). Se almacenan en Firebase Firestore asociadas a ese gasto.</li>
+    <li><strong>Transcripciones de voz:</strong> cuando usas el registro por voz, el audio es procesado localmente por la API de tu navegador (Web Speech API) y el texto resultante se envía a Google AI (Gemini) únicamente para extraer los datos del gasto. No se guarda ningún archivo de audio.</li>
+    <li><strong>Imágenes para escaneo de facturas:</strong> cuando usas el escáner IA, la imagen de la factura se envía a Google AI (Gemini) para extraer el monto y descripción. La imagen no se almacena en nuestros servidores salvo que la adjuntes explícitamente como recibo.</li>
+    <li><strong>Contadores de uso IA:</strong> se guarda en tu perfil (Firebase Firestore) el número de usos mensuales de voz y escaneo para aplicar el límite gratuito de 5 usos por función por mes.</li>
+    <li><strong>Datos de uso básico:</strong> información sobre cómo interactúas con la app para mejorar la experiencia.</li>
   </ul>
 
-  <h2>2. Cómo usamos tu información</h2>
+  <h2>2. Permisos de dispositivo</h2>
+  <p>Nido puede solicitar los siguientes permisos según las funciones que uses:</p>
+  <ul>
+    <li><strong>Micrófono:</strong> requerido solo cuando activas el registro por voz (botón "Por voz"). El audio nunca se almacena; se transcribe en tiempo real por el navegador y el texto se procesa por Gemini.</li>
+    <li><strong>Cámara / Galería:</strong> requerido solo cuando activas el escaneo de facturas (botón "Escanear"). La imagen se usa únicamente para esa operación y no se conserva salvo que la adjuntes manualmente como recibo del gasto.</li>
+  </ul>
+  <div class="note">Puedes revocar estos permisos en cualquier momento desde la configuración de tu navegador. Hacerlo deshabilitará las funciones IA correspondientes.</div>
+
+  <h2>3. Cómo usamos tu información</h2>
   <p>La información recopilada se usa exclusivamente para:</p>
   <ul>
     <li>Mostrar y sincronizar los datos financieros entre los miembros de tu sala.</li>
     <li>Autenticar tu identidad de forma segura.</li>
-    <li>Enviar notificaciones relacionadas con actividad en tu sala (gastos, solicitudes de liquidación).</li>
+    <li>Procesar comandos de voz e imágenes de facturas mediante IA para facilitar el registro de gastos.</li>
+    <li>Detectar anomalías financieras en tu historial de gastos (función exclusiva para usuarios Premium).</li>
+    <li>Enviar notificaciones relacionadas con actividad en tu sala y avisos del equipo Nido.</li>
+    <li>Controlar el límite de usos gratuitos de las funciones IA.</li>
   </ul>
 
-  <h2>3. Almacenamiento y seguridad</h2>
-  <p>Todos los datos se almacenan de forma segura en <strong>Google Firebase Firestore</strong>, protegidos por reglas de seguridad que garantizan que solo los miembros autorizados de cada sala pueden acceder a sus datos.</p>
+  <h2>4. Almacenamiento y seguridad</h2>
+  <p>Todos los datos persistentes se almacenan de forma segura en <strong>Google Firebase Firestore</strong>, protegidos por reglas de seguridad que garantizan que solo los miembros autorizados de cada sala pueden acceder a sus datos.</p>
+  <p>El texto transcrito por voz y las imágenes enviadas para escaneo <strong>no se almacenan</strong> en nuestros servidores; son procesados por Gemini en el momento y el resultado (descripción, monto, categoría) es lo único que puede guardarse si confirmas el gasto.</p>
   <p>No vendemos, compartimos ni transferimos tu información personal a terceros.</p>
 
-  <h2>4. Acceso a tus datos</h2>
+  <h2>5. Acceso a tus datos</h2>
   <p>Solo tú y tu pareja (los miembros de tu sala) tienen acceso a los datos de esa sala. Ningún otro usuario puede ver tu información.</p>
 
-  <h2>5. Eliminación de datos</h2>
+  <h2>6. Eliminación de datos</h2>
   <p>Puedes eliminar tu cuenta y todos tus datos en cualquier momento desde la configuración de la app (Ajustes → Eliminar cuenta). La eliminación es permanente e irreversible.</p>
 
-  <h2>6. Servicios de terceros</h2>
+  <h2>7. Servicios de terceros</h2>
   <p>Nido utiliza los siguientes servicios de terceros:</p>
   <ul>
     <li><strong>Google Firebase</strong> — autenticación y base de datos (<a href="https://firebase.google.com/support/privacy" target="_blank">política de privacidad</a>)</li>
+    <li><strong>Google AI (Gemini)</strong> — procesamiento de voz e imágenes para el registro inteligente de gastos y detección de anomalías (<a href="https://ai.google.dev/gemini-api/terms" target="_blank">términos de uso</a>). Los datos enviados a Gemini están sujetos a la <a href="https://policies.google.com/privacy" target="_blank">política de privacidad de Google</a>.</li>
     <li><strong>OneSignal</strong> — notificaciones push (<a href="https://onesignal.com/privacy_policy" target="_blank">política de privacidad</a>)</li>
+    <li><strong>EmailJS</strong> — envío de correos electrónicos transaccionales (<a href="https://www.emailjs.com/legal/privacy-policy/" target="_blank">política de privacidad</a>)</li>
   </ul>
 
-  <h2>7. Cambios a esta política</h2>
+  <h2>8. Cambios a esta política</h2>
   <p>Podemos actualizar esta política ocasionalmente. Te notificaremos sobre cambios significativos dentro de la app. El uso continuado de Nido después de los cambios implica tu aceptación.</p>
 
-  <h2>8. Contacto</h2>
-  <p>Si tienes preguntas sobre esta política de privacidad, puedes contactarnos en: <a href="mailto:john.anderson.co@gmail.com">john.anderson.co@gmail.com</a></p>
+  <h2>9. Contacto</h2>
+  <p>Si tienes preguntas sobre esta política de privacidad, puedes contactarnos en: <a href="mailto:balancegroup@zohomail.com">balancegroup@zohomail.com</a></p>
 
   <a href="https://aplicacion-page.github.io/Nido/" class="back">← Volver a Nido</a>
 </div>
