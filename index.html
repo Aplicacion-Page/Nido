@@ -124,30 +124,66 @@ input,select,button{font-family:inherit}
 .nido-alert-primary{color:#084298;background:#cfe2ff;border-color:#9ec5fe}
 .nido-alert-purple {color:#3d0a91;background:#e9d8fd;border-color:#d0b0fa}
 @keyframes bsAlertIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-/* ── IA: Icon Card buttons (horizontal) ── */
-.icard-row{display:flex;gap:7px;margin-bottom:12px}
-.icard-btn{display:flex;flex-direction:row;align-items:center;gap:8px;padding:9px 11px;flex:1;border-radius:12px;border:1px solid var(--bor);background:var(--s2);cursor:pointer;transition:all .2s ease;text-align:left;min-width:0}
-.icard-btn:hover{border-color:var(--bor2);box-shadow:0 4px 16px rgba(0,0,0,.25);background:var(--s3)}
+/* ── IA: Botón voz viajes (mantener icard-btn para ese uso) ── */
+.icard-btn{display:flex;flex-direction:row;align-items:center;gap:8px;padding:9px 11px;flex:1;border-radius:12px;border:1.5px solid var(--ac);background:var(--ac3);color:var(--ac);cursor:pointer;transition:all .2s ease;text-align:left;min-width:0;font-weight:700}
+.icard-btn:hover{background:var(--ac2);filter:brightness(1.08)}
 .icard-btn:active{transform:scale(.97)}
-.icard-icon-wrap{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .2s ease;flex-shrink:0;position:relative}
-.icard-btn.mic .icard-icon-wrap{background:linear-gradient(135deg,rgba(168,85,247,.3),rgba(236,72,153,.18))}
-.icard-btn.cam .icard-icon-wrap{background:linear-gradient(135deg,rgba(59,130,246,.3),rgba(6,182,212,.18))}
-.icard-btn.att .icard-icon-wrap{background:linear-gradient(135deg,rgba(16,185,129,.3),rgba(20,184,166,.18))}
-.icard-label{font-size:12.5px;font-weight:700;color:var(--mu);line-height:1.3;min-width:0}
-.icard-btn.mic:hover .icard-label{color:#c084fc}
-.icard-btn.cam:hover .icard-label{color:#60a5fa}
-.icard-btn.att:hover .icard-label{color:#34d399}
-/* Estado: escuchando */
-.icard-btn.listening .icard-icon-wrap{background:linear-gradient(135deg,rgba(239,68,68,.35),rgba(249,115,22,.2));animation:icardPulse 1.6s ease-in-out infinite}
+.icard-icon-wrap{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .2s ease;flex-shrink:0;position:relative;background:var(--ac2)}
+.icard-label{font-size:12.5px;font-weight:700;color:var(--ac);line-height:1.3;min-width:0}
+.icard-btn.listening .icard-icon-wrap{background:rgba(239,68,68,.2);animation:icardPulse 1.6s ease-in-out infinite}
 .icard-btn.listening .icard-label{color:#f87171}
 @keyframes icardPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 6px rgba(239,68,68,0)}}
-/* Estado: cargando */
-.icard-btn.ai-loading{opacity:.7;pointer-events:none}
-.icard-btn.ai-loading .icard-icon-wrap{animation:icardSpin .9s linear infinite}
+.icard-btn.ai-loading{opacity:.65;pointer-events:none}
 @keyframes icardSpin{to{transform:rotate(360deg)}}
+
+/* ══ IA: Panel unificado premium (formulario principal) ══ */
+.nido-ai-panel-wrap{margin-bottom:12px;animation:aiPanelEntry .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes aiPanelEntry{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.nido-ai-panel-border{padding:1.5px;border-radius:18px;background:linear-gradient(135deg,rgba(96,165,250,.65),rgba(167,139,250,.65) 50%,rgba(52,211,153,.65));position:relative;overflow:hidden;transition:box-shadow .3s ease}
+.nido-ai-panel-border.voice-glow{animation:aiGlowVoice 2s ease forwards}
+.nido-ai-panel-border.scan-glow{animation:aiGlowScan 2s ease forwards}
+@keyframes aiGlowVoice{0%{box-shadow:none}15%{box-shadow:0 0 0 2px rgba(167,139,250,.8),0 0 18px rgba(167,139,250,.4)}80%{box-shadow:0 0 0 1.5px rgba(167,139,250,.5),0 0 12px rgba(167,139,250,.25)}100%{box-shadow:none}}
+@keyframes aiGlowScan{0%{box-shadow:none}15%{box-shadow:0 0 0 2px rgba(96,165,250,.8),0 0 18px rgba(96,165,250,.4)}80%{box-shadow:0 0 0 1.5px rgba(96,165,250,.5),0 0 12px rgba(96,165,250,.25)}100%{box-shadow:none}}
+.nido-ai-sweep{position:absolute;top:0;bottom:0;width:90px;pointer-events:none;z-index:10;display:none;filter:blur(1px)}
+.nido-ai-sweep.voice{background:linear-gradient(90deg,transparent,rgba(167,139,250,.8),transparent)}
+.nido-ai-sweep.scan{background:linear-gradient(90deg,transparent,rgba(96,165,250,.8),transparent)}
+.nido-ai-sweep.active{display:block;animation:aiSweep 1.4s ease-in-out forwards}
+@keyframes aiSweep{from{left:-90px;opacity:0}10%{opacity:1}90%{opacity:1}to{left:110%;opacity:0}}
+.nido-ai-panel{display:flex;align-items:stretch;background:linear-gradient(135deg,rgba(96,165,250,.07),rgba(167,139,250,.07) 50%,rgba(52,211,153,.07)),var(--s1);border-radius:17px}
+.nido-ai-zone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px 10px;cursor:pointer;border:none;background:transparent;transition:transform .2s ease,filter .2s ease;position:relative;min-width:0}
+.nido-ai-zone:hover{transform:scale(1.02);filter:brightness(1.07)}
+.nido-ai-zone:active{transform:scale(.97)}
+.nido-ai-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative;overflow:hidden;flex-shrink:0;transition:background .2s ease,box-shadow .2s ease}
+.nido-ai-icon::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.45) 0%,transparent 55%);border-radius:11px;pointer-events:none}
+.nido-ai-zone.mic .nido-ai-icon{background:linear-gradient(135deg,rgba(167,139,250,.35),rgba(196,132,252,.2));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px rgba(167,139,250,.2)}
+.nido-ai-zone.scan .nido-ai-icon{background:linear-gradient(135deg,rgba(96,165,250,.35),rgba(6,182,212,.2));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px rgba(96,165,250,.2)}
+.nido-ai-zone.att .nido-ai-icon{background:linear-gradient(135deg,rgba(52,211,153,.35),rgba(20,184,166,.2));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px rgba(52,211,153,.2)}
+.nido-ai-icon-inner{display:flex;align-items:center;justify-content:center;width:100%;height:100%;transition:transform .25s ease;color:inherit;z-index:1;position:relative}
+.nido-ai-zone.mic .nido-ai-icon-inner{color:#a78bfa}
+.nido-ai-zone.scan .nido-ai-icon-inner{color:#60a5fa}
+.nido-ai-zone.att .nido-ai-icon-inner{color:#34d399}
+.nido-ai-zone.mic:hover .nido-ai-icon-inner{animation:aiMicPulse .5s ease-in-out infinite}
+@keyframes aiMicPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.nido-ai-zone.att:hover .nido-ai-icon-inner{transform:rotate(15deg)}
+.nido-ai-label-text{font-size:11px;font-weight:700;letter-spacing:.025em;color:var(--mu);text-align:center;line-height:1.3;pointer-events:none}
+.nido-ai-zone.mic:hover .nido-ai-label-text{color:#c084fc}
+.nido-ai-zone.scan:hover .nido-ai-label-text{color:#60a5fa}
+.nido-ai-zone.att:hover .nido-ai-label-text{color:#34d399}
+.nido-ai-divider{width:1px;align-self:stretch;margin:10px 0;background:linear-gradient(180deg,transparent,var(--bor2) 30%,var(--bor2) 70%,transparent);flex-shrink:0}
+/* Escuchando */
+.nido-ai-zone.listening .nido-ai-icon{background:linear-gradient(135deg,rgba(239,68,68,.3),rgba(249,115,22,.2))!important;animation:aiListenPulse 1.6s ease-in-out infinite}
+.nido-ai-zone.listening .nido-ai-icon-inner{animation:aiMicPulse .5s ease-in-out infinite!important;color:#f87171!important}
+.nido-ai-zone.listening .nido-ai-label-text{color:#f87171!important}
+@keyframes aiListenPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5),inset 0 1px 0 rgba(255,255,255,.3)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0),inset 0 1px 0 rgba(255,255,255,.3)}}
+/* Cargando */
+.nido-ai-zone.ai-loading{opacity:.65;pointer-events:none}
+/* Laser escáner */
+.nido-ai-laser{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(96,165,250,.95) 50%,transparent);filter:blur(.5px);pointer-events:none;z-index:5;opacity:0;top:0}
+.nido-ai-zone.scan.ai-loading .nido-ai-laser{animation:aiLaserLine .65s linear infinite;opacity:1}
+@keyframes aiLaserLine{from{top:-2px;opacity:0}15%{opacity:1}85%{opacity:1}to{top:42px;opacity:0}}
 /* Foto adjunta */
-.icard-btn.att.has-photo .icard-icon-wrap{background:linear-gradient(135deg,rgba(16,185,129,.45),rgba(20,184,166,.3))}
-.icard-btn.att.has-photo .icard-label{color:#34d399}
+.nido-ai-zone.att.has-photo .nido-ai-icon{background:linear-gradient(135deg,rgba(52,211,153,.5),rgba(20,184,166,.35))!important}
+.nido-ai-zone.att.has-photo .nido-ai-label-text{color:#34d399!important}
 .ai-chip{display:none;align-items:center;gap:7px;background:var(--ac3);border:1px solid var(--ac2);border-radius:10px;padding:7px 12px;font-size:.8rem;color:var(--ac);margin-bottom:10px;animation:bsAlertIn .2s ease}
 .ai-chip.show{display:flex}
 /* ── Tarjeta confirmación voz ── */
@@ -540,7 +576,7 @@ input[inputmode="numeric"]::placeholder,
 .txav{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:transform .2s}
 .txi:hover .txav{transform:scale(1.08)}
 .txbody{flex:1;min-width:0}
-.txdesc{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txdesc{font-weight:600;font-size:15px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:break-word}
 .txmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:11px;color:var(--mu)}
 .txr{text-align:right;flex-shrink:0}
 .txval{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px}
@@ -707,6 +743,13 @@ input[inputmode="numeric"]::placeholder,
 
 @media(max-width:360px){.content{padding:13px 10px 108px}.sval{font-size:15px}.row2{grid-template-columns:1fr}.sgrid{grid-template-columns:1fr 1fr;gap:8px}}
 @media(max-width:320px){.sgrid{grid-template-columns:1fr}}
+
+/* ── Botones IA en pantallas estrechas ── */
+@media screen and (max-width:374px){
+  .icard-label{font-size:11px}
+  .icard-btn{padding:8px 7px;gap:6px}
+  .icard-icon-wrap{width:28px;height:28px;font-size:13px}
+}
 
 /* ── Formulario compacto en móviles (todo visible sin scroll) ── */
 @media screen and (max-height:820px){
@@ -1075,9 +1118,676 @@ svg.lucide{
   0%,100%{opacity:.2;transform:scale(.75)}
   50%{opacity:1;transform:scale(1.2)}
 }
+
+/* ══ ONBOARDING (original nido-onboarding-v1) ══
+   Variables nuevas que no están en el tema principal */
+#ob-wrapper{
+  --phone-grad:linear-gradient(175deg,#0c1b42 0%,#07102a 100%);
+  --screen-grad:linear-gradient(165deg,#07102a 0%,#0f2248 100%);
+  --glass-bg:rgba(255,255,255,.055);
+  --glass-bor:rgba(255,255,255,.11);
+  --glass-sh:0 8px 32px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);
+  --nav-grad:rgba(7,16,42,1);
+  --dot-inactive:rgba(255,255,255,.18);
+}
+[data-theme="light"] #ob-wrapper{
+  --phone-grad:linear-gradient(175deg,#f4f6ff 0%,#e8ecfa 100%);
+  --screen-grad:linear-gradient(165deg,#edf0fb 0%,#f4f6ff 100%);
+  --glass-bg:rgba(255,255,255,.72);
+  --glass-bor:rgba(0,0,0,.08);
+  --glass-sh:0 4px 20px rgba(0,0,0,.09),inset 0 1px 0 rgba(255,255,255,.9);
+  --nav-grad:rgba(237,240,249,1);
+  --dot-inactive:rgba(0,0,0,.15);
+}
+/* ── Overlay wrapper (full-screen producción) ── */
+#ob-wrapper{
+  display:none;position:fixed;inset:0;z-index:99999;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:var(--bg);color:var(--tx);
+  transition:background .4s ease,color .4s ease,opacity .5s ease;
+  overflow:hidden;
+}
+/* En móvil: full-screen. En escritorio: contenedor centrado estilo phone */
+#ob-root{
+  position:absolute;inset:0;overflow:hidden;
+}
+@media(min-width:500px){
+  #ob-root{
+    width:375px;top:0;bottom:0;
+    left:50%;transform:translateX(-50%);
+    right:auto;
+    box-shadow:0 0 80px rgba(0,0,0,.45);
+  }
+}
+#ob-ambient{position:fixed;inset:0;pointer-events:none;transition:background 1s ease;z-index:0;}
+/* ── Header ── */
+.hd{text-align:center;margin-bottom:24px;position:relative;z-index:2;}
+.hd-top{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 14px;border-radius:99px;font-size:11px;font-weight:600;
+  font-family:'JetBrains Mono',monospace;
+  border:1px solid rgba(129,140,248,.3);background:rgba(129,140,248,.1);color:var(--ac);
+}
+.hd h1{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.hd h1 span{color:var(--pk);}
+.hd p{font-size:12.5px;color:var(--mu);}
+/* ── Theme toggle ── */
+.theme-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:99px;
+  border:1px solid var(--bor2);background:var(--s2);
+  color:var(--tx);font-size:12px;font-weight:600;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  cursor:pointer;transition:all .2s;user-select:none;
+}
+.theme-btn:hover{background:var(--s3);}
+/* ── Phone ── */
+.phone-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:22px;}
+.phone{
+  width:300px;height:580px;
+  background:var(--phone-grad);
+  border-radius:44px;border:1.5px solid var(--bor2);
+  box-shadow:0 0 0 7px rgba(10,26,60,.5),0 0 0 9px var(--bor),0 40px 90px rgba(0,0,0,.5);
+  overflow:hidden;position:relative;display:flex;flex-direction:column;
+  transition:background .4s ease;
+}
+.phone::before{
+  content:'';position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  width:82px;height:28px;background:#000;border-radius:20px;z-index:200;
+}
+.phone ::-webkit-scrollbar{display:none;}
+.phone *{scrollbar-width:none;}
+.screen-bg{background:var(--screen-grad)!important;transition:background .4s ease;}
+.dots{display:flex;gap:5px;align-items:center;justify-content:center;}
+.dot{height:6px;border-radius:99px;background:var(--dot-inactive);position:relative;overflow:hidden;}
+/* ── Glass card ── */
+.glass-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px) saturate(1.6);
+  -webkit-backdrop-filter:blur(20px) saturate(1.6);
+  border:1px solid var(--glass-bor);
+  border-radius:16px;
+  box-shadow:var(--glass-sh);
+  transition:background .4s ease,border-color .4s ease;
+}
+/* ── Animations ── */
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes spin-slow{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+/* ── Snippet ── */
+.snippet{
+  width:300px;background:var(--s1);border:1px solid var(--bor);
+  border-radius:12px;padding:12px 16px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.75;color:var(--mu);
+  transition:background .4s ease;
+}
+.snippet .kw{color:var(--ac)}.snippet .str{color:var(--gr)}
+.snippet .num{color:var(--pk)}.snippet .cm{color:#2d3f66}
+#ob-root:empty::after{
+  content:'Cargando…';display:block;text-align:center;color:var(--mu);font-size:13px;padding:40px;
+}
 </style>
 </head>
 <body>
+
+<!-- ══ ONBOARDING (primera visita) ══ -->
+<div id="ob-wrapper">
+  <div id="ob-ambient"></div>
+  <div id="ob-root"></div>
+</div>
+
+<script>
+/* Mostrar onboarding solo en primera visita */
+(function(){
+  if(!localStorage.getItem('nido_onboarding_v1')){
+    var w=document.getElementById('ob-wrapper');
+    if(w) w.style.display='flex';
+  }
+})();
+</script>
+
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react" data-type="module">
+import React, { useState, useCallback, useEffect, useRef } from 'https://esm.sh/react@18.3.1'
+import { createRoot }                                       from 'https://esm.sh/react-dom@18.3.1/client'
+import { motion, AnimatePresence, useAnimation }            from 'https://esm.sh/framer-motion@11.11.17'
+
+/* ── Variants ── */
+const containerV = {
+  hidden: { opacity:0 },
+  show: { opacity:1, transition:{ staggerChildren:.1, delayChildren:.05, when:'beforeChildren' } },
+  exit: { opacity:0, transition:{ duration:.2, ease:[.4,0,1,1] } }
+}
+const itemV = {
+  hidden: (dir) => ({ y: dir >= 0 ? 36 : -36, opacity:0 }),
+  show: { y:0, opacity:1, transition:{ type:'spring', stiffness:280, damping:26 } }
+}
+
+/* ── Logo helpers ── */
+const logo1 = (_) => '2-dark.png'
+const logo3 = (t) => t === 'dark' ? '3-dark.png' : '3.png'
+
+/* ══════════════════════════════════════════
+   SCREEN 1 — Tarjetas glassmorphic flotantes
+   ══════════════════════════════════════════ */
+const CARDS_DATA = [
+  { av:'👩', name:'Sara',   cat:'Mercado semanal',  amount:'-$85.000', rot:-2.5, startY:28, floatY:7, floatDur:3.2 },
+  { av:'👨', name:'Carlos', cat:'Arriendo · Mayo',  amount:'-$1.200k', rot: 1.2, startY:-20,floatY:5, floatDur:3.8 },
+  { av:'👩', name:'Sara',   cat:'Netflix · Pareja', amount:'-$45.900', rot:-0.5, startY:22, floatY:6, floatDur:2.9 },
+]
+
+function FloatingCard({ card, index }) {
+  const ctrl = useAnimation()
+  useEffect(() => {
+    let alive = true
+    async function run() {
+      await ctrl.start({ opacity:1, y:0, rotate:card.rot,
+        transition:{ type:'spring', stiffness:230, damping:22, delay:index*.13 } })
+      if (!alive) return
+      ctrl.start({ y:[0,-card.floatY,0], rotate:[card.rot,card.rot+.5,card.rot-.4,card.rot],
+        transition:{ duration:card.floatDur, repeat:Infinity, ease:'easeInOut' } })
+    }
+    run()
+    return () => { alive=false; ctrl.stop() }
+  }, [])
+
+  return (
+    <motion.div className="glass-card"
+      initial={{ opacity:0, y:card.startY, rotate:0 }}
+      animate={ctrl}
+      style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px',
+        marginTop:index===0?0:-10, position:'relative', zIndex:CARDS_DATA.length-index }}
+    >
+      <div style={{ width:32,height:32,borderRadius:'50%',background:'var(--bor2)',
+        display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,flexShrink:0 }}>
+        {card.av}
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:9.5, color:'var(--mu)' }}>{card.name}</div>
+        <div style={{ fontSize:12, fontWeight:600, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', color:'var(--tx)' }}>{card.cat}</div>
+      </div>
+      <div style={{ fontSize:12, fontWeight:700, color:'var(--re)', flexShrink:0 }}>{card.amount}</div>
+    </motion.div>
+  )
+}
+
+function FloatingCards({ dir }) {
+  return (
+    <motion.div custom={dir} variants={itemV} style={{ width:'100%', marginTop:18 }}>
+      {CARDS_DATA.map((c,i) => <FloatingCard key={c.cat} card={c} index={i} />)}
+    </motion.div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   SCREEN 2 — Barra equity animada
+   ══════════════════════════════════════════ */
+function EquityBar({ dir, theme }) {
+  const [phase, setPhase] = useState(0)
+
+  useEffect(() => {
+    let alive = true
+    async function cycle() {
+      while (alive) {
+        await new Promise(r => setTimeout(r, 2400))
+        if (!alive) break
+        setPhase(1)
+        await new Promise(r => setTimeout(r, 2600))
+        if (!alive) break
+        setPhase(0)
+      }
+    }
+    cycle()
+    return () => { alive = false }
+  }, [])
+
+  const saraP   = phase === 0 ? 50 : 63
+  const carlosP = 100 - saraP
+
+  return (
+    <motion.div custom={dir} variants={itemV} style={{ width:'100%', marginTop:14 }}>
+      <div style={{ display:'flex', justifyContent:'center', marginBottom:10 }}>
+        <AnimatePresence mode="wait">
+          <motion.div key={phase}
+            initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }}
+            exit={{ opacity:0, y:-6 }} transition={{ duration:.3 }}
+            style={{
+              display:'inline-flex', alignItems:'center', gap:6,
+              padding:'3px 12px', borderRadius:99, fontSize:11, fontWeight:600,
+              background: phase===0 ? 'rgba(52,211,153,.12)' : 'rgba(129,140,248,.12)',
+              border: `1px solid ${phase===0 ? 'rgba(52,211,153,.28)' : 'rgba(129,140,248,.28)'}`,
+              color: phase===0 ? '#34d399' : '#818cf8',
+            }}
+          >
+            <span>{phase===0 ? '⇌' : '∝'}</span>
+            <span>{phase===0 ? 'Igualitario · 50 / 50' : 'Proporcional al ingreso'}</span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div className="glass-card" style={{
+        display:'flex', height:62, borderRadius:18,
+        overflow:'hidden', padding:4, gap:3
+      }}>
+        <motion.div
+          animate={{ flex: saraP }}
+          transition={{ duration:1.4, ease:[.4,0,.2,1] }}
+          style={{
+            background:'linear-gradient(135deg,#f472b6,rgba(244,114,182,.55))',
+            borderRadius:14, display:'flex', flexDirection:'column',
+            alignItems:'center', justifyContent:'center', gap:1,
+            overflow:'hidden', minWidth:0
+          }}
+        >
+          <span style={{ fontSize:15 }}>👩</span>
+          <span style={{ fontSize:11, fontWeight:700, color:'white', lineHeight:1 }}>{saraP}%</span>
+        </motion.div>
+        <motion.div
+          animate={{ flex: carlosP }}
+          transition={{ duration:1.4, ease:[.4,0,.2,1] }}
+          style={{
+            background:'linear-gradient(135deg,rgba(129,140,248,.55),#818cf8)',
+            borderRadius:14, display:'flex', flexDirection:'column',
+            alignItems:'center', justifyContent:'center', gap:1,
+            overflow:'hidden', minWidth:0
+          }}
+        >
+          <span style={{ fontSize:15 }}>👨</span>
+          <span style={{ fontSize:11, fontWeight:700, color:'white', lineHeight:1 }}>{carlosP}%</span>
+        </motion.div>
+      </div>
+      <div style={{ display:'flex', justifyContent:'space-between', marginTop:5, fontSize:10, color:'var(--mu)' }}>
+        <span>Sara</span>
+        <span>Carlos</span>
+      </div>
+      <motion.p
+        initial={{ opacity:0 }} animate={{ opacity:1 }}
+        transition={{ delay:.6, duration:.5 }}
+        style={{ marginTop:14, fontSize:12, color:'var(--mu)', textAlign:'center', lineHeight:1.65 }}
+      >
+        Dividan los gastos en partes iguales o de forma proporcional a los ingresos de cada uno, eso es equidad.
+      </motion.p>
+    </motion.div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   SCREEN 3 — Entrada por voz / IA
+   ══════════════════════════════════════════ */
+const sleep = (ms) => new Promise(r => setTimeout(r, ms))
+
+function VoiceDemo({ dir }) {
+  const [phase, setPhase] = useState(0)
+
+  useEffect(() => {
+    let alive = true
+    async function cycle() {
+      while (alive) {
+        setPhase(0); await sleep(1900); if (!alive) break
+        setPhase(1); await sleep(1600); if (!alive) break
+        setPhase(2); await sleep(1100); if (!alive) break
+        setPhase(3); await sleep(2800); if (!alive) break
+      }
+    }
+    cycle()
+    return () => { alive = false }
+  }, [])
+
+  const isRec    = phase === 1
+  const showText = phase >= 2
+  const showCard = phase === 3
+
+  const fields = [
+    { label:'Categoría', value:'Servicios', icon:'⚡', col:'#fbbf24' },
+    { label:'Monto',     value:'$100.000',  icon:'💰', col:'#34d399' },
+    { label:'Pagó',      value:'Sara',      icon:'👩', col:'#f472b6' },
+    { label:'Fecha',     value:'Hoy',       icon:'📅', col:'#818cf8' },
+  ]
+
+  return (
+    <motion.div custom={dir} variants={itemV} style={{ width:'100%', marginTop:8 }}>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:9, marginBottom:10 }}>
+        <div style={{ position:'relative', width:60, height:60 }}>
+          <AnimatePresence>
+            {isRec && [0,1,2].map(i => (
+              <motion.div key={i}
+                initial={{ scale:1, opacity:.45 }}
+                animate={{ scale:2.8, opacity:0 }}
+                exit={{ opacity:0 }}
+                transition={{ duration:1.1, delay:i*.32, repeat:Infinity, ease:'easeOut' }}
+                style={{ position:'absolute', inset:0, borderRadius:'50%',
+                  background:'rgba(244,114,182,.25)', zIndex:0 }}
+              />
+            ))}
+          </AnimatePresence>
+          <motion.div
+            animate={
+              phase === 0 ? {
+                scale:[1,1.05,1],
+                boxShadow:['0 0 0 0 rgba(129,140,248,.2)','0 0 0 10px rgba(129,140,248,.07)','0 0 0 0 rgba(129,140,248,.2)']
+              } : phase === 1 ? {
+                scale:[1,1.07,1],
+                boxShadow:['0 0 0 0 rgba(244,114,182,.3)','0 0 0 12px rgba(244,114,182,.1)','0 0 0 0 rgba(244,114,182,.3)']
+              } : { scale:0.8, opacity:0.45 }
+            }
+            transition={{ duration:1.3, repeat: phase <= 1 ? Infinity : 0, ease:'easeInOut' }}
+            style={{
+              position:'absolute', inset:0, zIndex:2, borderRadius:'50%',
+              background: isRec
+                ? 'linear-gradient(135deg,#fb7185,#f472b6)'
+                : 'linear-gradient(135deg,#818cf8,#6366f1)',
+              display:'flex', alignItems:'center', justifyContent:'center', fontSize:24,
+              boxShadow: isRec ? '0 6px 20px rgba(244,114,182,.4)' : '0 6px 20px rgba(129,140,248,.4)'
+            }}
+          >
+            {isRec ? '⏺' : '🎙️'}
+          </motion.div>
+        </div>
+        <AnimatePresence mode="wait">
+          {phase === 0 && (
+            <motion.span key="idle"
+              initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+              style={{fontSize:11, color:'var(--mu)'}}>
+              Toca para registrar
+            </motion.span>
+          )}
+          {phase === 1 && (
+            <motion.span key="rec"
+              initial={{opacity:0, y:4}} animate={{opacity:1, y:0}} exit={{opacity:0, y:-4}}
+              style={{fontSize:11.5, color:'#f472b6', fontWeight:700}}>
+              ● Escuchando...
+            </motion.span>
+          )}
+          {showText && (
+            <motion.div key="quote"
+              initial={{opacity:0, y:6}} animate={{opacity:1, y:0}} exit={{opacity:0}}
+              transition={{duration:.3}}
+              className="glass-card"
+              style={{ padding:'6px 12px', fontSize:11, fontStyle:'italic',
+                color:'var(--tx)', textAlign:'center', maxWidth:232, lineHeight:1.5 }}>
+              "Pagué la luz por 100 mil pesos"
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+      <AnimatePresence>
+        {phase === 2 && (
+          <motion.div key="proc"
+            initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+            style={{ display:'flex', alignItems:'center', justifyContent:'center',
+              gap:5, fontSize:11, color:'var(--ac)', fontWeight:600, marginBottom:6 }}>
+            <motion.span animate={{rotate:360}}
+              transition={{duration:.9, repeat:Infinity, ease:'linear'}}>⚙️</motion.span>
+            IA procesando...
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showCard && (
+          <motion.div key="card"
+            initial={{opacity:0, y:16, scale:.96}}
+            animate={{opacity:1, y:0, scale:1}}
+            exit={{opacity:0, scale:.96}}
+            transition={{type:'spring', stiffness:280, damping:24}}
+            className="glass-card" style={{ padding:'9px 13px', width:'100%' }}
+          >
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:7 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:5,
+                fontSize:10, color:'var(--gr)', fontWeight:700, letterSpacing:.3 }}>
+                <motion.span animate={{scale:[1,1.35,1]}}
+                  transition={{duration:.35, delay:.25}}>✨</motion.span>
+                IA procesó tu gasto
+              </div>
+              <motion.div
+                initial={{opacity:0, scale:0}} animate={{opacity:1, scale:1}}
+                transition={{delay:.55, type:'spring', stiffness:400}}
+                style={{ fontSize:10, color:'#34d399', fontWeight:700,
+                  background:'rgba(52,211,153,.1)', padding:'2px 7px',
+                  borderRadius:99, border:'1px solid rgba(52,211,153,.22)' }}>
+                ⚡ 2 seg
+              </motion.div>
+            </div>
+            {fields.map((f, i) => (
+              <motion.div key={f.label}
+                initial={{opacity:0, x:-10}}
+                animate={{opacity:1, x:0}}
+                transition={{delay:.08+i*.09, type:'spring', stiffness:300, damping:24}}
+                style={{ display:'flex', alignItems:'center', gap:8,
+                  padding:'4px 0',
+                  borderBottom: i < fields.length-1 ? '1px solid var(--bor)' : 'none' }}>
+                <span style={{fontSize:12}}>{f.icon}</span>
+                <span style={{fontSize:10, color:'var(--mu)', width:60, flexShrink:0}}>{f.label}</span>
+                <span style={{fontSize:12, fontWeight:600, color:'var(--tx)', flex:1}}>{f.value}</span>
+                <motion.span
+                  initial={{scale:0, rotate:-90}} animate={{scale:1, rotate:0}}
+                  transition={{delay:.3+i*.09, type:'spring', stiffness:400}}
+                  style={{fontSize:11, color:'#34d399', flexShrink:0}}>✓</motion.span>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {!showCard && (
+          <motion.p
+            key="desc"
+            initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0, y:-6}}
+            transition={{duration:.35}}
+            style={{ marginTop:9, fontSize:14, fontWeight:500, color:'var(--mu)',
+              textAlign:'center', lineHeight:1.55, maxWidth:230 }}>
+            Nuestra IA se encarga de rellenar todo el formulario por ustedes.
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   Datos de pantallas
+   ══════════════════════════════════════════ */
+const screens = [
+  {
+    id:'welcome',
+    color:'#f472b6', colorBg:'rgba(244,114,182,0.13)',
+    ambientA:'rgba(244,114,182,0.09)', ambientB:'rgba(129,140,248,0.05)',
+    title:'Tu nido,\nsus finanzas', hideTitle:true,
+    desc:'La app donde como pareja tienen control total de cada peso compartido.',
+    Mock: FloatingCards, useLogo:'1',
+  },
+  {
+    id:'together',
+    color:'#34d399', colorBg:'rgba(52,211,153,0.13)',
+    ambientA:'rgba(52,211,153,0.07)', ambientB:'rgba(129,140,248,0.07)',
+    title:'Registren juntos,\nsin dramas\nni hojas de cálculo',
+    desc:'',
+    Mock: EquityBar, useLogo:'3',
+  },
+  {
+    id:'voice',
+    color:'#818cf8', colorBg:'rgba(129,140,248,0.13)',
+    ambientA:'rgba(129,140,248,0.09)', ambientB:'rgba(244,114,182,0.05)',
+    title:'Registren en segundos,\ncon voz, foto o texto',
+    desc:'',
+    Mock: VoiceDemo, useLogo:null,
+  }
+]
+
+/* ══════════════════════════════════════════
+   SCREEN COMPONENT
+   ══════════════════════════════════════════ */
+function Screen({ data, dir, page, total, onNext, onPrev, onSkip, theme }) {
+  const { Mock } = data
+  const isLast = page === total - 1
+
+  const logoSrc = data.useLogo === '1' ? logo1(theme)
+                : data.useLogo === '3' ? logo3(theme)
+                : null
+
+  return (
+    <motion.div custom={dir} variants={containerV}
+      initial="hidden" animate="show" exit="exit"
+      className="screen-bg"
+      drag="x"
+      dragConstraints={{ left:0, right:0 }}
+      dragElastic={{ left:.12, right:.12 }}
+      dragMomentum={false}
+      onDragEnd={(_, { offset, velocity }) => {
+        if (offset.x < -40 || velocity.x < -600) onNext()
+        else if (offset.x > 40 || velocity.x > 600) onPrev()
+      }}
+      style={{ position:'absolute', inset:0, display:'flex', flexDirection:'column', overflow:'hidden', touchAction:'pan-y' }}
+    >
+      {!isLast && (
+        <motion.button
+          initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:.6 }}
+          onClick={onSkip}
+          style={{ position:'absolute', top:14, right:14, zIndex:100,
+            background:'none', border:'none', color:'var(--mu)', fontSize:12, fontWeight:600,
+            fontFamily:"'Plus Jakarta Sans',sans-serif", cursor:'pointer',
+            padding:'4px 10px', borderRadius:8, backdropFilter:'blur(8px)' }}>
+          Saltar
+        </motion.button>
+      )}
+      <div style={{ flex:1, overflowY:'hidden', padding:'50px 20px 0',
+        display:'flex', flexDirection:'column', alignItems:'center' }}>
+        {logoSrc ? (
+          <motion.img custom={dir} variants={itemV}
+            src={logoSrc} alt="Nido"
+            style={{
+              width: data.useLogo === '1' ? 130 : 78,
+              marginBottom:14, objectFit:'contain',
+              filter: data.useLogo === '3' ? 'drop-shadow(0 0 12px rgba(52,211,153,.25))' : 'none',
+            }}
+          />
+        ) : data.icon ? (
+          <motion.div custom={dir} variants={itemV}
+            style={{ width:68,height:68,borderRadius:20, background:data.colorBg,
+              border:`1px solid ${data.color}44`, display:'flex',alignItems:'center',
+              justifyContent:'center', fontSize:30, marginBottom:18 }}>
+            {data.icon}
+          </motion.div>
+        ) : null}
+        {!data.hideTitle && (
+          <motion.h2 custom={dir} variants={itemV}
+            style={{ fontSize:20, fontWeight:800, letterSpacing:'-.3px',
+              textAlign:'center', lineHeight:1.22, marginBottom:8,
+              whiteSpace:'pre-line', color:'var(--tx)' }}>
+            {data.title}
+          </motion.h2>
+        )}
+        {data.desc && (
+          <motion.p custom={dir} variants={itemV}
+            style={{ fontSize:12.5, color:'var(--mu)', textAlign:'center', lineHeight:1.65, maxWidth:220 }}>
+            {data.desc}
+          </motion.p>
+        )}
+        <Mock dir={dir} theme={theme} />
+        <div style={{ minHeight:8 }} />
+      </div>
+      <motion.div custom={dir} variants={itemV}
+        style={{ padding:'12px 22px 26px',
+          background:`linear-gradient(to top, var(--nav-grad) 55%, transparent)`,
+          display:'flex', flexDirection:'column', alignItems:'center', gap:12, flexShrink:0 }}>
+        <div className="dots">
+          {screens.map((_,i) => (
+            <motion.div key={i} className="dot"
+              animate={{ width: i === page ? 20 : 6 }}
+              transition={{ type:'spring', stiffness:500, damping:36 }}>
+              {i === page && (
+                <motion.div layoutId="dot-pip"
+                  style={{ position:'absolute', inset:0, background:'var(--pk)', borderRadius:99 }}
+                  transition={{ type:'spring', stiffness:500, damping:36 }}
+                />
+              )}
+            </motion.div>
+          ))}
+        </div>
+        <motion.button onClick={onNext}
+          whileTap={{ scale:.97 }} whileHover={{ scale:1.02 }}
+          style={{
+            width:'100%', padding:'14px 20px', borderRadius:16, border:'none', cursor:'pointer',
+            background: isLast
+              ? 'linear-gradient(90deg,#34d399 0%,#818cf8 100%)'
+              : 'linear-gradient(90deg,#f472b6 0%,#818cf8 50%,#f472b6 100%)',
+            backgroundSize:'200% auto',
+            animation: isLast ? 'none' : 'shimmer 3s linear infinite',
+            color:'white', fontFamily:"'Plus Jakarta Sans',sans-serif",
+            fontSize:14, fontWeight:700,
+            boxShadow: isLast ? '0 8px 28px rgba(52,211,153,.25)' : '0 8px 28px rgba(244,114,182,.25)',
+          }}>
+          {isLast
+            ? (window.dP ? '📲 Instalar App' : (window._isIOS && !window._isInStandalone ? 'Entrar a la App 🪺' : 'Empezar juntos 🪺'))
+            : 'Siguiente →'}
+        </motion.button>
+        {page > 0 && (
+          <button onClick={onPrev}
+            style={{ background:'none', border:'none', color:'var(--mu)', fontSize:12,
+              fontFamily:"'Plus Jakarta Sans',sans-serif", cursor:'pointer', padding:'2px 8px' }}>
+            ← Anterior
+          </button>
+        )}
+      </motion.div>
+    </motion.div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   APP — full-screen producción
+   ══════════════════════════════════════════ */
+function App() {
+  const [[page, dir], setPage] = useState([0, 0])
+  const [theme] = useState(
+    document.documentElement.getAttribute('data-theme') || 'dark'
+  )
+  const total = screens.length
+  const s = screens[page]
+
+  const finishOnboarding = useCallback(() => {
+    localStorage.setItem('nido_onboarding_v1', '1')
+    const wrapper = document.getElementById('ob-wrapper')
+    if (wrapper) {
+      wrapper.style.opacity = '0'
+      setTimeout(() => { if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper) }, 520)
+    }
+  }, [])
+
+  const go = useCallback((d) => {
+    const next = page + d
+    if (next < 0) return
+    if (next >= total) {
+      if (window.dP) {
+        window.dP.prompt()
+        window.dP.userChoice.then(() => finishOnboarding())
+      } else {
+        finishOnboarding()
+      }
+      return
+    }
+    setPage([next, d])
+  }, [page, total, finishOnboarding])
+
+  useEffect(() => {
+    const el = document.getElementById('ob-ambient')
+    if (el) el.style.background = theme === 'dark'
+      ? `radial-gradient(ellipse 70% 50% at 15% 20%,${s.ambientA} 0%,transparent 60%),
+         radial-gradient(ellipse 60% 45% at 85% 80%,${s.ambientB} 0%,transparent 60%)`
+      : ''
+  }, [page, theme])
+
+  return (
+    <AnimatePresence initial={false} custom={dir} mode="wait">
+      <Screen key={s.id} data={s} dir={dir}
+        page={page} total={total}
+        onNext={() => go(1)} onPrev={() => go(-1)}
+        onSkip={() => go(total - 1 - page)}
+        theme={theme} />
+    </AnimatePresence>
+  )
+}
+
+createRoot(document.getElementById('ob-root')).render(<App />)
+</script>
 
 <!-- ══ SPLASH SCREEN ══ -->
 <div id="splash">
@@ -1502,20 +2212,37 @@ svg.lucide{
       </div>
 
       <div class="card">
-        <!-- ── IA: Icon Card buttons ── -->
-        <div class="icard-row">
-          <button type="button" class="icard-btn mic" id="btn-voice-ai" onclick="startVoiceInput()">
-            <div class="icard-icon-wrap" id="btn-voice-ai-icon"><i class="bi bi-mic-fill"></i></div>
-            <span class="icard-label" id="btn-voice-ai-label">Por voz</span>
-          </button>
-          <button type="button" class="icard-btn cam" id="btn-scan-ai" onclick="startAIScan()">
-            <div class="icard-icon-wrap" id="btn-scan-ai-icon"><i class="bi bi-camera-fill"></i></div>
-            <span class="icard-label" id="btn-scan-ai-label">Escanear</span>
-          </button>
-          <button type="button" class="icard-btn att" id="receipt-attach-btn" onclick="onReceiptAttachClick()">
-            <div class="icard-icon-wrap"><i class="bi bi-paperclip"></i></div>
-            <span class="icard-label" id="receipt-attach-label">Adjuntar factura</span>
-          </button>
+        <!-- ── IA: Panel unificado premium ── -->
+        <div class="nido-ai-panel-wrap">
+          <div class="nido-ai-panel-border" id="nido-ai-panel-border">
+            <div class="nido-ai-sweep" id="nido-ai-sweep"></div>
+            <div class="nido-ai-panel">
+              <!-- Voz -->
+              <button type="button" class="nido-ai-zone mic" id="btn-voice-ai" onclick="startVoiceInput()">
+                <div class="nido-ai-icon">
+                  <div class="nido-ai-icon-inner" id="btn-voice-ai-icon"><i class="bi bi-mic-fill"></i></div>
+                </div>
+                <span class="nido-ai-label-text" id="btn-voice-ai-label">Por voz</span>
+              </button>
+              <div class="nido-ai-divider"></div>
+              <!-- Escanear -->
+              <button type="button" class="nido-ai-zone scan" id="btn-scan-ai" onclick="startAIScan()">
+                <div class="nido-ai-icon">
+                  <div class="nido-ai-icon-inner" id="btn-scan-ai-icon"><i class="bi bi-camera-fill"></i></div>
+                  <div class="nido-ai-laser" id="nido-ai-laser"></div>
+                </div>
+                <span class="nido-ai-label-text" id="btn-scan-ai-label">Escanear</span>
+              </button>
+              <div class="nido-ai-divider"></div>
+              <!-- Adjuntar -->
+              <button type="button" class="nido-ai-zone att" id="receipt-attach-btn" onclick="onReceiptAttachClick()">
+                <div class="nido-ai-icon">
+                  <div class="nido-ai-icon-inner"><i class="bi bi-paperclip"></i></div>
+                </div>
+                <span class="nido-ai-label-text" id="receipt-attach-label">Adjuntar factura</span>
+              </button>
+            </div>
+          </div>
         </div>
         <div class="ai-chip" id="ai-status-chip">
           <i class="bi bi-stars"></i>
@@ -2366,7 +3093,7 @@ async function addRecurrente(){
     toggleRecurrenteForm();
     renderRecurrentes();
     toast(`✅ Recurrente '${nombre}' agregado`);
-  }catch(e){ toast("⚠️ Error: "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 async function deleteRecurrente(id){
   const existing=curCouple?.recurrentes||[];
@@ -2380,7 +3107,7 @@ async function deleteRecurrente(id){
     if(curCouple) curCouple.recurrentes=updated;
     renderRecurrentes();
     toast("Recurrente eliminado");
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 async function toggleRecurrente(id){
   const existing=curCouple?.recurrentes||[];
@@ -2391,7 +3118,7 @@ async function toggleRecurrente(id){
     renderRecurrentes();
     const rec=updated.find(r=>r.id===id);
     toast(rec?.activo===false?"⏸ Recurrente pausado":"▶ Recurrente activado");
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 async function registrarRecurrente(id){
   const existing=curCouple?.recurrentes||[];
@@ -2412,7 +3139,7 @@ async function registrarRecurrente(id){
     if(curCouple) curCouple.recurrentes=updatedRecs;
     renderRecurrentes();
     toast(`✅ '${r.nombre}' registrado como gasto de ${fmtMesRec(fecha)}`);
-  }catch(e){ toast("⚠️ Error: "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 /* ── Emoji picker ── */
@@ -2691,9 +3418,8 @@ function renderCreatorColorPicker(){
 
 /* ── Load Firebase libs ── */
 function loadFirebase(){
-  console.log("loadFirebase: starting...");
   return new Promise(res=>{
-    if(typeof firebase!=="undefined"){console.log("Firebase already loaded");initFB();res(db!==null);return;}
+    if(typeof firebase!=="undefined"){initFB();res(db!==null);return;}
     let loaded=0;
     const libs=[
       "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
@@ -2711,17 +3437,16 @@ function loadFirebase(){
 }
 
 function initFB(){
-  console.log("initFB: initializing...");
   try{
     if(!firebase.apps.length) firebase.initializeApp(FB_CFG);
     db   = firebase.firestore();
     auth = firebase.auth();
-    console.log("initFB: OK — db and auth ready");
     fbAuth = firebase.auth;
     db.enablePersistence({synchronizeTabs:true}).catch(err=>{
-      if(err.code==="failed-precondition") console.warn("Persistencia: múltiples pestañas");
-      else if(err.code==="unimplemented")  console.warn("Persistencia: no soportada");
+      if(err.code==="failed-precondition") console.warn("Persistencia: múltiples pestañas — solo una pestaña activa usa caché offline");
+      else if(err.code==="unimplemented")  console.warn("Persistencia: navegador no soporta IndexedDB offline");
     });
+    // Nota: db.settings() no se puede llamar aquí (debe ir antes de enablePersistence)
   }catch(e){db=null;auth=null;}
 }
 
@@ -2763,7 +3488,6 @@ function startAuthObserver(){
 
 /* ── After successful sign-in ── */
 async function onUserSignedIn(user){
-  console.log("onUserSignedIn:", user.uid, user.email);
   // Ensure user profile doc exists
   const profRef = db.collection("users").doc(user.uid);
   const profSnap = await profRef.get();
@@ -3033,7 +3757,6 @@ function enterAppUI(cid){
 
 async function enterCouple(cid){
   coupleId = cid;
-  console.log("enterCouple:", cid);
   showAuthLoading(true);
   try{
     const coupleSnap = await db.collection("couples").doc(cid).get();
@@ -3206,22 +3929,34 @@ async function dbDel(id){
 
 /* ── Listeners ── */
 function startListen(){
-  console.log("startListen: db=", !!db, "coupleId=", coupleId);
   if(!db||!coupleId)return;
   if(unsub)unsub();
   unsub=coupleCol("gastos").orderBy("ts","desc").onSnapshot(snap=>{
-    console.log("gastos snapshot:", snap.docs.length, "docs");
     gastos=snap.docs.map(d=>({id:d.id,...d.data()}));
     render(); setSdot(true);
+    // Conexión recuperada — ocultar banner offline si estaba visible
+    if(window.handleFbError && !navigator.onLine===false){
+      var b=document.getElementById("offline-banner");
+      if(b) b.classList.remove("show");
+    }
   },err=>{
-    console.error("gastos snapshot error:", err.code, err.message);
+    console.warn("gastos snapshot error:", err.code, err.message);
     setSdot(false);
+    // Mostrar banner offline en lugar de toast si es error de red
+    if(window.fbErrIsTransient && window.fbErrIsTransient(err)){
+      var b=document.getElementById("offline-banner");
+      if(b) b.classList.add("show");
+    }
   });
   // Escuchar cambios del doc de la pareja (salarios, props, avatars)
   if(coupleId){
     db.collection("couples").doc(coupleId).onSnapshot(snap=>{
       if(snap.exists){ curCouple={id:coupleId,...snap.data()}; onCoupleUpdated(); }
-    },()=>{});
+    },err=>{
+      // Silenciar errores transitorios del doc de pareja
+      if(window.fbErrIsTransient && !window.fbErrIsTransient(err))
+        console.warn("couple doc listener:", err.code);
+    });
   }
   seedFirebase();
   startListenViajes();
@@ -3384,15 +4119,12 @@ $("btn-crear-pareja").addEventListener("click",async()=>{
       createdAt: now,
       isLegacy: false
     };
-    console.log("Creando sala:", coupleName);
     const ref=await db.collection("couples").add(coupleData);
     const newCoupleId=ref.id;
-    console.log("Sala creada:", newCoupleId);
 
     // Guardar lookup público — si falla por permisos no es bloqueante
     try{
       await db.collection("invite_codes").doc(code).set({coupleId: newCoupleId, createdAt: Date.now()});
-      console.log("invite_codes guardado");
     }catch(ie){
       console.warn("invite_codes write failed (revisa reglas Firestore):", ie.message);
     }
@@ -3401,13 +4133,11 @@ $("btn-crear-pareja").addEventListener("click",async()=>{
     const newCouples=[...(myProfile.couples||[]),newCoupleId];
     try{
       await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
-      console.log("user profile updated");
     }catch(ue){
       console.warn("user update failed:", ue.message);
     }
     myProfile.couples=newCouples;
 
-    console.log("Entrando a la sala...");
     await enterCouple(newCoupleId);
     showInviteToast(code);
   }catch(e){
@@ -3476,11 +4206,9 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
   if(!window._pendingJoin){
     try{
       const saved=sessionStorage.getItem("nido_pending_join");
-      console.log("[Nido] _pendingJoin en memoria: null — sessionStorage:", saved);
       if(saved) window._pendingJoin=JSON.parse(saved);
     }catch(e){ console.error("[Nido] Error restaurando _pendingJoin:", e); }
   } else {
-    console.log("[Nido] _pendingJoin en memoria OK, cid:", window._pendingJoin?.cid);
   }
   const chosenColor=window._selectedAvatarColor||AVATAR_COLORS[0];
   try{
@@ -3769,7 +4497,7 @@ $("btn-save").addEventListener("click",async()=>{
     $("f-desc").value=""; $("f-val").value=""; $("f-fec").value=mesHoy();
     $("f-cat").value="Hogar"; setSplit(50); updatePrev();
     $("f-desc").focus();
-  }catch(e){ toast("⚠️ Error: "+e.message); }
+  }catch(e){ handleErr(e); }
   finally{ btn.textContent="Guardar gasto ✓"; btn.style.opacity="1"; }
 });
 
@@ -3872,7 +4600,7 @@ async function aceptarGasto(id){
     toast("✅ Gasto aceptado — ya está en el balance");
     pushOtro("✅ Tu gasto fue validado",
       `${myProfile?.displayName||"Tu pareja"} aceptó "${esc(g.desc)}" (${fmt(g.valor)})`);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 async function rechazarGasto(id){
@@ -3891,7 +4619,7 @@ async function rechazarGasto(id){
     toast("❌ Gasto rechazado y eliminado");
     pushOtro("❌ Tu gasto fue rechazado",
       `${myProfile?.displayName||"Tu pareja"} rechazó "${esc(g.desc)}" (${fmt(g.valor)})`);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 async function cancelarGastoPendiente(id){
@@ -3906,7 +4634,7 @@ async function cancelarGastoPendiente(id){
   try{
     await dbDel(id);
     toast("🗑 Gasto cancelado");
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 async function eliminar(id){
@@ -3919,7 +4647,7 @@ async function eliminar(id){
   });
   if(!ok) return;
   try{ await dbDel(id); toast("🗑 Eliminado"); }
-  catch(e){ toast("⚠️ "+e.message); }
+  catch(e){ handleErr(e); }
 }
 
 /* ══ OCULTAR/MOSTRAR MONTOS — botón 👁 ══ */
@@ -3962,9 +4690,16 @@ function updateUltimoBanner(){
   const mm=String(dt.getMonth()+1).padStart(2,"0");
   const yy=String(dt.getFullYear()).slice(2);
   const fechaStr=dd+"-"+mm+"-"+yy;
-  banner.innerHTML='⏰ <b>Último registro:</b> '+esc(last.desc)+' · <b>'+fmt(last.valor)+'</b> · '+pN+' · '+fechaStr;
+  const shortDesc = last.desc.length > 20 ? last.desc.slice(0,20)+'…' : last.desc;
+  banner.innerHTML =
+    '<span style="font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ac);display:block;margin-bottom:2px">Último registro</span>' +
+    '<span style="font-weight:700;color:var(--tx);font-size:13px">'+esc(shortDesc)+'</span>' +
+    '<span style="color:var(--mu);font-size:11px;margin-top:1px;display:block">'+
+      fmt(last.valor)+' · '+esc(pN)+' · '+fechaStr+
+    '</span>';
   banner.style.display="flex";
-  banner.style.alignItems="center";
+  banner.style.alignItems="flex-start";
+  banner.style.flexDirection="column";
 }
 
 function getMonths(){
@@ -4627,19 +5362,91 @@ document.querySelectorAll(".ntab").forEach(btn=>{
 $("flt-mes").addEventListener("change",renderTx);
 $("flt-per").addEventListener("change",renderTx);
 
-/* ── U6: Offline / online banner ── */
+/* ── U6: Offline / online banner + manejo inteligente de errores Firebase ── */
 (function(){
   const banner=$("offline-banner");
+  let _fbOfflineTimer=null;
+
+  // Códigos de error transitorios de Firestore — NO muestran toast al usuario
+  var TRANSIENT_CODES = ['unavailable','deadline-exceeded','internal','resource-exhausted','cancelled','aborted'];
+
+  /**
+   * Clasifica si un error de Firebase/Firestore es transitorio (de red)
+   * o real (permisos, datos incorrectos, etc.)
+   */
+  window.fbErrIsTransient = function(e){
+    if(!e) return false;
+    var code = e.code || '';
+    return TRANSIENT_CODES.some(function(c){ return code.indexOf(c) !== -1; })
+        || (e.message||'').toLowerCase().indexOf('network') !== -1
+        || (e.message||'').toLowerCase().indexOf('connection') !== -1
+        || (e.message||'').toLowerCase().indexOf('offline') !== -1;
+  };
+
+  /**
+   * Maneja un error de operación Firestore de forma inteligente:
+   * - Si es transitorio: muestra el banner offline, NO el toast
+   * - Si es real (permisos, etc.): muestra el toast con mensaje claro
+   */
+  window.handleFbError = function(e, fallbackMsg){
+    if(window.fbErrIsTransient(e)){
+      setOffline(true);
+      // Se auto-oculta cuando vuelve la conexión (evento online)
+      return;
+    }
+    // Error real — mostrar mensaje limpio sin stack técnico
+    var msg = fallbackMsg || '⚠️ ' + (e.message || 'Error desconocido');
+    if((e.code||'').indexOf('permission-denied') !== -1)
+      msg = '⚠️ Sin permisos para esta operación';
+    if((e.code||'').indexOf('not-found') !== -1)
+      msg = '⚠️ Dato no encontrado';
+    toast(msg);
+  };
+
   function setOffline(offline){
     if(!banner) return;
-    if(offline){ banner.classList.add("show"); }
-    else { banner.classList.remove("show"); }
+    if(offline){
+      banner.classList.add("show");
+      // Auto-ocultar después de 8s por si el evento 'online' no llega
+      clearTimeout(_fbOfflineTimer);
+      _fbOfflineTimer = setTimeout(function(){ banner.classList.remove("show"); }, 8000);
+    } else {
+      clearTimeout(_fbOfflineTimer);
+      banner.classList.remove("show");
+    }
   }
-  window.addEventListener("offline",()=>setOffline(true));
-  window.addEventListener("online", ()=>setOffline(false));
-  // Check initial state in case page loaded offline
+
+  window.addEventListener("offline", ()=>setOffline(true));
+  window.addEventListener("online",  ()=>setOffline(false));
   if(!navigator.onLine) setOffline(true);
+
+  // Detectar reconexión de Firebase cuando el browser dice online
+  // pero Firestore aún no ha reconectado (gap de ~2-3s)
+  window.addEventListener("online", function(){
+    setTimeout(function(){ setOffline(false); }, 2500);
+  });
 })();
+
+/* ── handleErr: reemplaza catch(e){toast(e.message)} en toda la app ── */
+window.handleErr = function(e, ctx) {
+  if(!e) return;
+  // Error de red / transitorio → banner silencioso
+  if(window.fbErrIsTransient && window.fbErrIsTransient(e)){
+    var b = document.getElementById("offline-banner");
+    if(b) b.classList.add("show");
+    console.warn((ctx||'Firebase')+':', e.code||e.message);
+    return;
+  }
+  // Error real → toast limpio sin stack técnico
+  var msg = '⚠️ ';
+  var code = (e.code||'');
+  if(code.indexOf('permission-denied') !== -1)   msg += 'Sin permisos para esta operación';
+  else if(code.indexOf('not-found') !== -1)       msg += 'Dato no encontrado';
+  else if(code.indexOf('already-exists') !== -1)  msg += 'Ya existe ese registro';
+  else if(code.indexOf('invalid-argument') !== -1)msg += 'Datos inválidos';
+  else msg += (e.message || 'Error desconocido');
+  toast(msg);
+};
 
 /* ══ EXPORT — filas filtradas compartidas ══ */
 function getExportRows(){
@@ -5633,7 +6440,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 async function initFCM(){
   if(!USE_PUSH){ console.warn("[Push] USE_PUSH=false, desactivado"); return; }
   try{
-    console.log("[Push] Iniciando OneSignal con appId:", OS_APP_ID);
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal){
       await OneSignal.init({
@@ -5641,21 +6447,17 @@ async function initFCM(){
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
       });
-      console.log("[Push] OneSignal inicializado ✓");
 
       // Escuchar cambio de suscripción y guardar subscription ID en Firestore
       OneSignal.User.PushSubscription.addEventListener("change", async (e) => {
-        console.log("[Push] Cambio de suscripción:", e.current);
         if(e.current.optedIn && e.current.id){
-          console.log("[Push] Suscrito ✓ ID:", e.current.id);
           toast("🔔 Notificaciones activadas ✓");
           if(db && curUser){
             await db.collection("os_tokens").doc(curUser).set({
               subscriptionId: e.current.id,
               user: curUser,
               updatedAt: Date.now()
-            }).then(()=>console.log("[Push] Token guardado en Firestore ✓"))
-              .catch(err=>console.error("[Push] Error guardando token:", err));
+            }).catch(err=>console.error("[Push] Error guardando token:", err));
           }
         } else {
           console.warn("[Push] No suscrito o sin ID:", e.current);
@@ -5664,14 +6466,13 @@ async function initFCM(){
 
       // Guardar subscription ID si ya está suscrito
       const sub = OneSignal.User.PushSubscription;
-      console.log("[Push] Estado suscripción actual → optedIn:", sub.optedIn, "| id:", sub.id);
       const osUid2=myProfile?.uid||curUser;
       if(sub.optedIn && sub.id && db && osUid2){
         await db.collection("os_tokens").doc(osUid2).set({
           subscriptionId: sub.id,
           user: osUid2,
           updatedAt: Date.now()
-        }).then(()=>{ console.log("[Push] Token existente guardado en Firestore ✓"); toast("🔔 Push listo ✓"); })
+        }).then(()=>{ toast("🔔 Push listo ✓"); })
           .catch(err=>console.error("[Push] Error guardando token existente:", err));
       } else if(!sub.optedIn){
         console.warn("[Push] Usuario no ha dado permiso de notificaciones");
@@ -6083,7 +6884,6 @@ window.activarPremiumTest = async function(dias=30, plan='mensual'){
   if(curCouple){ curCouple.premium=true; curCouple.premiumExpiry=expiry; curCouple.premiumPlan=planType; }
   updatePremiumBadges();
   if(typeof populateSettings==='function' && document.getElementById('settings-drawer')?.classList.contains('open')) populateSettings();
-  console.log('[Nido] Premium activado:', planType, dias===0?'permanente':dias+' dias');
   if(typeof toast==='function') toast('💎 de prueba activado ('+planType+')');
 };
 window.desactivarPremiumTest = async function(){
@@ -6091,7 +6891,6 @@ window.desactivarPremiumTest = async function(){
   await db.collection('couples').doc(coupleId).update({premium:false,premiumExpiry:null});
   if(curCouple){ curCouple.premium=false; }
   updatePremiumBadges();
-  console.log('[Nido] Premium desactivado');
   if(typeof toast==='function') toast('Premium desactivado');
 };
 function updatePremiumBadges(){
@@ -7038,7 +7837,7 @@ async function saveCoupleName(){
     populateSettings();
     toast("✅ Sala renombrada");
     pushOtro("✏️ Sala renombrada",myProfile.displayName+" cambió el nombre a: "+name);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 // (delegated above)
 
@@ -7062,7 +7861,7 @@ async function startEditPass(){
   try{
     await auth.sendPasswordResetEmail(auth.currentUser.email);
     toast("📧 Email enviado a "+auth.currentUser.email);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 /* ── Theme toggle from settings ── */
@@ -7302,7 +8101,7 @@ async function saveMonedaSala(){
     renderSalaMoneda();
     closeMonedaEdit();
     toast(`✅ Moneda cambiada a ${MONEDAS[newMon]?.flag} ${newMon}`);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 function updateSalaStatus(){
@@ -7430,7 +8229,7 @@ async function toggleProp(which){
     await db.collection("couples").doc(coupleId).update({props});
     curCouple.props=props;
     renderProportions();
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 /* ── Split options en form de gastos ── */
@@ -7486,7 +8285,7 @@ async function saveMySalary(){
     updateSalaStatus();
     toast("✅ Ingresos guardados");
     pushOtro("💰 Ingresos actualizados",myProfile.displayName+" actualizó sus ingresos");
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 document.addEventListener("input",e=>{
   if(["salary-input","onb-salary","new-couple-salary"].includes(e.target?.id)){
@@ -7601,7 +8400,7 @@ async function saveMyAvatar(){
     if(curPag) setPag(curPag);                       // badge "Agregar gasto"
     if(curViaje) renderViajeDetalle();               // detalle de viaje si está abierto
     toast("✅ Avatar actualizado");
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 /* ── Sala name ── */
@@ -7624,7 +8423,7 @@ async function saveSalaName(){
     document.title="🤝 "+name;
     toast("✅ Nombre actualizado");
     pushOtro("✏️ Sala renombrada",myProfile.displayName+" cambió el nombre a: "+name);
-  }catch(e){ toast("⚠️ "+e.message); }
+  }catch(e){ handleErr(e); }
 }
 
 /* ── onCoupleUpdated ── */
@@ -8049,14 +8848,16 @@ const _origOpenSettings=openSettings;
 document.addEventListener("DOMContentLoaded",()=>{ lockInit(); });
 
 /* ══ PWA INSTALL BANNER ══ */
-let dP=null;
-const _isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-const _isInStandalone=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+window.dP=null; let dP=window.dP;
+window._isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+const _isIOS=window._isIOS;
+window._isInStandalone=window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+const _isInStandalone=window._isInStandalone;
 
 // Android / Chrome: beforeinstallprompt
 window.addEventListener("beforeinstallprompt",e=>{
   e.preventDefault();
-  dP=e;
+  window.dP=e; dP=e;
   if(!_isInStandalone && !sessionStorage.getItem("install-dismissed")){
     $("install-banner").style.display="flex";
   }
@@ -8605,7 +9406,7 @@ async function _callGemini(prompt, imageBase64) {
                  data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
                  data.candidates[0].content.parts[0].text;
       if (!text) throw new Error('Respuesta vacía de Gemini');
-      _logAIUsage(imageBase64 ? 'scan' : 'voice', data.usageMetadata);
+      _logAIUsage(imageBase64 ? 'scan' : 'voice', data.usageMetadata, 'gemini');
       var cleaned = text.trim();
       // 1. Quitar fences markdown (``` json ... ```)
       if (cleaned.includes('```')) {
@@ -8652,11 +9453,14 @@ async function _callGemini(prompt, imageBase64) {
 }
 
 // ── Fallback IA: Groq (OpenAI-compatible) ──────────────────
-async function _callGroq(prompt, imageBase64) {
+// logType: 'voice' | 'scan' | 'analysis' (auto si no se pasa)
+async function _callGroq(prompt, imageBase64, logType) {
   var apiKey = (window._appConfig || {}).groq_api_key;
   if (!apiKey) throw new Error('Groq no configurado');
 
+  var type    = logType || (imageBase64 ? 'scan' : 'voice');
   var model   = imageBase64 ? 'meta-llama/llama-4-scout-17b-16e-instruct' : 'llama-3.3-70b-versatile';
+  var maxTok  = (type === 'analysis') ? 2048 : (imageBase64 ? 512 : 300);
   var content = imageBase64
     ? [{ type:'image_url', image_url:{ url: imageBase64 } }, { type:'text', text: prompt }]
     : prompt;
@@ -8665,7 +9469,7 @@ async function _callGroq(prompt, imageBase64) {
     model:       model,
     messages:    [{ role:'user', content: content }],
     temperature: 0.1,
-    max_tokens:  imageBase64 ? 512 : 300
+    max_tokens:  maxTok
   };
   if (!imageBase64) bodyObj.response_format = { type:'json_object' };
 
@@ -8684,9 +9488,12 @@ async function _callGroq(prompt, imageBase64) {
   var text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
   if (!text) throw new Error('Respuesta vacía de Groq');
 
+  var tokens = (data.usage && data.usage.total_tokens) || 0;
+  _logAIUsage(type, tokens, 'groq');
+
   try { return JSON.parse(text); } catch(e) {
-    var m = text.match(/\{[^{}]*\}/);
-    if (m) try { return JSON.parse(m[0]); } catch(e2) {}
+    var jsonMatch = text.match(/\{[^{}]*\}/);
+    if (jsonMatch) try { return JSON.parse(jsonMatch[0]); } catch(e2) {}
     throw new Error('Groq: respuesta no es JSON válido');
   }
 }
@@ -8733,6 +9540,22 @@ function _fillFormFromAI(parsed) {
   }
   if (parsed.categoria && CATI[parsed.categoria]) $('f-cat').value = parsed.categoria;
   updatePrev();
+}
+
+// ── Efecto de barrido de luz en el borde del panel ─────────
+function _triggerAISweep(type) {
+  var sweep  = document.getElementById('nido-ai-sweep');
+  var border = document.getElementById('nido-ai-panel-border');
+  if (!sweep || !border) return;
+  sweep.classList.remove('active','voice','scan');
+  border.classList.remove('voice-glow','scan-glow');
+  void sweep.offsetWidth; void border.offsetWidth; // force reflow
+  sweep.classList.add('active', type);
+  border.classList.add(type + '-glow');
+  setTimeout(function() {
+    sweep.classList.remove('active','voice','scan');
+    border.classList.remove('voice-glow','scan-glow');
+  }, 2000);
 }
 
 // ── Chip de estado visual ───────────────────────────────────
@@ -8796,8 +9619,9 @@ async function _saveFromVoice() {
   if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
 
   try {
-    var desc = p.descripcion || 'Gasto';
-    var val  = Math.round(p.monto);
+    // Sanitización: texto plano sin HTML, número entero, categoría de lista cerrada
+    var desc = String(p.descripcion || 'Gasto').replace(/<[^>]*>/g,'').trim().slice(0, 80) || 'Gasto';
+    var val  = Math.abs(Math.round(Number(p.monto)));
     var cat  = (typeof CATI !== 'undefined' && CATI[p.categoria]) ? p.categoria : 'Otro';
     var fec  = typeof mesHoy === 'function' ? mesHoy() : '';
     var parts = fec.split('-');
@@ -8882,6 +9706,7 @@ async function startVoiceInput() {
       if (ico) ico.innerHTML = '<i class="bi bi-stop-circle-fill"></i>';
       if (lbl) lbl.textContent = 'Parar';
     }
+    _triggerAISweep('voice');
     _dismissVoiceConfirm();
     _aiChip('🎤 Di el gasto, valor y cómo dividirlo…', true);
   };
@@ -9167,7 +9992,7 @@ async function _callGeminiAnalysis(prompt) {
                  data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
                  data.candidates[0].content.parts[0].text;
       if (!text) throw new Error('Respuesta vacía');
-      _logAIUsage('analysis', data.usageMetadata);
+      _logAIUsage('analysis', data.usageMetadata, 'gemini');
       // Parser defensivo: reparar JSON truncado si es necesario
       try {
         return JSON.parse(text);
@@ -9181,20 +10006,31 @@ async function _callGeminiAnalysis(prompt) {
       }
     } catch(e) { lastErr = e; }
   }
+  // Fallback a Groq para análisis si la cuota Gemini está agotada
+  if (lastErr && (window._appConfig || {}).groq_api_key) {
+    var em2 = lastErr.message || '';
+    if (em2.indexOf('quota') !== -1 || em2.indexOf('Quota') !== -1) {
+      return _callGroq(prompt, null, 'analysis');
+    }
+  }
   throw lastErr || new Error('No se pudo conectar con Gemini');
 }
 
 // ── Log de uso IA → users/{uid}.ai_uses (fire-and-forget) ─
-function _logAIUsage(type, usageMeta) {
+// usageOrTokens: objeto {totalTokenCount} (Gemini) o número directo (Groq)
+// provider: 'gemini' | 'groq'
+function _logAIUsage(type, usageOrTokens, provider) {
   try {
-    var tokens = (usageMeta && usageMeta.totalTokenCount) || 0;
+    provider = provider || 'gemini';
+    var tokens = typeof usageOrTokens === 'number'
+      ? usageOrTokens
+      : ((usageOrTokens && usageOrTokens.totalTokenCount) || 0);
     if (!db || !myProfile || !myProfile.uid) return;
-    var mk  = new Date().toISOString().slice(0, 7); // "2026-05"
+    var mk  = new Date().toISOString().slice(0, 7);
+    var pfx = 'ai_uses.' + provider + '_' + type + '_' + mk;
     var upd = {};
-    upd['ai_uses.' + type + '_' + mk + '_tok'] = firebase.firestore.FieldValue.increment(tokens || 0);
-    if (type === 'analysis') {
-      upd['ai_uses.analysis_' + mk] = firebase.firestore.FieldValue.increment(1);
-    }
+    upd[pfx + '_calls'] = firebase.firestore.FieldValue.increment(1);
+    upd[pfx + '_tok']   = firebase.firestore.FieldValue.increment(tokens || 0);
     db.collection('users').doc(myProfile.uid).update(upd).catch(function() {});
   } catch(e) {}
 }
@@ -9292,7 +10128,6 @@ function _detectMonedaDeTexto(text) {
   var raw = text || '';
   // Normalización Unicode robusta (quita tildes y diacríticos)
   var t = raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  console.log('[Nido voz] transcript:', raw, '| normalizado:', t);
 
   // Palabras explícitas
   if (/dol[ae]r|usd/.test(t))  return 'USD';
@@ -9321,7 +10156,6 @@ function _setVMonedaForce(moneda) {
     return '<option value="' + o[0] + '"' + (o[0] === moneda ? ' selected' : '') + '>' + o[1] + '</option>';
   }).join('');
   updateVMonedaPrefix();
-  console.log('[Nido voz] Moneda aplicada:', moneda, '→ sel.value =', sel.value);
 }
 
 function startVoiceInputViaje() {
@@ -9430,8 +10264,7 @@ function startAIScan() {
     var btn = document.getElementById('btn-scan-ai');
     if (btn) {
       btn.classList.add('ai-loading');
-      var ico = document.getElementById('btn-scan-ai-icon');
-      if (ico) ico.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+      _triggerAISweep('scan'); // laser CSS + borde glow
     }
     _aiChip('📷 Leyendo factura con Gemini Vision…', true);
 
@@ -9468,12 +10301,8 @@ function startAIScan() {
       _aiChip('', false);
       toast('⚠️ ' + err.message);
     } finally {
-      if (btn) {
-        btn.classList.remove('ai-loading');
-        var ico = document.getElementById('btn-scan-ai-icon');
-        if (ico) ico.innerHTML = '<i class="bi bi-camera-fill"></i>';
-      }
-      _updateAIButtonCounters(); // restaura label con contador correcto
+      if (btn) btn.classList.remove('ai-loading');
+      _updateAIButtonCounters();
     }
   });
 })();
