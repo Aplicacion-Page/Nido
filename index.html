@@ -256,10 +256,10 @@ input,select,button{font-family:inherit}
 .user-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--bor2);flex-shrink:0}
 .user-avatar-placeholder{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;border:2px solid var(--bor2)}
 /* Profile card */
-.profile-card{background:var(--s2);border:1.5px solid var(--bor);border-radius:14px;padding:16px 14px;display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.profile-card{background:var(--s2);border:1.5px solid var(--bor);border-radius:14px;padding:18px 16px;display:flex;align-items:center;gap:16px;margin-bottom:18px}
 .profile-info{flex:1;min-width:0}
-.profile-name{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.profile-email{font-size:12px;color:var(--mu);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-name{font-weight:700;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-email{font-size:13px;color:var(--mu);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Toggle switch */
 .tog{position:relative;width:44px;height:24px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0;position:absolute}
@@ -576,7 +576,7 @@ input[inputmode="numeric"]::placeholder,
 .txav{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:transform .2s}
 .txi:hover .txav{transform:scale(1.08)}
 .txbody{flex:1;min-width:0}
-.txdesc{font-weight:600;font-size:15px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:break-word}
+.txdesc{font-weight:600;font-size:15px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;word-break:break-word}
 .txmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:11px;color:var(--mu)}
 .txr{text-align:right;flex-shrink:0}
 .txval{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px}
@@ -2200,9 +2200,9 @@ createRoot(document.getElementById('ob-root')).render(<App />)
 
     <!-- AGREGAR -->
     <div id="pnl-agregar" class="panel">
-      <div style="margin-bottom:12px">
-        <div class="stit">Nuevo gasto</div>
-        <div style="color:var(--mu);font-size:13px">Registra un gasto de cualquiera</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+        <div class="stit" style="margin-bottom:0">Nuevo gasto</div>
+        <div style="color:var(--mu);font-size:12px">Registra un movimiento de gasto</div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:12px;align-items:stretch">
         <div id="ultimo-gasto-banner" style="display:none;flex:2;background:var(--ac3);border:1px solid var(--ac2);border-radius:12px;padding:9px 12px;font-size:12px;color:var(--so);line-height:1.5;min-width:0;white-space:normal;word-break:break-word"></div>
@@ -5201,13 +5201,17 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
       $("catbars").style.display="none";
       const CLRS=['#f87171','#fb923c','#fbbf24','#4ade80','#22d3ee','#818cf8','#c084fc','#f472b6','#34d399','#60a5fa','#a3e635','#e879f9'];
       window._chartCat=new ApexCharts(chartCatEl,{
-        chart:{type:'donut',height:300,background:bg,toolbar:{show:false},fontFamily:font},
+        chart:{type:'donut',height:300,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
         series:catE.map(([,v])=>v),
         labels:catE.map(([c])=>catIcon(c)+' '+c),
         colors:CLRS.slice(0,catE.length),
         dataLabels:{enabled:false},
         legend:{position:'bottom',labels:{colors:textClr},fontSize:'11px'},
-        plotOptions:{pie:{donut:{size:'66%',labels:{show:true,total:{show:true,label:'Total',color:textClr,formatter:w=>'$'+Math.round(w.globals.seriesTotals.reduce((a,b)=>a+b,0)).toLocaleString('es-CO')}}}}},
+        plotOptions:{pie:{donut:{size:'66%',labels:{show:true,
+          name:{show:true,color:textClr},
+          value:{show:true,color:textClr,fontSize:'16px',fontWeight:700,formatter:v=>'$'+Math.round(parseFloat(v)).toLocaleString('es-CO')},
+          total:{show:true,label:'Total',color:textClr,formatter:w=>'$'+Math.round(w.globals.seriesTotals.reduce((a,b)=>a+b,0)).toLocaleString('es-CO')}
+        }}}},
         tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
         theme:{mode:isDk?'dark':'light'},
       });
@@ -5227,7 +5231,7 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
     const myData=mAsc.map(m=>{const[y,mo]=m.split('-');return gastos.filter(g=>g.anio==y&&g.mes==parseInt(mo)&&isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0);});
     const prtData=mAsc.map(m=>{const[y,mo]=m.split('-');return gastos.filter(g=>g.anio==y&&g.mes==parseInt(mo)&&!isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0);});
     window._chartHist=new ApexCharts(chartHistEl,{
-      chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font},
+      chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
       series:[{name:myName,data:myData,color:myColor},{name:prtName,data:prtData,color:prtColor}],
       xaxis:{categories:xLbls,labels:{style:{colors:textClr,fontSize:'10px'}},axisBorder:{show:false},axisTicks:{show:false}},
       yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+v}},
@@ -5279,7 +5283,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
     const myW =weeks.map(w=>gFiltrados.filter(g=>g.ts>=w.ms&&g.ts<w.me&& isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0));
     const prtW=weeks.map(w=>gFiltrados.filter(g=>g.ts>=w.ms&&g.ts<w.me&&!isPagMe(g.pagador)).reduce((s,g)=>s+g.valor,0));
     window._chartWeekly=new ApexCharts(weeklyEl,{
-      chart:{type:'line',height:200,background:bg,toolbar:{show:false},fontFamily:font},
+      chart:{type:'line',height:200,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
       series:[{name:myName,data:myW,color:myColor},{name:prtName,data:prtW,color:prtColor}],
       xaxis:{categories:weeks.map(w=>w.lbl),labels:{style:{colors:textClr,fontSize:'10px'}},axisBorder:{show:false},axisTicks:{show:false}},
       yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
@@ -5302,7 +5306,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
     const allCats=[...new Set([...Object.keys(catMy),...Object.keys(catPrt)])].sort((a,b)=>(catMy[b]||0)+(catPrt[b]||0)-(catMy[a]||0)-(catPrt[a]||0)).slice(0,6);
     if(allCats.length){
       window._chartCatPerson=new ApexCharts(catPersonEl,{
-        chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font},
+        chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
         series:[{name:myName,data:allCats.map(c=>catMy[c]||0),color:myColor},{name:prtName,data:allCats.map(c=>catPrt[c]||0),color:prtColor}],
         xaxis:{categories:allCats.map(c=>catIcon(c)+' '+c),labels:{style:{colors:textClr,fontSize:'9px'},rotate:-30,trim:true},axisBorder:{show:false},axisTicks:{show:false}},
         yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
@@ -5332,7 +5336,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
         else{prtAcum+=g.valor;prtPts.push({x:g.ts,y:Math.round(prtAcum)});}
       });
       window._chartAcum=new ApexCharts(acumEl,{
-        chart:{type:'area',height:200,background:bg,toolbar:{show:false},fontFamily:font},
+        chart:{type:'area',height:200,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
         series:[{name:myName,data:myPts,color:myColor},{name:prtName,data:prtPts,color:prtColor}],
         xaxis:{type:'datetime',labels:{style:{colors:textClr,fontSize:'10px'},datetimeFormatter:{month:'MMM yy',day:'dd MMM'}},axisBorder:{show:false},axisTicks:{show:false}},
         yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:fmtV}},
@@ -7542,7 +7546,7 @@ function populateSettings(){
 
   // Profile card
   const avatarWrap=$("set-avatar-wrap");
-  if(avatarWrap){ avatarWrap.innerHTML=""; const av=buildAvatar(myProfile,56,avatarWrap); if(av) avatarWrap.appendChild(av); }
+  if(avatarWrap){ avatarWrap.innerHTML=""; const av=buildAvatar(myProfile,68,avatarWrap); if(av) avatarWrap.appendChild(av); }
   const pn=$("set-profile-name"); if(pn) pn.textContent = myProfile.displayName||"Sin nombre";
   const pe=$("set-profile-email"); if(pe) pe.textContent = myProfile.email||"—";
   const ns=$("set-name-sub"); if(ns) ns.textContent = myProfile.displayName||"—";
@@ -9065,20 +9069,15 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
       <!-- PERFIL -->
       <div class="set-section">
         <div class="set-section-title">Mi perfil</div>
-        <div class="profile-card" id="set-profile-card">
+        <div class="profile-card" id="set-profile-card" style="cursor:pointer" onclick="startEditName()" title="Toca para cambiar tu nombre">
           <div id="set-avatar-wrap"></div>
-          <div class="profile-info">
-            <div class="profile-name" id="set-profile-name">—</div>
+          <div class="profile-info" style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="profile-name" id="set-profile-name">—</div>
+              <span style="font-size:13px;color:var(--mu);flex-shrink:0">✏️</span>
+            </div>
             <div class="profile-email" id="set-profile-email">—</div>
           </div>
-        </div>
-        <div class="set-row" onclick="startEditName()">
-          <div class="set-row-ico" style="background:var(--ac3)">✏️</div>
-          <div class="set-row-body">
-            <div class="set-row-lbl">Cambiar nombre</div>
-            <div class="set-row-sub" id="set-name-sub">Nombre visible para tu pareja</div>
-          </div>
-          <div class="set-row-end">›</div>
         </div>
         <div id="set-name-edit" style="display:none;padding:4px 2px 8px">
           <div class="inline-edit">
