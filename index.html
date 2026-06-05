@@ -2489,9 +2489,11 @@ createRoot(document.getElementById('ob-root')).render(<App />)
               <div id="vpag-badge" style="font-weight:700;font-size:13px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"></div>
             </div>
             <!-- ── Voz para gastos de viaje ── -->
-            <button type="button" class="icard-btn mic" id="btn-voice-viaje" onclick="startVoiceInputViaje()" style="flex:1;min-width:0">
-              <div class="icard-icon-wrap" id="btn-voice-viaje-icon"><i class="bi bi-mic-fill"></i></div>
-              <span class="icard-label" id="btn-voice-viaje-label">Registrar por voz</span>
+            <button type="button" class="nido-ai-zone mic" id="btn-voice-viaje" onclick="startVoiceInputViaje()" style="flex:1;min-width:0;flex-direction:row;justify-content:flex-start;gap:10px;padding:9px 12px;border-radius:12px">
+              <div class="nido-ai-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0">
+                <div class="nido-ai-icon-inner" id="btn-voice-viaje-icon"><i class="bi bi-mic-fill"></i></div>
+              </div>
+              <span class="nido-ai-label-text" id="btn-voice-viaje-label" style="font-size:12.5px">Registrar por voz</span>
             </button>
           </div>
           <div class="ai-chip" id="ai-chip-viaje" style="margin-bottom:8px">
@@ -2811,6 +2813,42 @@ createRoot(document.getElementById('ob-root')).render(<App />)
   </div>
 </div>
 
+<!-- ══ Modal editar gasto de viaje ══ -->
+<div id="vedit-overlay" onclick="if(event.target===this)cerrarEditarVGasto()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;align-items:flex-end;justify-content:center">
+  <div style="background:var(--s1);border-radius:16px 16px 0 0;padding:20px 16px 32px;width:100%;max-width:480px;max-height:82vh;overflow-y:auto;animation:slideUp .25s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:800">✏️ Editar gasto del viaje</div>
+      <button onclick="cerrarEditarVGasto()" style="background:none;border:none;font-size:20px;color:var(--mu);cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div class="fg">
+      <label class="flbl">Descripción</label>
+      <input id="veg-desc" class="finp" type="text" maxlength="60">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="fg">
+        <label class="flbl">Valor</label>
+        <div class="val-wrap" style="min-width:0">
+          <input id="veg-val" class="finp" type="text" inputmode="numeric" placeholder="0">
+          <span class="val-prefix" id="veg-val-prefix">$</span>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="flbl">Moneda</label>
+        <select id="veg-moneda" class="fsel" style="font-size:13px" onchange="updateVegPrefix()">
+          <option value="COP">🇨🇴 COP — Peso</option>
+          <option value="USD">🇺🇸 USD — Dólar</option>
+          <option value="MXN">🇲🇽 MXN — Peso mex.</option>
+          <option value="EUR">🇪🇺 EUR — Euro</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn" onclick="guardarEdicionVGasto()" style="flex:1;background:linear-gradient(135deg,var(--gr),#059669);box-shadow:0 4px 16px var(--gr2)">✓ Guardar cambios</button>
+      <button class="btn-outline" onclick="cerrarEditarVGasto()" style="padding:11px 14px">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ Modal editar gasto ══ -->
 <div id="edit-overlay" onclick="if(event.target===this)cerrarEditarGasto()">
   <div id="edit-panel">
@@ -2841,7 +2879,7 @@ createRoot(document.getElementById('ob-root')).render(<App />)
     </div>
     <div id="eg-debe-preview" style="background:var(--s2);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--mu);margin-bottom:14px;min-height:32px"></div>
     <div style="display:flex;gap:8px">
-      <button class="btn" onclick="guardarEdicionGasto()" style="flex:1">✓ Guardar cambios</button>
+      <button class="btn" onclick="guardarEdicionGasto()" style="flex:1;background:linear-gradient(135deg,var(--gr),#059669);box-shadow:0 4px 16px var(--gr2)">✓ Guardar cambios</button>
       <button class="btn-outline" onclick="cerrarEditarGasto()" style="padding:11px 14px">Cancelar</button>
     </div>
   </div>
@@ -3751,6 +3789,7 @@ function enterAppUI(cid){
   startNotifListener(isPremium());
   // Contadores de uso IA
   _updateAIButtonCounters();
+  _updateAnalysisBtn();
   // Precargar avatares en background para que el picker los muestre al instante
   setTimeout(preloadAvatarImages, 1500);
 }
@@ -5764,7 +5803,8 @@ function renderViajeDetalle(){
       const avBg=getUserColorBg(g.pagador);
       const gMon=g.moneda||base;
       const avHTML=pagAvatarHTML(g.pagador,28)||((g.pagador===myProfile?.uid||g.pagador===curUser)?"👩‍💼":"👨‍💼");
-      const delBtn=v.estado==="activo"?`<button class="vdel-btn" data-idx="${i}" onclick="eliminarVGasto(${i})" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:all .2s">🗑</button>`:"";
+      const editBtn=v.estado==="activo"?`<button onclick="abrirEditarVGasto(${i})" title="Editar" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--mu)'">✏️</button>`:"";
+      const delBtn=v.estado==="activo"?`<button class="vdel-btn" data-idx="${i}" onclick="eliminarVGasto(${i})" title="Eliminar" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:all .2s">🗑</button>`:"";
       const monTag=gMon!==base?`<span style="font-size:10px;background:var(--ac2);color:var(--ac);border-radius:5px;padding:1px 5px;margin-left:4px">${gMon}</span>`:"";
       const valStr=g.valorBase&&gMon!==base
         ?`<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${col}">${fmtMon(g.valor,gMon)}</div><div style="font-size:10px;color:var(--mu)">≈ ${fmtMon(g.valorBase,base)}</div>`
@@ -5775,8 +5815,8 @@ function renderViajeDetalle(){
           <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(g.desc)}${monTag}</div>
           <div style="font-size:11px;color:var(--mu)">${getPagadorName(g.pagador)}</div>
         </div>
-        <div style="margin-right:6px;text-align:right">${valStr}</div>
-        ${delBtn}
+        <div style="margin-right:2px;text-align:right">${valStr}</div>
+        ${editBtn}${delBtn}
       </div>`;
     }).join("");
   }
@@ -5947,26 +5987,80 @@ async function agregarGastoViaje(){
   }
 }
 
+/* ── Editar gasto del viaje ── */
+let _editVGastoIdx=null;
+
+function updateVegPrefix(){
+  const mon=$("veg-moneda")?.value||"COP";
+  const pre=$("veg-val-prefix");
+  if(pre) pre.textContent=monedaSym(mon);
+  const inp=$("veg-val");
+  if(inp){ inp.placeholder=mon==="COP"?"0":"0.00"; inp.inputMode=mon==="COP"?"numeric":"decimal"; }
+}
+
+function abrirEditarVGasto(idx){
+  if(!curViaje||curViaje.estado!=="activo") return;
+  const g=(curViaje.gastos||[])[idx];
+  if(!g) return;
+  _editVGastoIdx=idx;
+  $("veg-desc").value=g.desc||"";
+  const mon=g.moneda||salaMoneda();
+  $("veg-moneda").value=mon;
+  updateVegPrefix();
+  $("veg-val").value=mon==="COP"
+    ? fmtInput(String(Math.round(g.valor)))
+    : parseFloat(g.valor).toFixed(2);
+  $("vedit-overlay").style.display="flex";
+  setTimeout(()=>$("veg-desc").focus(),120);
+}
+
+function cerrarEditarVGasto(){
+  $("vedit-overlay").style.display="none";
+  _editVGastoIdx=null;
+}
+
+async function guardarEdicionVGasto(){
+  if(_editVGastoIdx===null||!curViaje) return;
+  const desc=$("veg-desc").value.trim();
+  const mon=$("veg-moneda")?.value||salaMoneda();
+  const rawVal=($("veg-val").value||"").replace(/\./g,"").replace(/,/g,".");
+  const val=parseFloat(rawVal)||0;
+  if(!desc){ toast("⚠️ Escribe una descripción"); return; }
+  if(!val||val<=0){ toast("⚠️ Ingresa un valor válido"); return; }
+  const nuevos=[...(curViaje.gastos||[])];
+  nuevos[_editVGastoIdx]={...nuevos[_editVGastoIdx],desc,valor:val,moneda:mon};
+  try{
+    await coupleCol("viajes").doc(curViaje.id).update({gastos:nuevos});
+    cerrarEditarVGasto();
+    toast("✅ Gasto actualizado");
+  }catch(e){ handleErr(e); }
+}
+
 /* ── Eliminar gasto del viaje ── */
 async function eliminarVGasto(i){
   if(!curViaje||curViaje.estado!=="activo")return;
-  const btn=document.querySelector('.vdel-btn[data-idx="'+i+'"]');
-  if(btn&&btn.dataset.confirm!=="1"){
-    btn.dataset.confirm="1";
-    btn.textContent="¿Seguro?";
-    btn.style.color="var(--re)"; btn.style.fontWeight="700"; btn.style.fontSize="11px";
-    setTimeout(()=>{ if(btn){ btn.dataset.confirm=""; btn.textContent="🗑"; btn.style.color=""; btn.style.fontWeight=""; btn.style.fontSize=""; } },3000);
-    return;
-  }
+  const g=(curViaje.gastos||[])[i];
+  if(!g) return;
+  const r=await nidoDialog.fire({
+    title:"¿Eliminar gasto?",
+    html:`<b>${esc(g.desc)}</b> — ${fmtMon(g.valor,g.moneda||salaMoneda())}<br><span style="font-size:12px;color:var(--mu)">Esta acción no se puede deshacer.</span>`,
+    confirmButtonText:"🗑 Eliminar",
+    showCancelButton:true,
+    cancelButtonText:"Cancelar"
+  });
+  if(!r?.isConfirmed) return;
   const nuevos=(curViaje.gastos||[]).filter((_,idx)=>idx!==i);
   if(db){
-    try{await coupleCol("viajes").doc(curViaje.id).update({gastos:nuevos});toast("🗑 Eliminado");}
-    catch(e){toast("⚠️ "+e.message);}
+    try{
+      await coupleCol("viajes").doc(curViaje.id).update({gastos:nuevos});
+      toast("🗑 Gasto eliminado");
+    }catch(e){ handleErr(e); }
   }else{
     curViaje.gastos=nuevos;
     const idx=viajes.findIndex(v=>v.id===curViaje.id);
     if(idx>=0){viajes[idx]=curViaje; lsSaveV(viajes);}
-    renderViajeDetalle(); toast("🗑 Eliminado");
+    renderViajeDetalle();
+    toast("🗑 Gasto eliminado");
   }
 }
 
@@ -9678,8 +9772,13 @@ async function _saveFromVoice() {
 }
 
 /* ── VOZ ───────────────────────────────────────────────────── */
-var _voiceRec       = null;
+var _voiceRec        = null;
 var _parsedVoiceData = null; // datos actuales de la tarjeta de confirmación
+var _voiceMaxTimer   = null; // timer de 15s para auto-detener grabación
+var _voiceLastEnd    = 0;    // timestamp del último fin de grabación (cooldown 3s)
+var VOICE_MAX_SECS   = 15;   // máximo segundos de grabación
+var VOICE_MAX_CHARS  = 400;  // máximo caracteres del transcript a enviar a Gemini
+var VOICE_COOLDOWN   = 3000; // ms de espera entre grabaciones
 
 async function startVoiceInput() {
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -9688,6 +9787,12 @@ async function startVoiceInput() {
 
   // Si ya está escuchando, detener
   if (_voiceRec) { _voiceRec.stop(); return; }
+
+  // Cooldown de 3s entre grabaciones
+  if (Date.now() - _voiceLastEnd < VOICE_COOLDOWN) {
+    toast('⏳ Espera un momento antes de grabar de nuevo.');
+    return;
+  }
 
   // Verificar cuota (sin consumir aún — se consume al completar exitosamente)
   if (!_checkAILimit('voice')) return;
@@ -9708,11 +9813,19 @@ async function startVoiceInput() {
     }
     _triggerAISweep('voice');
     _dismissVoiceConfirm();
-    _aiChip('🎤 Di el gasto, valor y cómo dividirlo…', true);
+    _aiChip('🎤 Di el gasto, valor y cómo dividirlo… (máx ' + VOICE_MAX_SECS + 's)', true);
+    // Auto-detener después de VOICE_MAX_SECS segundos
+    _voiceMaxTimer = setTimeout(function() {
+      if (_voiceRec) { _voiceRec.stop(); }
+    }, VOICE_MAX_SECS * 1000);
   };
 
   _voiceRec.onresult = async function(e) {
-    var transcript = e.results[0][0].transcript;
+    var rawTranscript = e.results[0][0].transcript;
+    // Truncar si es muy largo — Gemini no necesita más de VOICE_MAX_CHARS chars
+    var transcript = rawTranscript.length > VOICE_MAX_CHARS
+      ? rawTranscript.slice(0, VOICE_MAX_CHARS)
+      : rawTranscript;
     var preview = transcript.length > 60 ? transcript.slice(0, 60) + '…' : transcript;
     _aiChip('✨ Analizando: "' + preview + '"', true);
     try {
@@ -9723,7 +9836,6 @@ async function startVoiceInput() {
     } catch(err) {
       _aiChip('', false);
       toast('⚠️ ' + err.message);
-      // NO se consume si la IA falló
     }
   };
 
@@ -9738,13 +9850,16 @@ async function startVoiceInput() {
   };
 
   _voiceRec.onend = function() {
+    clearTimeout(_voiceMaxTimer);  // limpiar timer si terminó antes
+    _voiceMaxTimer = null;
+    _voiceLastEnd = Date.now();    // guardar timestamp para cooldown
     _voiceRec = null;
     if (btn) {
       btn.classList.remove('listening');
       var ico = document.getElementById('btn-voice-ai-icon');
       if (ico) ico.innerHTML = '<i class="bi bi-mic-fill"></i>';
     }
-    _updateAIButtonCounters(); // restaura label con contador correcto
+    _updateAIButtonCounters();
   };
 
   _voiceRec.start();
@@ -9837,11 +9952,36 @@ function _updateAIButtonCounters() {
 
 var _aiModalOpen = false;
 
+// Clave de localStorage para el límite diario: nido_ai_daily_{coupleId}_{YYYY-MM-DD}
+function _aiDailyKey() {
+  var d = new Date();
+  var dateStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  return 'nido_ai_daily_' + (coupleId || '') + '_' + dateStr;
+}
+
+function _updateAnalysisBtn() {
+  var btn = document.getElementById('btn-ai-analysis');
+  if (!btn || !isPremium()) return;
+  var used = !!localStorage.getItem(_aiDailyKey());
+  if (used) {
+    btn.style.opacity = '.5';
+    btn.title = 'Límite diario alcanzado — se reactiva mañana';
+  } else {
+    btn.style.opacity = '';
+    btn.title = 'Analizar gastos del mes con IA';
+  }
+}
+
 // ── Abre el modal y dispara el análisis ────────────────────
 function openAIAnalysisModal(isAuto) {
   if (_aiModalOpen) return;
   // Verificar premium
   if (!isPremium()) { showPremiumWall('Detección de anomalías con IA'); return; }
+  // Verificar límite diario (1 análisis por día)
+  if (localStorage.getItem(_aiDailyKey())) {
+    toast('📅 Ya analizaste hoy. El análisis se activa de nuevo mañana.');
+    return;
+  }
   var apiKey = (window._appConfig || {}).gemini_api_key;
   if (!apiKey) { toast('⚠️ Configura la Gemini API Key en el admin para usar esta función.'); return; }
 
@@ -9872,7 +10012,12 @@ function openAIAnalysisModal(isAuto) {
   if (btn) btn.classList.add('ai-loading');
 
   _runAIAnomalyAnalysis(monthKey, monthLabel, isAuto)
-    .then(function(result) { _renderAIResults(result, monthLabel, isAuto); })
+    .then(function(result) {
+      // Guardar uso diario solo si el análisis completó exitosamente
+      localStorage.setItem(_aiDailyKey(), '1');
+      _renderAIResults(result, monthLabel, isAuto);
+      _updateAnalysisBtn(); // actualizar apariencia del botón
+    })
     .catch(function(err) {
       if (bodyEl) bodyEl.innerHTML = '<div class="ai-summary-box">⚠️ ' + (err.message || 'Error al analizar') + '</div>';
     })
