@@ -2271,10 +2271,10 @@ createRoot(document.getElementById('ob-root')).render(<App />)
         </div>
         <div class="row2">
           <div class="fg">
-            <label class="flbl" for="f-val">Valor (COP)</label>
+            <label class="flbl" for="f-val" id="f-val-label">Valor (COP)</label>
             <div class="val-wrap">
               <input type="text" id="f-val" class="finp" placeholder="0" inputmode="numeric" autocomplete="off">
-              <span class="val-prefix">$</span>
+              <span class="val-prefix" id="f-val-prefix">$</span>
             </div>
           </div>
           <div class="fg">
@@ -2860,8 +2860,12 @@ createRoot(document.getElementById('ob-root')).render(<App />)
       <input id="eg-desc" class="finp" type="text" maxlength="60" oninput="updateEditDebePreview()">
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="fg"><label class="flbl">Valor $</label>
-        <input id="eg-val" class="finp mono" inputmode="numeric" oninput="updateEditDebePreview()">
+      <div class="fg">
+        <label class="flbl" id="eg-val-label">Valor ($)</label>
+        <div class="val-wrap" style="min-width:0">
+          <input id="eg-val" class="finp" inputmode="numeric" oninput="_fmtEgVal(this);updateEditDebePreview()">
+          <span class="val-prefix" id="eg-val-prefix">$</span>
+        </div>
       </div>
       <div class="fg"><label class="flbl">Mes</label>
         <input id="eg-fec" class="finp" type="month">
@@ -2914,7 +2918,7 @@ createRoot(document.getElementById('ob-root')).render(<App />)
 
 /* ══ APP VERSION ══ */
 const APP_VERSION = "1.6.0";
-const APP_BUILD   = "2026-05-08";
+const APP_BUILD   = "2026-06-08";
 
 /* ══ T1: LOGGER — silencia consola en producción ══ */
 (function(){
@@ -3207,8 +3211,11 @@ const MONEDAS={
 function salaMoneda(){ return curCouple?.moneda||"COP"; }
 function monedaSym(code){ return (MONEDAS[code]||MONEDAS.COP).sym; }
 function fmtMon(val, moneda){
-  const m=MONEDAS[moneda||salaMoneda()]||MONEDAS.COP;
-  return m.sym+" "+Math.round(val).toLocaleString("es-CO");
+  const mon = moneda || salaMoneda();
+  const m   = MONEDAS[mon] || MONEDAS.COP;
+  const sym = _fmtSym(mon);
+  if(mon === 'COP') return sym + " " + Math.round(val).toLocaleString('es-CO');
+  return sym + " " + Number(val).toLocaleString(m.locale, {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function monedaSelectHTML(idSel, defaultVal){
   const opts=Object.entries(MONEDAS).map(([k,v])=>
@@ -3249,7 +3256,15 @@ async function convertToBase(valor, fromMoneda, rates){
   return Math.round(valor/r[fromMoneda]);
 }
 
-const fmt   = n => "$" + Math.round(n).toLocaleString("es-CO");
+// Símbolo simplificado para displays generales (sin código de país)
+const _fmtSym = mon => mon === 'EUR' ? '€' : '$';
+const fmt = n => {
+  const mon = salaMoneda();
+  const m   = MONEDAS[mon] || MONEDAS.COP;
+  const sym = _fmtSym(mon);
+  if(mon === 'COP') return sym + Math.round(n).toLocaleString('es-CO');
+  return sym + Number(n).toLocaleString(m.locale, {minimumFractionDigits:2, maximumFractionDigits:2});
+};
 const esc   = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const mkey  = (y,m) => `${y}-${String(m).padStart(2,"0")}`;
 const mesHoy= () => { const n=new Date(); return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0"); };
@@ -3314,6 +3329,8 @@ let curCouple=null, coupleId=null, myProfile=null, partnerProfile=null;
 const pickedU = null;
 // Viajes
 let viajes=[], curViaje=null, vPagador=null, unsubViajes=null;
+// Listener del doc de la sala (couples/{id}) — se limpia al cambiar de sala
+let unsubCoupleDoc=null;
 // Settlement
 let saldos=[], unsubSaldos=null;
 const LS="finpj-gastos-v4", LS_V="finpj-viajes-v1", LS_S="finpj-saldos-v1";
@@ -3344,16 +3361,40 @@ function fmtInputDecimal(v){
   return s;
 }
 function getRawVal(){
-  return parseFloat(($("f-val").value||"").replace(/\./g,"").replace(/,/g,".")) || 0;
+  const mon = salaMoneda();
+  const raw = ($("f-val").value||"").trim();
+  if(mon === 'COP') return parseFloat(raw.replace(/\./g,"").replace(/,/g,".")) || 0;
+  return parseFloat(raw) || 0;
+}
+
+/* Actualiza el formulario de gastos según la moneda de la sala */
+function updateFormForMoneda(){
+  const mon = salaMoneda();
+  const sym = monedaSym(mon);
+  const isCOP = mon === 'COP';
+  const lbl = document.getElementById('f-val-label');
+  const pre = document.getElementById('f-val-prefix');
+  const inp = $('f-val');
+  if(lbl) lbl.textContent = 'Valor (' + mon + ')';
+  if(pre) pre.textContent = sym;
+  if(inp){
+    inp.placeholder  = isCOP ? '0' : '0.00';
+    inp.inputMode    = isCOP ? 'numeric' : 'decimal';
+    inp.value        = '';
+  }
 }
 
 $("f-val").addEventListener("input", e=>{
-  const pos=e.target.selectionStart;
-  const old=e.target.value;
-  const formatted=fmtInput(old);
-  e.target.value=formatted;
-  // Restore cursor approximately
-  try{ e.target.setSelectionRange(formatted.length,formatted.length); }catch{}
+  const mon = salaMoneda();
+  const old = e.target.value;
+  if(mon === 'COP'){
+    const formatted = fmtInput(old);
+    e.target.value = formatted;
+    try{ e.target.setSelectionRange(formatted.length,formatted.length); }catch{}
+  } else {
+    // Para USD/MXN/EUR: solo dígitos y punto decimal, máx 2 decimales
+    e.target.value = fmtInputDecimal(old);
+  }
   updatePrev();
 });
 
@@ -3749,7 +3790,7 @@ async function shareInviteCode(code){
   const myName = myProfile?.displayName || "Tu pareja";
   const appUrl = "https://balance-group.github.io/Nido/";
   const msg =
-    `🏠 *${salaName} · Finanzas en pareja*\n\n`+
+    `🏠 *${salaName} · Gastos en pareja*\n\n`+
     `*${myName}* te invita a unirte a la sala en *Nido*.\n\n`+
     `Usa este código de invitación:\n`+
     `🔑  *${c}*\n\n`+
@@ -3776,6 +3817,7 @@ function enterAppUI(cid){
   hideSplash();
   $("screen-app").style.cssText="display:flex;flex-direction:column";
   $("f-fec").value=mesHoy();
+  updateFormForMoneda();
   setPag(myProfile.uid);
   setSplit(50);
   startListen();
@@ -3794,7 +3836,7 @@ function enterAppUI(cid){
   setTimeout(preloadAvatarImages, 1500);
 }
 
-async function enterCouple(cid){
+async function enterCouple(cid, fromSwitch=false){
   coupleId = cid;
   showAuthLoading(true);
   try{
@@ -3855,7 +3897,7 @@ async function enterCouple(cid){
     const mySalary=(curCouple.salarios||{})[myProfile.uid]||0;
     if(mySalary<=0){
       showAuthLoading(false);
-      $("screen-login").style.display="flex";
+      if(!fromSwitch) $("screen-login").style.display="flex";
       window._pendingSalaryCid=cid;
       const inp=$("onb-salary"); if(inp){inp.value="";setTimeout(()=>inp.focus(),200);}
       window._selectedAvatarColor=null;
@@ -3865,7 +3907,7 @@ async function enterCouple(cid){
     }
     if(!isSalaCompleta(curCouple)){
       showAuthLoading(false);
-      $("screen-login").style.display="flex";
+      if(!fromSwitch) $("screen-login").style.display="flex";
       showAuthScreen("auth-waiting");
       renderWaitingScreen(curCouple);
       startWaitingListener(cid);
@@ -3878,7 +3920,14 @@ async function enterCouple(cid){
     console.error("enterCouple error:", e);
     showAuthLoading(false);
     if(e.code==="permission-denied"||e.message?.includes("permissions")){
-      // Probablemente sala de prueba antigua sin permisos — limpiar y seguir
+      if(fromSwitch){
+        // Cambio desde dentro de la app — no mostrar auth screen
+        $("screen-app").style.display="flex";
+        $("screen-login").style.display="none";
+        toast("⚠️ Sin permisos para esa sala. Verifica las reglas de Firestore.");
+        throw e; // re-throw para que _doSwitchToCouple lo capture
+      }
+      // Login inicial — limpiar sala inválida y reconectar
       const cleanCouples=(myProfile?.couples||[]).filter(c=>c!==cid);
       if(myProfile) myProfile.couples=cleanCouples;
       db.collection("users").doc(myProfile?.uid).update({couples:cleanCouples}).catch(()=>{});
@@ -3892,6 +3941,7 @@ async function enterCouple(cid){
       }
     } else {
       toast("⚠️ Error cargando sala: "+e.message);
+      if(fromSwitch) throw e;
     }
   }
 }
@@ -3933,10 +3983,6 @@ function getCoupleAlias(uid){
   return (curCouple.members||{})[uid]||"user";
 }
 function getDisplayEmoji(uid){
-  const alias=getCoupleAlias(uid);
-  if(alias==="johana"||alias==="first")  return "👩‍💼";
-  if(alias==="john"  ||alias==="second") return "👨‍💼";
-  // New couple: use position in members list
   const uids=Object.keys(curCouple?.members||{});
   return uids.indexOf(uid)===0 ? "👩‍💼" : "👨‍💼";
 }
@@ -3987,12 +4033,13 @@ function startListen(){
       if(b) b.classList.add("show");
     }
   });
-  // Escuchar cambios del doc de la pareja (salarios, props, avatars)
+  // Escuchar cambios del doc de la sala (salarios, props, avatars)
+  // ⚠️ Guardamos el unsubscribe en unsubCoupleDoc para poder limpiar al cambiar de sala
+  if(unsubCoupleDoc){ unsubCoupleDoc(); unsubCoupleDoc=null; }
   if(coupleId){
-    db.collection("couples").doc(coupleId).onSnapshot(snap=>{
+    unsubCoupleDoc=db.collection("couples").doc(coupleId).onSnapshot(snap=>{
       if(snap.exists){ curCouple={id:coupleId,...snap.data()}; onCoupleUpdated(); }
     },err=>{
-      // Silenciar errores transitorios del doc de pareja
       if(window.fbErrIsTransient && !window.fbErrIsTransient(err))
         console.warn("couple doc listener:", err.code);
     });
@@ -4013,6 +4060,7 @@ function tearDownListeners(fullSignOut=false){
   if(window._pendingJoin) console.warn("[Nido] tearDownListeners llamado con _pendingJoin activo — fullSignOut:", fullSignOut, new Error().stack);
   // Detener todos los listeners de Firestore
   if(unsub){unsub();unsub=null;}
+  if(unsubCoupleDoc){unsubCoupleDoc();unsubCoupleDoc=null;}
   if(unsubViajes){unsubViajes();unsubViajes=null;}
   if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
   if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
@@ -4691,7 +4739,7 @@ async function eliminar(id){
 
 /* ══ OCULTAR/MOSTRAR MONTOS — botón 👁 ══ */
 function fmtH(v){
-  return localStorage.getItem("nido_hide_amounts")==="1" ? "$ •••••" : fmt(v);
+  return localStorage.getItem("nido_hide_amounts")==="1" ? _fmtSym(salaMoneda())+" •••••" : fmt(v);
 }
 function toggleHideAmounts(){
   const hidden=localStorage.getItem("nido_hide_amounts")==="1";
@@ -4713,7 +4761,11 @@ function _updateHideBtn(){
 }
 
 /* ══ RENDER ══ */
-function render(){ buildCatFilter(); renderTx(); renderResumen(); renderViajes(); updateUltimoBanner(); checkAIMonthlyAutoAnalysis(); }
+function render(){
+  // Guardia: no renderizar si myProfile aún no está cargado (ej. durante cambio de sala)
+  if(!myProfile) return;
+  buildCatFilter(); renderTx(); renderResumen(); renderViajes(); updateUltimoBanner(); checkAIMonthlyAutoAnalysis();
+}
 
 function updateUltimoBanner(){
   const banner=document.getElementById("ultimo-gasto-banner");
@@ -4747,17 +4799,7 @@ function getMonths(){
 }
 
 
-/* ════════════════════════════════════════════════════════════════════
-   LEGACY ALIAS BRIDGE — mantenido intencionalmente para compatibilidad
-   ─────────────────────────────────────────────────────────────────────
-   Gastos guardados antes de mar-2025 usaban pagador="johana"/"john"/
-   "first"/"second" en vez de UID. Las funciones siguientes detectan
-   y traducen estos valores. NO eliminar hasta migrar los datos viejos.
-════════════════════════════════════════════════════════════════════ */
 function isPagadorFirst(pagador){
-  if(pagador==="johana"||pagador==="first") return true;
-  if(pagador==="john"  ||pagador==="second") return false;
-  // UID-based: compare with first member
   if(curCouple){
     const uids=Object.keys(curCouple.members||{});
     if(uids[0]===pagador) return true;
@@ -4766,22 +4808,12 @@ function isPagadorFirst(pagador){
 }
 function getPagadorName(pagador){
   if(!pagador) return "—";
-  if(pagador==="johana"||pagador==="first")  return myProfile?.uid===Object.keys(curCouple?.members||{})[0] ? myProfile.displayName : (partnerProfile?.displayName||"—");
-  if(pagador==="john"  ||pagador==="second") return myProfile?.uid===Object.keys(curCouple?.members||{})[1] ? myProfile.displayName : (partnerProfile?.displayName||"—");
   if(pagador===myProfile?.uid) return myProfile.displayName;
   if(pagador===partnerProfile?.uid) return partnerProfile.displayName;
   return pagador.slice(0,6);
 }
 function getOtherName(pagador){
-  // Determine if I'm the pagador (user-centric, handles UIDs and legacy aliases)
-  let iAmPagador=false;
-  if(pagador===myProfile?.uid){
-    iAmPagador=true;
-  } else if(curCouple){
-    const uids=Object.keys(curCouple.members||{});
-    if((pagador==="johana"||pagador==="first")  && uids[0]===myProfile?.uid) iAmPagador=true;
-    if((pagador==="john"  ||pagador==="second") && uids[1]===myProfile?.uid) iAmPagador=true;
-  }
+  const iAmPagador = pagador===myProfile?.uid;
   return iAmPagador
     ? (partnerProfile?.displayName||"tu pareja")
     : (myProfile?.displayName||"yo");
@@ -5209,10 +5241,10 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
         legend:{position:'bottom',labels:{colors:textClr},fontSize:'11px'},
         plotOptions:{pie:{donut:{size:'66%',labels:{show:true,
           name:{show:true,color:textClr},
-          value:{show:true,color:textClr,fontSize:'16px',fontWeight:700,formatter:v=>'$'+Math.round(parseFloat(v)).toLocaleString('es-CO')},
-          total:{show:true,label:'Total',color:textClr,formatter:w=>'$'+Math.round(w.globals.seriesTotals.reduce((a,b)=>a+b,0)).toLocaleString('es-CO')}
+          value:{show:true,color:textClr,fontSize:'16px',fontWeight:700,formatter:v=>fmt(parseFloat(v))},
+          total:{show:true,label:'Total',color:textClr,formatter:w=>fmt(w.globals.seriesTotals.reduce((a,b)=>a+b,0))}
         }}}},
-        tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+        tooltip:{y:{formatter:v=>fmt(v)}},
         theme:{mode:isDk?'dark':'light'},
       });
       window._chartCat.render();
@@ -5234,11 +5266,11 @@ function renderCharts(months, gFiltrados, myName, prtName, myColor, prtColor, is
       chart:{type:'bar',height:220,background:bg,toolbar:{show:false},fontFamily:font,zoom:{enabled:false},selection:{enabled:false}},
       series:[{name:myName,data:myData,color:myColor},{name:prtName,data:prtData,color:prtColor}],
       xaxis:{categories:xLbls,labels:{style:{colors:textClr,fontSize:'10px'}},axisBorder:{show:false},axisTicks:{show:false}},
-      yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:v=>v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+v}},
+      yaxis:{labels:{style:{colors:textClr,fontSize:'10px'},formatter:v=>fmt(v)}},
       grid:{borderColor:gridClr,strokeDashArray:4},
       plotOptions:{bar:{borderRadius:5,columnWidth:'60%'}},
       dataLabels:{enabled:false},
-      tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+      tooltip:{y:{formatter:v=>fmt(v)}},
       legend:{labels:{colors:textClr},fontSize:'11px'},
       theme:{mode:isDk?'dark':'light'},
     });
@@ -5268,7 +5300,17 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
   const gridClr  = isDk?'rgba(255,255,255,0.06)':'rgba(10,26,60,0.08)';
   const bg       = 'transparent';
   const font     = "'JetBrains Mono',monospace";
-  const fmtV = v => v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+Math.round(v).toLocaleString('es-CO');
+  const _mon  = salaMoneda();
+  const _sym  = _fmtSym(_mon);
+  const _isCOP = _mon === 'COP';
+  const _loc   = (MONEDAS[_mon]||MONEDAS.COP).locale;
+  const fmtV = v => {
+    if(v >= 1e6) return _sym + (v/1e6).toFixed(1) + 'M';
+    if(v >= 1e3) return _sym + (_isCOP ? Math.round(v/1e3)+'K' : (v/1e3).toFixed(1)+'K');
+    return _isCOP
+      ? _sym + Math.round(v).toLocaleString('es-CO')
+      : _sym + Number(v).toLocaleString(_loc, {minimumFractionDigits:2, maximumFractionDigits:2});
+  };
 
   // ── 1. Tendencia semanal (line chart, últimas 8 semanas) ──
   const weeklyEl=$("chart-weekly");
@@ -5290,7 +5332,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
       stroke:{curve:'smooth',width:2.5},markers:{size:4,hover:{size:6}},
       grid:{borderColor:gridClr,strokeDashArray:4},
       dataLabels:{enabled:false},
-      tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+      tooltip:{y:{formatter:v=>fmtV(v)}},
       legend:{labels:{colors:textClr},fontSize:'11px'},
       theme:{mode:isDk?'dark':'light'},
     });
@@ -5313,7 +5355,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
         grid:{borderColor:gridClr,strokeDashArray:4},
         plotOptions:{bar:{borderRadius:4,columnWidth:'55%'}},
         dataLabels:{enabled:false},
-        tooltip:{y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+        tooltip:{y:{formatter:v=>fmtV(v)}},
         legend:{labels:{colors:textClr},fontSize:'11px'},
         theme:{mode:isDk?'dark':'light'},
       });
@@ -5344,7 +5386,7 @@ function renderAdvancedCharts(gFiltrados, myName, prtName, myColor, prtColor, is
         fill:{type:'gradient',gradient:{opacityFrom:.35,opacityTo:.03}},
         grid:{borderColor:gridClr,strokeDashArray:4},
         dataLabels:{enabled:false},
-        tooltip:{x:{format:'dd MMM yyyy'},y:{formatter:v=>'$'+Math.round(v).toLocaleString('es-CO')}},
+        tooltip:{x:{format:'dd MMM yyyy'},y:{formatter:v=>fmtV(v)}},
         legend:{labels:{colors:textClr},fontSize:'11px'},
         theme:{mode:isDk?'dark':'light'},
       });
@@ -6616,8 +6658,19 @@ function abrirEditarGasto(id){
   if(!g) return;
   _editGastoId=id;
   _editSplit=g.split;
+  const _emon = salaMoneda();
+  const _esym = monedaSym(_emon);
+  // Actualizar label y prefix según moneda de la sala
+  const _elbl = document.getElementById('eg-val-label');
+  const _epre = document.getElementById('eg-val-prefix');
+  const _einp = $('eg-val');
+  if(_elbl) _elbl.textContent = 'Valor (' + _emon + ')';
+  if(_epre) _epre.textContent = _esym;
+  if(_einp){ _einp.inputMode = _emon==='COP'?'numeric':'decimal'; }
   $("eg-desc").value=g.desc;
-  $("eg-val").value=Math.round(g.valor).toLocaleString("es-CO");
+  $("eg-val").value = _emon==='COP'
+    ? Math.round(g.valor).toLocaleString("es-CO")
+    : parseFloat(g.valor).toFixed(2);
   $("eg-fec").value=g.anio+"-"+String(g.mes).padStart(2,"0");
   // categorías
   buildCatSelects(false);
@@ -6642,10 +6695,27 @@ function selectEditSplit(btn){
   _editSplit=btn.dataset.v==="custom"?"custom":parseInt(btn.dataset.v);
   updateEditDebePreview();
 }
+function _fmtEgVal(inp){
+  const mon = salaMoneda();
+  if(!inp) return;
+  if(mon === 'COP'){
+    const f = fmtInput(inp.value);
+    inp.value = f;
+  } else {
+    inp.value = fmtInputDecimal(inp.value);
+  }
+}
+function _parseEgVal(){
+  const mon = salaMoneda();
+  const v = ($("eg-val")?.value||"").trim();
+  return mon==='COP'
+    ? parseFloat(v.replace(/\./g,"").replace(/,/g,"."))||0
+    : parseFloat(v)||0;
+}
 function updateEditDebePreview(){
   const g=gastos.find(x=>x.id===_editGastoId);
   if(!g) return;
-  const raw=parseFloat(($("eg-val")?.value||"").replace(/\./g,"").replace(/,/g,"."))||0;
+  const raw=_parseEgVal();
   const oName=getOtherName(g.pagador), pName=getPagadorName(g.pagador);
   let debe=0, pctTxt="";
   if(_editSplit===50){debe=raw*.5;}
@@ -6663,7 +6733,7 @@ async function guardarEdicionGasto(){
   const g=gastos.find(x=>x.id===_editGastoId);
   if(!g) return;
   const desc=$("eg-desc").value.trim();
-  const raw=parseFloat(($("eg-val")?.value||"").replace(/\./g,"").replace(/,/g,"."))||0;
+  const raw=_parseEgVal();
   const fec=$("eg-fec").value;
   const cat=$("eg-cat").value;
   if(!desc){toast("⚠️ Escribe una descripción");return;}
@@ -6936,7 +7006,7 @@ function showActivarPremium(plan='codigo'){
     title:'Activar Premium 💎',
     html:`<div style="font-size:13px;color:var(--mu);margin-bottom:12px;line-height:1.6">
       Ingresa tu código de activación.<br>
-      <span style="font-size:11px">¿No tienes código? <a href="mailto:balancegroup@zohomail.com" style="color:var(--ac)">Contáctanos</a> para obtenerlo.</span>
+      <span style="font-size:11px">¿No tienes código? <a href="https://wa.me/573180415357?text=Hola,%20App%20Nido!" target="_blank" style="color:var(--ac)">Contáctanos</a> para obtenerlo.</span>
     </div>
     <input id="nd-promo-inp" class="finp" placeholder="XXXX-XXXX-XXXX" style="text-align:center;font-size:15px;letter-spacing:.08em;text-transform:uppercase" maxlength="14">`,
     confirmButtonText:'Activar',
@@ -6970,27 +7040,6 @@ function showActivarPremium(plan='codigo'){
 }
 
 
-/* ── Activación de prueba (solo para testing) ── */
-window.activarPremiumTest = async function(dias=30, plan='mensual'){
-  if(!coupleId){ console.error('No hay sala activa'); return; }
-  const expiry = dias===0 ? null : Date.now() + dias*86400000;
-  const planType = dias===0 ? 'permanente' : (dias>200 ? 'anual' : plan);
-  await db.collection('couples').doc(coupleId).update({
-    premium:true, premiumExpiry:expiry, premiumPlan:planType,
-    premiumActivatedAt:Date.now(), premiumActivatedBy:'test', premiumCode:'TEST'
-  });
-  if(curCouple){ curCouple.premium=true; curCouple.premiumExpiry=expiry; curCouple.premiumPlan=planType; }
-  updatePremiumBadges();
-  if(typeof populateSettings==='function' && document.getElementById('settings-drawer')?.classList.contains('open')) populateSettings();
-  if(typeof toast==='function') toast('💎 de prueba activado ('+planType+')');
-};
-window.desactivarPremiumTest = async function(){
-  if(!coupleId){ console.error('No hay sala activa'); return; }
-  await db.collection('couples').doc(coupleId).update({premium:false,premiumExpiry:null});
-  if(curCouple){ curCouple.premium=false; }
-  updatePremiumBadges();
-  if(typeof toast==='function') toast('Premium desactivado');
-};
 function updatePremiumBadges(){
   const active=isPremium();
   const badge=document.getElementById('viajes-lock-badge');
@@ -7313,23 +7362,64 @@ async function joinSalaFromTab(){
   }
 }
 async function _doSwitchToCouple(cid){
-  if(cid === (curCouple?.id || coupleId)){ return; }
-  closeSettings();
-  // Ocultar detalle mientras se carga la nueva sala
-  const detailEl=$("sala-active-detail"); if(detailEl) detailEl.style.display="none";
-  const intEl=$("sala-integrantes"); if(intEl) intEl.innerHTML="";
-  const nameEl=$("sala-tab-name"); if(nameEl) nameEl.textContent="Cargando...";
-  // Limpiar TODOS los datos de sala anterior
-  tearDownListeners(false);
-  partnerProfile = null;
-  curCouple = null;
-  coupleId = null;
+  if(!cid) return;
+  const prevCid = curCouple?.id || coupleId;
+  if(cid === prevCid){ toast('Ya estás en esta sala'); return; }
+
+  showAuthLoading(true);
+
+  // Navegar al tab de Agregar para evitar renders complejos durante el cambio
+  document.querySelectorAll(".ntab").forEach(b=>b.classList.remove("on"));
+  const tabAg=document.querySelector('.ntab[data-p="agregar"]');
+  if(tabAg) tabAg.classList.add("on");
+  ["agregar","transacciones","resumen","viajes","sala"].forEach(n=>{
+    const el=$("pnl-"+n); if(el) el.style.display=n==="agregar"?"block":"none";
+  });
+
+  // 1. Parar listeners de la sala anterior sin limpiar myProfile
+  if(unsub){unsub();unsub=null;}
+  if(unsubCoupleDoc){unsubCoupleDoc();unsubCoupleDoc=null;}
+  if(unsubViajes){unsubViajes();unsubViajes=null;}
+  if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
+  if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
+
+  // 2. Limpiar datos de la sala anterior
   gastos=[]; viajes=[]; saldos=[];
-  render();
-  await enterCouple(cid);
-  // Forzar refresco del tab de sala si está visible
-  const pnlSala=$("pnl-sala");
-  if(pnlSala && pnlSala.style.display!=="none") await renderSalaTab();
+  curCouple=null; coupleId=null; partnerProfile=null;
+
+  try{
+    // 3. Cargar el doc de la sala destino
+    const snap = await db.collection("couples").doc(cid).get();
+    if(!snap.exists){ showAuthLoading(false); toast("⚠️ Sala no encontrada"); return; }
+
+    curCouple = {id:cid,...snap.data()};
+    coupleId  = cid;
+
+    // 4. Cargar perfil del partner
+    const mems = Object.keys(curCouple.members||{});
+    const pUid = mems.find(u=>u!==myProfile.uid);
+    if(pUid){
+      try{
+        const ps = await db.collection("users").doc(pUid).get();
+        partnerProfile = ps.exists ? {uid:pUid,...ps.data()} : null;
+      }catch(e){ partnerProfile=null; }
+    } else {
+      partnerProfile = null;
+    }
+
+    // 5. Entrar a la app con la nueva sala (mismo path que login exitoso)
+    enterAppUI(cid);
+
+    // 6. Refrescar pestaña sala si está visible
+    const pnlSala=$("pnl-sala");
+    if(pnlSala && pnlSala.style.display!=="none") await renderSalaTab();
+
+  }catch(e){
+    showAuthLoading(false);
+    // Restaurar sala anterior si falla
+    coupleId=prevCid||null;
+    handleErr(e,'cambio de sala');
+  }
 }
 
 /* Envía push nativo via OneSignal REST API al otro usuario */
@@ -7477,11 +7567,9 @@ function getAvatarSeed(uid){
 
 /* Resuelve pagador (uid o alias) → uid */
 function pagadorToUID(pagador){
-  if(pagador === myProfile?.uid) return myProfile.uid;
-  if(pagador === partnerProfile?.uid) return partnerProfile.uid;
-  const uids = Object.keys(curCouple?.members || {});
-  if(pagador==="johana"||pagador==="first")  return myProfile?.uid===uids[0] ? myProfile?.uid : partnerProfile?.uid;
-  if(pagador==="john"  ||pagador==="second") return myProfile?.uid===uids[1] ? myProfile?.uid : partnerProfile?.uid;
+  if(!pagador) return null;
+  if(myProfile?.uid && pagador === myProfile.uid) return myProfile.uid;
+  if(partnerProfile?.uid && pagador === partnerProfile.uid) return partnerProfile.uid;
   return null;
 }
 /* Avatar inline para badges y etiquetas (tamaño configurable, por defecto 24px) */
@@ -8988,55 +9076,7 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
 </script>
 
 <!--
-╔══════════════════════════════════════════════════════════════╗
-║  AUTH: Firebase Auth (email + Google)                         ║
-║                                                               ║
-║  FIRESTORE RULES (pega en Firebase Console > Firestore > Rules):
-║                                                               ║
-║  rules_version = '2';                                         ║
-║  service cloud.firestore {                                    ║
-║    match /databases/{database}/documents {                    ║
-║      match /users/{userId} {                                  ║
-║        allow read, write: if request.auth != null             ║
-║          && request.auth.uid == userId;                       ║
-║      }                                                        ║
-║      match /couples/{coupleId} {                              ║
-║        allow read: if request.auth != null                    ║
-║          && (request.auth.uid in resource.data.members        ║
-║             || !exists(resource));                            ║
-║        allow create: if request.auth != null;                 ║
-║        allow update: if request.auth != null                  ║
-║          && (request.auth.uid in resource.data.members        ║
-║             || request.auth.uid in                            ║
-║                request.resource.data.members);                ║
-║        match /{sub}/{doc} {                                   ║
-║          allow read, write: if request.auth != null           ║
-║            && get(/databases/$(database)/documents/           ║
-║               couples/$(coupleId))                            ║
-║               .data.members[request.auth.uid] != null;        ║
-║        }                                                      ║
-║      }                                                        ║
-║      match /os_tokens/{userId} {                              ║
-║        allow read, write: if request.auth != null             ║
-║          && request.auth.uid == userId;                       ║
-║      }                                                        ║
-║      match /promo_codes/{code} {                              ║
-║        allow get: if request.auth != null;                    ║
-║        allow list: if false;                                  ║
-║        allow write: if request.auth != null;                  ║
-║      }                                                        ║
-║    }                                                          ║
-║  }                                                            ║
-╠══════════════════════════════════════════════════════════════╣
-║  NOTIFICACIONES PUSH — OneSignal (v12)                       ║
-║                                                              ║
-║  Ya configurado. Variables en el bloque CONFIG:              ║
-║  OS_APP_ID  → App ID de OneSignal                            ║
-║  OS_API_KEY → Solo en Cloudflare Worker (no en cliente)       ║
-║                                                              ║
-║  Los subscription IDs se guardan en Firestore: os_tokens/{user}    ║
-║  Las notificaciones in-app siguen en: notificaciones         ║
-╚══════════════════════════════════════════════════════════════╝
+
 -->
 
     <div style="font-size:12px;color:var(--mu);text-align:center;margin-bottom:18px" id="cm-members"></div>
@@ -9628,7 +9668,10 @@ function _fillFormFromAI(parsed) {
   if (!parsed) return;
   if (parsed.descripcion) $('f-desc').value = _capitalize(parsed.descripcion);
   if (parsed.monto && parsed.monto > 0) {
-    $('f-val').value = fmtInput(String(Math.round(parsed.monto)));
+    const _mon = salaMoneda();
+    $('f-val').value = _mon === 'COP'
+      ? fmtInput(String(Math.round(parsed.monto)))
+      : parseFloat(parsed.monto).toFixed(2);
     $('f-val').dispatchEvent(new Event('input'));
   }
   if (parsed.categoria && CATI[parsed.categoria]) $('f-cat').value = parsed.categoria;
