@@ -359,6 +359,12 @@ input,select,button{font-family:inherit}
 .av-opt img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .av-opt:hover{transform:scale(1.1);border-color:var(--ac)}
 .av-opt.sel{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac2)}
+/* Create-sala accordion (avatar + color picker collapsibles) */
+.cre-accordion{border:1.5px solid var(--bor);border-radius:13px;margin-bottom:8px;overflow:hidden;background:var(--s2)}
+.cre-acc-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 13px;background:none;border:none;cursor:pointer;color:var(--tx);text-align:left;transition:background .15s;gap:10px}
+.cre-acc-head:hover{background:rgba(255,255,255,.04)}
+[data-theme="light"] .cre-acc-head:hover{background:rgba(0,0,0,.04)}
+.cre-acc-body{padding:8px 12px 13px;border-top:1px solid var(--bor)}
 /* Salary inline edit */
 .salary-edit{background:var(--ac3);border:1.5px solid var(--ac2);border-radius:11px;padding:11px 13px;margin-top:8px;animation:panelIn .2s ease}
 /* Onboarding steps */
@@ -392,7 +398,7 @@ input,select,button{font-family:inherit}
 .fsel{width:100%;padding:13px 34px 13px 14px;background:var(--s2);border:1.5px solid var(--bor);border-radius:11px;color:var(--tx);font-size:15px;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%236b7299' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;transition:var(--t)}
 .fsel:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--ac2);outline:none}
 .fg{margin-bottom:12px}
-.row2{display:grid;grid-template-columns:3fr 2fr;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 /* Value input with prefix */
 .val-wrap{position:relative}
@@ -567,6 +573,15 @@ input[inputmode="numeric"]::placeholder,
 
 /* ══════════════════ TRANSACTIONS ══════════════════ */
 .frow{display:flex;gap:8px;margin-bottom:9px}
+/* ── Category picker bottom sheet ── */
+#cat-picker-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);animation:fadeInBg .2s ease}
+#cat-picker-sheet{position:absolute;bottom:0;left:0;right:0;background:var(--s1);border-radius:20px 20px 0 0;padding:16px 14px 32px;max-height:70vh;overflow-y:auto;animation:slideUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.cat-pick-btn{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--s2);border:1.5px solid var(--bor);border-radius:12px;padding:10px 6px 9px;cursor:pointer;color:var(--tx);font-family:inherit;transition:var(--t);width:100%}
+.cat-pick-btn:active{opacity:.75}
+.cat-pick-btn.cat-pick-sel{border-color:var(--ac);background:var(--ac2)}
+.cat-pick-ico{font-size:22px;line-height:1}
+.cat-pick-lbl{font-size:11px;font-weight:600;text-align:center;line-height:1.3;color:var(--tx)}
 .frow .fsel{flex:1;padding:9px 30px 9px 12px;font-size:13px}
 .arow{display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap;align-items:center}
 .txlist{display:flex;flex-direction:column;gap:8px}
@@ -576,9 +591,10 @@ input[inputmode="numeric"]::placeholder,
 .txav{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:transform .2s}
 .txi:hover .txav{transform:scale(1.08)}
 .txbody{flex:1;min-width:0}
-.txdesc{font-weight:600;font-size:15px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;word-break:break-word}
-.txmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;font-size:11px;color:var(--mu)}
-.txr{text-align:right;flex-shrink:0}
+.txdesc{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.txmeta{display:flex;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--mu);flex:1;min-width:0}
+.txmeta-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:3px;gap:6px}
+.txr{text-align:right;flex-shrink:0;white-space:nowrap}
 .txval{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px}
 .txd{font-size:10px;color:var(--mu);margin-top:2px}
 .txdel{background:none;border:none;color:var(--mu);font-size:16px;padding:5px;cursor:pointer;border-radius:7px;flex-shrink:0;transition:var(--t)}
@@ -1913,51 +1929,86 @@ createRoot(document.getElementById('ob-root')).render(<App />)
 
   <!-- ONBOARDING: Setup couple -->
   <div class="lcard" id="auth-couple" style="display:none">
-    <div class="ltitle">¡Hola! 👋</div>
-    <div class="lsub" id="couple-sub" style="margin-bottom:18px">Configura tu sala</div>
+
+    <!-- Hero premium -->
+    <div style="text-align:center;padding-bottom:20px;margin-bottom:18px;border-bottom:1px solid var(--bor)">
+      <img src="3.png" style="width:72px;height:72px;border-radius:20px;margin:0 auto 13px;display:block;object-fit:contain;filter:drop-shadow(0 8px 20px var(--ac2))" alt="Nido">
+      <div class="ltitle" style="font-size:22px;margin-bottom:4px">Crea tu sala</div>
+      <div class="lsub" id="couple-sub" style="margin-bottom:0;font-size:12px">Organicen sus finanzas juntos</div>
+    </div>
+
     <div id="couple-selector">
-      <!-- Crear nueva sala -->
-      <div style="background:var(--s2);border:1.5px solid var(--bor);border-radius:14px;padding:14px;margin-bottom:12px">
-        <div style="font-size:11px;font-weight:800;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Nueva sala</div>
-        <div class="fg">
-          <label class="flbl">Nombre de la sala</label>
-          <input type="text" id="new-couple-name" class="finp" placeholder="Ej: Ana & Carlos ❤️" maxlength="20">
-        </div>
-        <div class="fg">
-          <label class="flbl">Moneda de la sala</label>
-          <select id="new-couple-moneda" class="fsel">
-            <option value="COP" selected>🇨🇴 COP — Peso colombiano</option>
-            <option value="USD">🇺🇸 USD — Dólar estadounidense</option>
-            <option value="MXN">🇲🇽 MXN — Peso mexicano</option>
-            <option value="EUR">🇪🇺 EUR — Euro</option>
-          </select>
-          <div style="font-size:11px;color:var(--mu);margin-top:4px">💱 Los gastos de viaje en otra moneda se convertirán a esta al cerrar el viaje</div>
-        </div>
-        <div class="fg">
-          <label class="flbl">Tus ingresos mensuales</label>
-          <div class="val-wrap">
-            <input type="text" id="new-couple-salary" class="finp" placeholder="0" inputmode="numeric" autocomplete="off">
-            <span class="val-prefix">$</span>
+
+      <div class="fg">
+        <label class="flbl">Nombre de la sala</label>
+        <input type="text" id="new-couple-name" class="finp" placeholder="Ej: Ana &amp; Carlos" maxlength="20">
+      </div>
+      <div class="fg">
+        <label class="flbl">Moneda</label>
+        <select id="new-couple-moneda" class="fsel">
+          <option value="COP" selected>🇨🇴 COP — Peso colombiano</option>
+          <option value="USD">🇺🇸 USD — Dólar estadounidense</option>
+          <option value="MXN">🇲🇽 MXN — Peso mexicano</option>
+          <option value="EUR">🇪🇺 EUR — Euro</option>
+        </select>
+      </div>
+
+      <div style="font-size:10px;font-weight:800;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px;display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:1px;background:var(--bor)"></div>Tu perfil<div style="flex:1;height:1px;background:var(--bor)"></div>
+      </div>
+
+      <!-- Avatar accordion -->
+      <div class="cre-accordion">
+        <button class="cre-acc-head" onclick="toggleCreAccordion('avatar')">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="cre-av-mini" style="width:36px;height:36px;border-radius:50%;overflow:hidden;background:var(--ac3);border:2px solid var(--ac2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--mu)">?</div>
+            <div style="text-align:left">
+              <div style="font-size:13px;font-weight:700;color:var(--tx)">Avatar</div>
+              <div style="font-size:11px;color:var(--mu)">Elige tu personaje</div>
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--mu);margin-top:4px">🔒 Solo tú lo ves. Se usa para calcular proporciones. Máx. $100.000.000</div>
-        </div>
-        <div class="fg" style="margin-bottom:0">
-          <label class="flbl">Tu color de perfil</label>
-          <div id="cre-avatar-prev" style="width:44px;height:44px;border-radius:50%;margin:6px auto 8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;border:2px solid var(--bor2);background:#818cf8">?</div>
-          <div class="clr-picker" id="cre-clr-picker"></div>
+          <svg id="cre-acc-av-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--mu);transition:transform .2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="cre-acc-avatar" class="cre-acc-body" style="display:none">
+          <div class="avatar-grid" id="cre-avatar-grid" style="padding:4px 0 0"></div>
         </div>
       </div>
-      <button class="btn" id="btn-crear-pareja" style="background:linear-gradient(135deg,var(--gr),#059669);box-shadow:0 4px 20px var(--gr2);margin-bottom:14px">
+
+      <!-- Color accordion -->
+      <div class="cre-accordion">
+        <button class="cre-acc-head" onclick="toggleCreAccordion('color')">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div id="cre-avatar-prev" style="width:36px;height:36px;border-radius:50%;background:#818cf8;border:2px solid var(--bor2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0">?</div>
+            <div style="text-align:left">
+              <div style="font-size:13px;font-weight:700;color:var(--tx)">Color</div>
+              <div style="font-size:11px;color:var(--mu)">Tu color identificador</div>
+            </div>
+          </div>
+          <svg id="cre-acc-clr-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--mu);transition:transform .2s;flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="cre-acc-color" class="cre-acc-body" style="display:none">
+          <div class="clr-picker" id="cre-clr-picker" style="margin:4px 0 0"></div>
+        </div>
+      </div>
+
+      <div id="legacy-migrate-tip" style="display:none;font-size:11px;color:var(--mu);margin-top:6px;text-align:center">Hola de nuevo — tus datos siguen igual</div>
+
+      <button class="btn" id="btn-crear-pareja" style="background:linear-gradient(135deg,var(--gr),#059669);box-shadow:0 4px 20px var(--gr2);margin-top:16px;margin-bottom:14px">
         <i data-lucide="plus"></i> Crear sala
       </button>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--mu);font-size:12px">
         <div style="flex:1;height:1px;background:var(--bor)"></div>o<div style="flex:1;height:1px;background:var(--bor)"></div>
       </div>
       <button class="btn btn-outline" id="btn-show-join" style="width:100%;padding:13px;font-size:14px;font-weight:700">
-        <i data-lucide="link-2"></i> Unirme con código de invitación
+        <i data-lucide="link-2"></i> Unirme con código
       </button>
     </div>
+
     <div id="couple-join-form" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:700;color:var(--tx)">Unirme con código</div>
+        <div style="font-size:12px;color:var(--mu)">Ingresa el código que te compartió tu pareja</div>
+      </div>
       <div class="fg">
         <label class="flbl">Código de invitación</label>
         <input type="text" id="join-code" class="finp" placeholder="XXXX-XXXX" maxlength="9" style="text-transform:uppercase;letter-spacing:.1em;font-size:18px;text-align:center">
@@ -1967,38 +2018,30 @@ createRoot(document.getElementById('ob-root')).render(<App />)
       </button>
       <button class="btn btn-outline" id="btn-back-couple" style="width:100%;padding:11px;font-size:13px"><i data-lucide="arrow-left"></i> Atrás</button>
     </div>
+
     <div class="lerr" id="lerr-couple">&nbsp;</div>
     <div style="text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--bor)">
       <button onclick="doAuthLogout()" style="background:none;border:none;color:var(--mu);font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;padding:6px"><i data-lucide="log-out"></i> Cerrar sesión</button>
     </div>
   </div>
 
-  <!-- ONBOARDING: Salary input (after joining) -->
+  <!-- ONBOARDING: Profile color (after joining) -->
   <div class="lcard" id="auth-salary" style="display:none">
     <div class="ltitle">✨ Tu perfil</div>
-    <div class="lsub" style="margin-bottom:16px">Personaliza cómo te verás en la app</div>
+    <div class="lsub" style="margin-bottom:16px">Elige tu color de identificación</div>
 
     <!-- Avatar preview + color picker -->
-    <div style="text-align:center;margin-bottom:18px">
+    <div style="text-align:center;margin-bottom:22px">
       <div id="onb-avatar-prev" style="background:#818cf8">?</div>
-      <div class="flbl" style="text-align:center;margin-bottom:8px">Elige tu color</div>
+      <div class="flbl" style="text-align:center;margin-bottom:8px">Tu color en la sala</div>
       <div class="clr-picker" id="onb-clr-picker"></div>
     </div>
 
-    <!-- Salario -->
-    <div style="background:var(--ac3);border:1px solid var(--ac2);border-radius:11px;padding:12px 14px;font-size:13px;color:var(--so);margin-bottom:14px;line-height:1.6">
-      🔒 Solo tú ves tus ingresos exactos. Tu pareja únicamente verá el porcentaje calculado.
-    </div>
-    <div class="fg">
-      <label class="flbl">Mis ingresos mensuales</label>
-      <div class="val-wrap">
-        <input type="text" id="onb-salary" class="finp" placeholder="0" inputmode="numeric" autocomplete="off">
-        <span class="val-prefix">$</span>
-      </div>
-      <div style="font-size:11px;color:var(--mu);margin-top:4px">Mínimo $1 · Máximo $100.000.000</div>
-    </div>
+    <!-- Hidden inputs kept for compatibility -->
+    <input type="hidden" id="onb-salary" value="0">
+
     <button class="btn" id="btn-save-onboarding-salary" style="background:linear-gradient(135deg,var(--ac),#6366f1);box-shadow:0 4px 20px var(--ac2);margin-bottom:10px">
-      Guardar y continuar →
+      Continuar →
     </button>
     <div class="lerr" id="lerr-salary">&nbsp;</div>
     <div style="text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--bor)">
@@ -2051,9 +2094,10 @@ createRoot(document.getElementById('ob-root')).render(<App />)
 
     <!-- Descripción de la app -->
     <div style="background:var(--s2);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:8px">🤝 ¿Para qué sirve Finanzas Pareja?</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">🤝 ¿Para qué sirve Gastos en Pareja?</div>
       <div style="font-size:12px;color:var(--so);line-height:1.7">
         Registra y divide los gastos de tu pareja de forma justa.<br>
+        🤖 Agrega gastos por voz o foto con inteligencia artificial<br>
         📊 Balance automático de quién debe cuánto<br>
         ✈️ Módulo especial para gastos de viajes<br>
         💰 Proporción de gastos según los ingresos de cada uno<br>
@@ -2265,9 +2309,19 @@ createRoot(document.getElementById('ob-root')).render(<App />)
           </div>
         </div>
 
-        <div class="fg">
-          <label class="flbl" for="f-desc">Descripción</label>
-          <input type="text" id="f-desc" class="finp" placeholder="Ej: Gas, Mercado, Clase Pipe...">
+        <div class="fg" style="display:flex;gap:8px;align-items:flex-end">
+          <div style="flex:1;min-width:0">
+            <label class="flbl" for="f-desc">Descripción</label>
+            <input type="text" id="f-desc" class="finp" placeholder="Ej: Gas, Mercado, Clase Pipe...">
+          </div>
+          <div style="flex:0 0 58px">
+            <label class="flbl" for="f-cat-btn">Cat.</label>
+            <input type="hidden" id="f-cat" value="Supermercado">
+            <button type="button" id="f-cat-btn" onclick="openCatPicker()" class="finp" style="display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:11px 8px;width:100%">
+              <span id="f-cat-label" style="font-size:20px;line-height:1">🛒</span>
+              <svg width="8" height="5" viewBox="0 0 10 6" style="flex-shrink:0;opacity:.45"><path fill="currentColor" d="M0 0l5 6 5-6z"/></svg>
+            </button>
+          </div>
         </div>
         <div class="row2">
           <div class="fg">
@@ -2281,10 +2335,6 @@ createRoot(document.getElementById('ob-root')).render(<App />)
             <label class="flbl" for="f-fec" style="font-size:10px">Mes</label>
             <input type="month" id="f-fec" class="finp">
           </div>
-        </div>
-        <div class="fg">
-          <label class="flbl" for="f-cat">Categoría</label>
-          <select id="f-cat" class="fsel"></select>
         </div>
         <div class="fg" style="margin-bottom:0">
           <label class="flbl">División del gasto</label>
@@ -2617,23 +2667,6 @@ createRoot(document.getElementById('ob-root')).render(<App />)
           </div>
         </div>
 
-        <!-- Avatar picker (Open Peeps) -->
-        <div id="avatar-picker-panel" style="display:none;background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div id="av-preview" style="width:50px;height:50px;border-radius:50%;overflow:hidden;border:2px solid var(--bor2);flex-shrink:0;background:var(--s2)"></div>
-            <div>
-              <div style="font-size:12px;font-weight:700;color:var(--so);margin-bottom:1px">Tu avatar</div>
-              <div style="font-size:11px;color:var(--mu)">Elige tu personaje de identificación</div>
-            </div>
-          </div>
-          <div style="font-size:11px;font-weight:800;color:var(--mu);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">Avatar</div>
-          <div class="avatar-grid" id="avatar-grid"></div>
-          <div style="display:flex;gap:7px;margin-top:10px">
-            <button class="btn" onclick="saveMyAvatar()" style="background:linear-gradient(135deg,var(--pk),#ec4899);flex:1;font-size:13px;padding:9px">Guardar ✓</button>
-            <button class="btn btn-outline" onclick="cancelAvatarPick()" style="padding:9px 12px;font-size:13px">✕</button>
-          </div>
-        </div>
-
         <!-- Proporciones -->
         <div class="sala-section-title">Proporciones de gastos</div>
         <div class="prop-strip">
@@ -2654,7 +2687,7 @@ createRoot(document.getElementById('ob-root')).render(<App />)
           </div>
         </div>
         <div id="prop-custom-wait" style="font-size:11px;color:var(--mu);text-align:center;margin-bottom:14px;display:none">
-          ⏳ Ambos integrantes deben ingresar sus ingresos para activar esta proporción
+          💰 Ambos deben agregar sus ingresos (sección Integrantes arriba) para activar esta opción
         </div>
 
         <!-- Moneda de la sala -->
@@ -2728,19 +2761,6 @@ createRoot(document.getElementById('ob-root')).render(<App />)
             </div>
           </div>
         </div>
-        <!-- Mi color -->
-        <div class="sala-section-title">Mi color</div>
-        <div id="color-picker-panel" style="background:var(--s1);border:1.5px solid var(--bor);border-radius:13px;padding:14px;margin-bottom:10px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div id="clr-preview-dot" style="width:36px;height:36px;border-radius:50%;border:2px solid var(--bor2);flex-shrink:0;transition:background .2s"></div>
-            <div>
-              <div style="font-size:12px;font-weight:700;color:var(--so);margin-bottom:1px">Color de identificación</div>
-              <div style="font-size:11px;color:var(--mu)">Toca un color para aplicarlo en toda la app</div>
-            </div>
-          </div>
-          <div class="clr-picker" id="sala-clr-picker"></div>
-        </div>
-
         <!-- Código de invitación -->
         <div id="sala-invite-section" style="display:none">
           <div class="sala-section-title">Código de invitación</div>
@@ -2968,7 +2988,7 @@ function nidoLogoHTML(width=200,extraStyle=""){
 function nidoIconHTML(size=32,extraStyle=""){
   return `<img src="${NIDO_ICON_SRC}" alt="Nido" width="${size}" height="${size}" style="display:inline-block;vertical-align:middle;flex-shrink:0;${extraStyle}">`;
 }
-const CATI={Hogar:"🏠",Mercado:"🛒",Transporte:"🚗",Servicios:"💡","Educación":"📚",Salud:"🏥",Entretenimiento:"🎭",Ropa:"👗",Mascotas:"🐾",Ahorro:"💰",Deuda:"💳",Viaje:"✈️",Otro:"📦"};
+const CATI={"Alojamiento":"🏨","Supermercado":"🛒","Entretenimiento":"🎭","Salud":"🏥","Restaurante/Bar":"🍔","Transporte":"🚗","Deuda":"💳","Hogar":"🏠","Ropa":"👗","Mascotas":"🐾","Servicios":"💡","Viaje":"✈️","Otro":"📦"};
 /* ── Categorías: merge default + custom ── */
 function getAllCats(){
   const base={...CATI};
@@ -2976,16 +2996,42 @@ function getAllCats(){
   return base;
 }
 function catIcon(name){ return getAllCats()[name]||"📦"; }
+function setCatLabel(name){
+  const lbl=$("f-cat-label");
+  if(lbl) lbl.textContent=catIcon(name)||"📦";
+}
+function openCatPicker(){
+  const overlay=$("cat-picker-overlay"); if(!overlay) return;
+  const grid=$("cat-picker-grid"); if(!grid) return;
+  const cats=getAllCats();
+  const cur=$("f-cat")?.value||"";
+  grid.innerHTML=Object.entries(cats).map(([name,icon])=>{
+    const sel=name===cur?" cat-pick-sel":"";
+    return `<button type="button" class="cat-pick-btn${sel}" data-cat="${name}" onclick="selectCat(this.dataset.cat)"><span class="cat-pick-ico">${icon}</span><span class="cat-pick-lbl">${name}</span></button>`;
+  }).join("");
+  overlay.style.display="block";
+}
+function selectCat(name){
+  const inp=$("f-cat"); if(inp) inp.value=name;
+  setCatLabel(name);
+  closeCatPicker();
+}
+function closeCatPicker(){
+  const overlay=$("cat-picker-overlay"); if(overlay) overlay.style.display="none";
+}
 function buildCatSelects(keepVal){
   const cats=getAllCats();
   const opts=Object.entries(cats).map(([n,i])=>`<option value="${n}">${i} ${n}</option>`).join("");
-  ["f-cat","eg-cat","rec-cat"].forEach(id=>{
+  ["eg-cat","rec-cat"].forEach(id=>{
     const el=$(id); if(!el) return;
     const prev=keepVal?el.value:null;
     el.innerHTML=opts;
     if(prev&&el.querySelector(`option[value="${prev}"]`)) el.value=prev;
     else el.selectedIndex=0;
   });
+  // Sync the custom f-cat button label
+  const fCatVal=$("f-cat")?.value||Object.keys(cats)[0]||"Supermercado";
+  setCatLabel(fCatVal);
 }
 
 /* ── Render lista categorías custom ── */
@@ -3333,6 +3379,7 @@ let viajes=[], curViaje=null, vPagador=null, unsubViajes=null;
 let unsubCoupleDoc=null;
 // Settlement
 let saldos=[], unsubSaldos=null;
+let unsubNotif=null;
 const LS="finpj-gastos-v4", LS_V="finpj-viajes-v1", LS_S="finpj-saldos-v1";
 const lsLoad=()=>{try{return JSON.parse(localStorage.getItem((coupleId||"")+LS)||"[]")}catch{return[]}};
 const lsSave=d=>{try{localStorage.setItem((coupleId||"")+LS,JSON.stringify(d))}catch{}};
@@ -3362,7 +3409,7 @@ function fmtInputDecimal(v){
 }
 function getRawVal(){
   const mon = salaMoneda();
-  const raw = ($("f-val").value||"").trim();
+  const raw = ($("f-val")?.value||"").trim();
   if(mon === 'COP') return parseFloat(raw.replace(/\./g,"").replace(/,/g,".")) || 0;
   return parseFloat(raw) || 0;
 }
@@ -3465,7 +3512,11 @@ function showAuthScreen(id){
     const el=$(s); if(el) el.style.display=s===id?"block":"none";
   });
   // Inicializar picker del creador al mostrar auth-couple
-  if(id==="auth-couple") setTimeout(()=>renderCreatorColorPicker(),50);
+  if(id==="auth-couple") setTimeout(()=>{
+    renderCreatorColorPicker();
+    if(!window._selectedCreatorAvatar) window._selectedCreatorAvatar=myProfile?.avatar||null;
+    renderCreatorAvatarMini();
+  },50);
 }
 
 /* Color picker del CREADOR (en auth-couple) */
@@ -3495,6 +3546,50 @@ function renderCreatorColorPicker(){
   });
 }
 
+/* ── Creator avatar picker (acordeón en auth-couple) ── */
+window._selectedCreatorAvatar=null;
+function renderCreatorAvatarMini(){
+  const mini=$("cre-av-mini");
+  if(!mini) return;
+  const chosen=window._selectedCreatorAvatar;
+  if(chosen) mini.innerHTML=peepImg(chosen,32);
+  else mini.textContent="?";
+}
+function renderCreatorAvatarGrid(){
+  const grid=$("cre-avatar-grid");
+  if(!grid) return;
+  if(!window._selectedCreatorAvatar) window._selectedCreatorAvatar=myProfile?.avatar||AVATARS[0];
+  const chosen=window._selectedCreatorAvatar;
+  grid.innerHTML=AVATARS.map(a=>
+    `<div class="av-opt${a===chosen?" sel":""}" data-seed="${a}" onclick="pickCreatorAvatar('${a}')">` +
+    `<img data-src="${peepURL(a)}" width="38" height="38" style="width:38px;height:38px;object-fit:cover;display:block;border-radius:50%" alt=""></div>`
+  ).join("");
+  const imgs=Array.from(grid.querySelectorAll("img[data-src]"));
+  function loadNext(i){
+    if(i>=imgs.length) return;
+    const img=imgs[i];
+    img.onload=img.onerror=()=>setTimeout(()=>loadNext(i+1),90);
+    img.src=img.dataset.src;
+  }
+  loadNext(0);
+}
+function pickCreatorAvatar(a){
+  window._selectedCreatorAvatar=a;
+  document.querySelectorAll("#cre-avatar-grid .av-opt").forEach(el=>el.classList.toggle("sel",el.dataset.seed===a));
+  renderCreatorAvatarMini();
+}
+function toggleCreAccordion(which){
+  const bodyId=which==="avatar"?"cre-acc-avatar":"cre-acc-color";
+  const iconId=which==="avatar"?"cre-acc-av-icon":"cre-acc-clr-icon";
+  const body=$(bodyId);
+  const icon=$(iconId);
+  if(!body) return;
+  const isOpen=body.style.display!=="none";
+  body.style.display=isOpen?"none":"block";
+  if(icon) icon.style.transform=isOpen?"":"rotate(180deg)";
+  if(!isOpen && which==="avatar") renderCreatorAvatarGrid();
+}
+
 /* ── Load Firebase libs ── */
 function loadFirebase(){
   return new Promise(res=>{
@@ -3516,6 +3611,11 @@ function loadFirebase(){
 }
 
 function initFB(){
+  const _allowed=["balance-group.github.io","localhost","127.0.0.1"];
+  if(!_allowed.includes(location.hostname)){
+    document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#888;gap:12px"><div style="font-size:40px">🔒</div><div style="font-weight:700;font-size:16px">Aplicación no disponible</div></div>';
+    throw new Error("Dominio no autorizado: "+location.hostname);
+  }
   try{
     if(!firebase.apps.length) firebase.initializeApp(FB_CFG);
     db   = firebase.firestore();
@@ -3637,9 +3737,7 @@ async function onUserSignedIn(user){
 /* ══ SALA COMPLETITUD ══ */
 function isSalaCompleta(couple){
   const mems=Object.keys(couple?.members||{});
-  if(mems.length<2) return false;
-  const sal=couple?.salarios||{};
-  return mems.every(uid=>(sal[uid]||0)>0);
+  return mems.length>=2;
 }
 
 let unsubWaiting=null;
@@ -3713,16 +3811,12 @@ function renderWaitingScreen(couple){
     }
     if(msgEl) msgEl.innerHTML="";
   }else{
-    if(titleEl) titleEl.textContent="Casi listo...";
-    if(subEl)   subEl.textContent="Tu pareja debe ingresar sus ingresos";
+    // Sala con 2 miembros → isSalaCompleta=true → esta rama ya no se alcanza,
+    // pero se mantiene como fallback de seguridad.
+    if(titleEl) titleEl.textContent="¡Listo!";
+    if(subEl)   subEl.textContent="Entrando a la sala...";
     if(codeEl) codeEl.style.display="none";
-    const partnerUid=mems.find(u=>u!==myProfile.uid);
-    const partnerName=partnerProfile?.displayName||"Tu pareja";
-    if(msgEl) msgEl.innerHTML=`<div style="background:var(--s2);border:1.5px solid var(--bor);border-radius:11px;padding:13px;text-align:center;font-size:13px;color:var(--so);margin-bottom:10px">
-      <div style="font-size:20px;margin-bottom:5px">💼</div>
-      <div style="font-weight:700;margin-bottom:3px">${esc(partnerName)} ya se unió</div>
-      <div style="color:var(--mu);font-size:12px">Esperando que ingrese sus ingresos...</div>
-    </div>`;
+    if(msgEl)  msgEl.innerHTML="";
   }
 }
 
@@ -3837,6 +3931,14 @@ function enterAppUI(cid){
 }
 
 async function enterCouple(cid, fromSwitch=false){
+  // Detener listeners ANTES de cambiar coupleId para evitar callbacks stale
+  if(unsub){unsub();unsub=null;}
+  if(unsubCoupleDoc){unsubCoupleDoc();unsubCoupleDoc=null;}
+  if(unsubViajes){unsubViajes();unsubViajes=null;}
+  if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
+  if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
+  if(unsubNotif){unsubNotif();unsubNotif=null;}
+
   coupleId = cid;
   showAuthLoading(true);
   try{
@@ -3894,17 +3996,6 @@ async function enterCouple(cid, fromSwitch=false){
     }
 
     // ── Verificar completitud de sala ──
-    const mySalary=(curCouple.salarios||{})[myProfile.uid]||0;
-    if(mySalary<=0){
-      showAuthLoading(false);
-      if(!fromSwitch) $("screen-login").style.display="flex";
-      window._pendingSalaryCid=cid;
-      const inp=$("onb-salary"); if(inp){inp.value="";setTimeout(()=>inp.focus(),200);}
-      window._selectedAvatarColor=null;
-      showAuthScreen("auth-salary");
-      renderOnbColorPicker(partnerProfile?.avatarColor||null);
-      return;
-    }
     if(!isSalaCompleta(curCouple)){
       showAuthLoading(false);
       if(!fromSwitch) $("screen-login").style.display="flex";
@@ -4064,6 +4155,7 @@ function tearDownListeners(fullSignOut=false){
   if(unsubViajes){unsubViajes();unsubViajes=null;}
   if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
   if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
+  if(unsubNotif){unsubNotif();unsubNotif=null;}
   // Limpiar pendientes de onboarding
   window._pendingJoin=null;
   window._pendingSalaryCid=null;
@@ -4072,6 +4164,7 @@ function tearDownListeners(fullSignOut=false){
   gastos=[]; viajes=[]; saldos=[];
   curCouple=null; coupleId=null; partnerProfile=null;
   curSplit=50;
+  window._multiSalaOk = false;
   // Solo limpiar el usuario si es un cierre de sesión real
   if(fullSignOut){
     curUser=null; myProfile=null;
@@ -4182,16 +4275,19 @@ $("btn-crear-pareja").addEventListener("click",async()=>{
   $("lerr-couple").textContent="";
   const nameInp=$("new-couple-name");
   const coupleName=nameInp?.value.trim()||(myProfile?.displayName||"Mi sala")+" & …";
-  const salaryRaw=parseFloat(($("new-couple-salary")?.value||"").replace(/\./g,"").replace(/,/g,"."))||0;
   if(!coupleName){$("lerr-couple").textContent="⚠️ Ingresa un nombre para la sala";return;}
-  if(!salaryRaw||salaryRaw<=0){$("lerr-couple").textContent="⚠️ Ingresa tus ingresos mensuales para continuar";return;}
-  if(salaryRaw>100000000){$("lerr-couple").textContent="⚠️ Los ingresos no pueden superar $100.000.000";return;}
+  // Premium gate: segunda sala en adelante requiere premium
+  if((myProfile?.couples||[]).length >= 1 && !isPremium() && !window._multiSalaOk){
+    showPremiumWall('Múltiples salas'); return;
+  }
+  window._multiSalaOk = false;
   showAuthLoading(true);
-  // Guardar color elegido
+  // Guardar color y avatar elegidos
   const chosenColorCre=window._selectedCreatorColor||AVATAR_COLORS[0];
+  const chosenAvatarCre=window._selectedCreatorAvatar||AVATARS[0];
   try{
-    await db.collection("users").doc(myProfile.uid).update({avatarColor:chosenColorCre}).catch(()=>{});
-    if(myProfile) myProfile.avatarColor=chosenColorCre;
+    await db.collection("users").doc(myProfile.uid).update({avatarColor:chosenColorCre,avatar:chosenAvatarCre}).catch(()=>{});
+    if(myProfile){myProfile.avatarColor=chosenColorCre;myProfile.avatar=chosenAvatarCre;}
     await fbReady; // ensure db is ready
 
     const code=genCode();
@@ -4200,7 +4296,7 @@ $("btn-crear-pareja").addEventListener("click",async()=>{
       name: coupleName,
       moneda: $("new-couple-moneda")?.value||"COP",
       members:{ [myProfile.uid]:myProfile.uid },
-      salarios:{ [myProfile.uid]:salaryRaw },
+      salarios:{},
       inviteCode: code,
       createdBy: myProfile.uid,
       createdAt: now,
@@ -4284,9 +4380,6 @@ function renderOnbColorPicker(partnerColor){
 
 /* ── Guardar salario de onboarding ── */
 $("btn-save-onboarding-salary").addEventListener("click",async()=>{
-  const raw=parseFloat(($("onb-salary")?.value||"").replace(/\./g,"").replace(/,/g,"."))||0;
-  if(!raw||raw<=0){$("lerr-salary").textContent="⚠️ Ingresa un valor mayor a $0";return;}
-  if(raw>100000000){$("lerr-salary").textContent="⚠️ Los ingresos no pueden superar $100.000.000";return;}
   $("lerr-salary").textContent="";
   showAuthLoading(true);
   // Restaurar _pendingJoin desde sessionStorage si se perdió por re-fire de auth
@@ -4295,7 +4388,6 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
       const saved=sessionStorage.getItem("nido_pending_join");
       if(saved) window._pendingJoin=JSON.parse(saved);
     }catch(e){ console.error("[Nido] Error restaurando _pendingJoin:", e); }
-  } else {
   }
   const chosenColor=window._selectedAvatarColor||AVATAR_COLORS[0];
   try{
@@ -4304,15 +4396,13 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
     if(myProfile) myProfile.avatarColor=chosenColor;
 
     if(window._pendingJoin){
-      // Flujo unirse: completar la unión + guardar salario
+      // Flujo unirse: completar la unión (sin salario — se agrega luego en tab Sala)
       const {cid,code,cdata,updatedMembers,finalName,firstMember}=window._pendingJoin;
       window._pendingJoin=null;
       try{ sessionStorage.removeItem("nido_pending_join"); }catch(e){}
-      const updatedSalarios={...(cdata.salarios||{}),[myProfile.uid]:raw};
       await db.collection("couples").doc(cid).update({
         members:updatedMembers,
         name:finalName,
-        salarios:updatedSalarios,
         inviteCode:null
       });
       await db.collection("invite_codes").doc(code).delete().catch(()=>{});
@@ -4321,14 +4411,6 @@ $("btn-save-onboarding-salary").addEventListener("click",async()=>{
       await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
       myProfile.couples=newCouples;
       toast("🎉 ¡Sala vinculada!");
-      await enterCouple(cid);
-    }else if(window._pendingSalaryCid){
-      // Flujo salario faltante en sala existente
-      const cid=window._pendingSalaryCid;
-      window._pendingSalaryCid=null;
-      const salarios={...(curCouple?.salarios||{}),[myProfile.uid]:raw};
-      await db.collection("couples").doc(cid).update({salarios});
-      if(curCouple) curCouple.salarios=salarios;
       await enterCouple(cid);
     }else{
       showAuthLoading(false);
@@ -4351,6 +4433,11 @@ $("btn-join-pareja").addEventListener("click",async()=>{
   const code=$("join-code").value.trim().toUpperCase();
   $("lerr-couple").textContent="";
   if(code.length<9){$("lerr-couple").textContent="Código inválido (XXXX-XXXX)";return;}
+  // Premium gate: segunda sala en adelante requiere premium
+  if((myProfile?.couples||[]).length >= 1 && !isPremium() && !window._multiSalaOk){
+    showPremiumWall('Múltiples salas'); return;
+  }
+  window._multiSalaOk = false;
   showAuthLoading(true);
   try{
     await fbReady; // ensure db is ready
@@ -4413,7 +4500,34 @@ $("btn-join-pareja").addEventListener("click",async()=>{
   }
 });
 
-$("btn-add-new-couple").addEventListener("click",()=>{
+$("btn-add-new-couple").addEventListener("click", async()=>{
+  const existing = myProfile?.couples || [];
+  if(existing.length >= 1){
+    // Intentar verificación rápida con curCouple cargado (path in-app)
+    let ok = isPremium();
+    if(!ok){
+      // Path de login (curCouple null) — verificar en Firestore
+      for(const cid of existing){
+        try{
+          const s = await db.collection("couples").doc(cid).get();
+          if(s.exists){ const d=s.data(); if(d.premium && (!d.premiumExpiry || d.premiumExpiry>=Date.now())){ ok=true; break; } }
+        }catch(e){}
+      }
+    }
+    if(!ok){ showPremiumWall('Múltiples salas'); return; }
+    window._multiSalaOk = true;
+  }
+
+  // Detener listeners activos antes de salir al auth screen
+  if(unsub){unsub();unsub=null;}
+  if(unsubCoupleDoc){unsubCoupleDoc();unsubCoupleDoc=null;}
+  if(unsubViajes){unsubViajes();unsubViajes=null;}
+  if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
+  if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
+  if(unsubNotif){unsubNotif();unsubNotif=null;}
+  gastos=[]; viajes=[]; saldos=[];
+  curCouple=null; coupleId=null; partnerProfile=null;
+
   $("screen-login").style.display="flex";
   $("screen-app").style.display="none";
   $("couple-selector").style.display="block";
@@ -4511,7 +4625,7 @@ function setPag(p){
   const name=getPagadorName(p);
   const color=getUserColor(p);
   const avHTML=pagAvatarHTML(p,24);
-  if(badge) badge.innerHTML=`<span style="color:${color};display:inline-flex;align-items:center;gap:7px">${avHTML||"👤"}${name}</span>`;
+  if(badge) badge.innerHTML=`<span style="color:${color};display:inline-flex;align-items:center;gap:7px">${avHTML||"👤"}${esc(name)}</span>`;
   const btn=$("btn-save");
   btn.style.background=`linear-gradient(135deg,${color},${color}cc)`;
   btn.style.boxShadow=`0 4px 20px ${color}50`;
@@ -4534,14 +4648,15 @@ function updatePrev(){
   }
   box.classList.add("has-val");
   const pN=getPagadorName(curPag), oN=getOtherName(curPag);
+  const pNe=esc(pN), oNe=esc(oN);
   if(curSplit===50)
-    box.innerHTML=`<b>${pN}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> → <b>${oN}</b> debe <b style="color:var(--ye)">${fmt(v*.5)}</b>`;
+    box.innerHTML=`<b>${pNe}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> → <b>${oNe}</b> debe <b style="color:var(--ye)">${fmt(v*.5)}</b>`;
   else if(curSplit==="custom"){
-    const oPct=window._theirPct||50; // siempre el % del OTRO, calculado por UID
+    const oPct=window._theirPct||50;
     const oDebe=Math.round(v*oPct/100);
-    box.innerHTML=`<b>${pN}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> → <b>${oN}</b> debe <b style="color:var(--ye)">${fmt(oDebe)}</b> <span style="color:var(--mu);font-size:11px">(${oPct}%)</span>`;
+    box.innerHTML=`<b>${pNe}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> → <b>${oNe}</b> debe <b style="color:var(--ye)">${fmt(oDebe)}</b> <span style="color:var(--mu);font-size:11px">(${oPct}%)</span>`;
   } else
-    box.innerHTML=`<b>${pN}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> completo → <b>${oN}</b> le debe <b style="color:var(--ye)">${fmt(v)}</b>`;
+    box.innerHTML=`<b>${pNe}</b> pagó <b style="color:var(--ye)">${fmt(v)}</b> completo → <b>${oNe}</b> le debe <b style="color:var(--ye)">${fmt(v)}</b>`;
 }
 
 /* Save */
@@ -4556,7 +4671,7 @@ $("btn-save").addEventListener("click",async()=>{
   if(!fec)         {toast("⚠️ Selecciona el mes");return;}
   const [anioS,mesS]=fec.split("-");
   let debeVal=val;
-  if(curSplit===50) debeVal=val*.5;
+  if(curSplit===50) debeVal=Math.round(val*.5);
   else if(curSplit==="custom"){
     debeVal=Math.round(val*(window._theirPct||50)/100); // % del OTRO, calculado por UID
   }
@@ -4568,7 +4683,7 @@ $("btn-save").addEventListener("click",async()=>{
     ...(needsValidation ? {pendiente:true} : {}),
     ...(_pendingReceipt ? {recibo:_pendingReceipt} : {})};
   const btn=$("btn-save");
-  btn.textContent="Guardando..."; btn.style.opacity=".7";
+  btn.textContent="Guardando..."; btn.style.opacity=".7"; btn.disabled=true;
   try{
     await dbAdd(g);
     if(needsValidation){
@@ -4582,10 +4697,10 @@ $("btn-save").addEventListener("click",async()=>{
     }
     clearReceiptPreview();
     $("f-desc").value=""; $("f-val").value=""; $("f-fec").value=mesHoy();
-    $("f-cat").value="Hogar"; setSplit(50); updatePrev();
+    $("f-cat").value="Supermercado"; setCatLabel("Supermercado"); setSplit(50); updatePrev();
     $("f-desc").focus();
   }catch(e){ handleErr(e); }
-  finally{ btn.textContent="Guardar gasto ✓"; btn.style.opacity="1"; }
+  finally{ btn.textContent="Guardar gasto ✓"; btn.style.opacity="1"; btn.disabled=false; }
 });
 
 /* ══ FOTO DE RECIBO (premium) ══ */
@@ -4820,7 +4935,7 @@ function getOtherName(pagador){
 }
 function renderTx(){
   const lastTs=lastSettleTs();
-  const gastosActivos=gastos.filter(g=>g.ts>lastTs);
+  const gastosActivos=gastos.filter(g=>g.ts>lastTs || g.esSaldo);
 
   // Separar pendientes y confirmados
   const pendingPartner=gastosActivos.filter(g=>g.pendiente&&g.addedBy!==myProfile?.uid).sort((a,b)=>b.ts-a.ts);
@@ -4859,19 +4974,21 @@ function renderTx(){
   // ── Helper: card de gasto confirmado ──
   function txCardConfirmed(g){
     const col=getUserColor(g.pagador);
-    const ds=MOF[g.mes-1]+" "+g.anio;
+    const ds=(MOF[g.mes-1]||MOF[0])+" "+g.anio;
     const ico=catIcon(g.cat);
     const oName=getOtherName(g.pagador);
-    const debt=`${oName} debe ${fmt(g.debe)}`;
+    const debt=`${esc(oName)} debe ${fmt(g.debe)}`;
     return`<div class="txi">
       <div class="txav">${txAvatarHTML(g.pagador, col)}</div>
       <div class="txbody">
         <div class="txdesc">${esc(g.desc)}</div>
-        <div class="txmeta"><span>${ds}</span><span>${ico} ${g.cat}</span><span class="tag ${g.split==='custom'?'tcustom':'t'+g.split}">${g.split==='custom'?(g.valor>0?Math.round(g.debe/g.valor*100)+'% prop':'prop'):g.split+'%'}</span></div>
-      </div>
-      <div class="txr">
-        <div class="txval" style="color:${col}">${fmt(g.valor)}</div>
-        <div class="txd">${debt}</div>
+        <div class="txmeta-row">
+          <div class="txmeta"><span>${ds}</span><span>${ico} ${esc(g.cat||"Otro")}</span><span class="tag ${g.split==='custom'?'tcustom':'t'+g.split}">${g.split==='custom'?(g.valor>0?Math.round(g.debe/g.valor*100)+'% prop':'prop'):g.split+'%'}</span></div>
+          <div class="txr">
+            <div class="txval" style="color:${col}">${fmt(g.valor)}</div>
+            <div class="txd">${debt}</div>
+          </div>
+        </div>
       </div>
       ${g.recibo?`<button class="tx-receipt-btn" onclick="openReceiptLightbox(gastos.find(x=>x.id==='${g.id}')?.recibo)" title="Ver recibo">📷</button>`:''}
       <button class="txedit" onclick="abrirEditarGasto('${g.id}')" title="Editar">✏️</button>
@@ -4882,10 +4999,10 @@ function renderTx(){
   // ── Helper: card de gasto pendiente ──
   function txCardPending(g, tipo){
     const col=getUserColor(g.pagador);
-    const ds=MOF[g.mes-1]+" "+g.anio;
+    const ds=(MOF[g.mes-1]||MOF[0])+" "+g.anio;
     const ico=catIcon(g.cat);
     const oName=getOtherName(g.pagador);
-    const debt=`${oName} debe ${fmt(g.debe)}`;
+    const debt=`${esc(oName)} debe ${fmt(g.debe)}`;
     const isPartner=tipo==="partner";
     const cardCls=isPartner?"txi-pending-partner":"txi-pending-mine";
     const badge=isPartner
@@ -4899,11 +5016,13 @@ function renderTx(){
       <div class="txav">${txAvatarHTML(g.pagador, col)}</div>
       <div class="txbody">
         <div class="txdesc">${esc(g.desc)}</div>
-        <div class="txmeta"><span>${ds}</span><span>${ico} ${g.cat}</span>${badge}</div>
-      </div>
-      <div class="txr">
-        <div class="txval" style="color:${col}">${fmt(g.valor)}</div>
-        <div class="txd">${debt}</div>
+        <div class="txmeta-row">
+          <div class="txmeta"><span>${ds}</span><span>${ico} ${esc(g.cat||"Otro")}</span>${badge}</div>
+          <div class="txr">
+            <div class="txval" style="color:${col}">${fmt(g.valor)}</div>
+            <div class="txd">${debt}</div>
+          </div>
+        </div>
       </div>
       <div class="pending-actions">${actions}</div>
     </div>`;
@@ -5040,9 +5159,9 @@ function renderResumen(){
 
   // Actualizar etiquetas de las 4 tarjetas
   const lblYoPago =$("lbl-jp");
-  if(lblYoPago)  lblYoPago.innerHTML =`<span style="display:inline-flex;align-items:center;gap:4px">${pagAvatarHTML(myProfile?.uid,14)||"💕"}<span>${myName} pagó</span></span>`;
+  if(lblYoPago)  lblYoPago.innerHTML =`<span style="display:inline-flex;align-items:center;gap:4px">${pagAvatarHTML(myProfile?.uid,14)||"💕"}<span>${esc(myName)} pagó</span></span>`;
   const lblPrtPago=$("lbl-jop");
-  if(lblPrtPago) lblPrtPago.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px">${pagAvatarHTML(partnerProfile?.uid,14)||"💼"}<span>${prtName} pagó</span></span>`;
+  if(lblPrtPago) lblPrtPago.innerHTML=`<span style="display:inline-flex;align-items:center;gap:4px">${pagAvatarHTML(partnerProfile?.uid,14)||"💼"}<span>${esc(prtName)} pagó</span></span>`;
   const lblPrtDebe=$("lbl-dj");  if(lblPrtDebe) lblPrtDebe.textContent=prtName+" le debe a "+myName;
   const lblYoDebo =$("lbl-djo"); if(lblYoDebo)  lblYoDebo.textContent =myName+" le debe a "+prtName;
 
@@ -5770,7 +5889,7 @@ function startListenSaldos(){
   if(unsubSaldos)unsubSaldos();
   unsubSaldos=coupleCol("saldos").orderBy("ts","desc").onSnapshot(snap=>{
     saldos=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderResumen(); // refresh balance
+    render(); // refresca balance y oculta gastos anteriores al corte
   },()=>{});
 }
 
@@ -5851,14 +5970,14 @@ function renderViajeDetalle(){
       const avHTML=pagAvatarHTML(g.pagador,28)||((g.pagador===myProfile?.uid||g.pagador===curUser)?"👩‍💼":"👨‍💼");
       const editBtn=v.estado==="activo"?`<button onclick="abrirEditarVGasto(${i})" title="Editar" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:all .2s" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--mu)'">✏️</button>`:"";
       const delBtn=v.estado==="activo"?`<button class="vdel-btn" data-idx="${i}" onclick="eliminarVGasto(${i})" title="Eliminar" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:6px;transition:all .2s">🗑</button>`:"";
-      const monTag=gMon!==base?`<span style="font-size:10px;background:var(--ac2);color:var(--ac);border-radius:5px;padding:1px 5px;margin-left:4px">${gMon}</span>`:"";
+      const monCode=`<span style="font-size:10px;font-weight:700;color:var(--mu);margin-left:4px;letter-spacing:.02em">${gMon}</span>`;
       const valStr=g.valorBase&&gMon!==base
-        ?`<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${col}">${fmtMon(g.valor,gMon)}</div><div style="font-size:10px;color:var(--mu)">≈ ${fmtMon(g.valorBase,base)}</div>`
-        :`<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${col}">${fmtMon(g.valor,gMon)}</div>`;
+        ?`<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${col}">${fmtMon(g.valor,gMon)}${monCode}</div><div style="font-size:10px;color:var(--mu)">≈ ${fmtMon(g.valorBase,base)}</div>`
+        :`<div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;color:${col}">${fmtMon(g.valor,gMon)}${monCode}</div>`;
       return`<div class="vgasto-item">
         <div class="vgasto-av" style="background:${avBg};overflow:hidden;border-radius:50%">${avHTML}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(g.desc)}${monTag}</div>
+          <div style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(g.desc)}</div>
           <div style="font-size:11px;color:var(--mu)">${getPagadorName(g.pagador)}</div>
         </div>
         <div style="margin-right:2px;text-align:right">${valStr}</div>
@@ -6405,39 +6524,78 @@ function renderSettlement(){
 }
 
 async function proponerSaldo(){
+  const btn=document.getElementById("btn-proponer-saldo");
+  if(btn){btn.disabled=true;btn.style.opacity=".6";}
   const prop={propuestoPor:myProfile?.uid||curUser,estado:"pendiente",ts:Date.now()};
-  if(db){
-    try{
+  try{
+    if(db){
       await coupleCol("saldos").add(prop);
       const oN2=partnerProfile?.displayName||"tu pareja";
       toast("💸 Propuesta enviada a "+oN2);
       pushOtro("💸 Propuesta de saldo",
         (myProfile?.displayName||"Tu pareja")+" propone saldar cuentas. Abre la app para aceptar.");
-    }catch(e){toast("⚠️ "+e.message);}
-  }else{
-    prop.id="s_"+Date.now();saldos.unshift(prop);lsSaveS(saldos);renderResumen();
-    toast("💸 Propuesta registrada");
+    }else{
+      prop.id="s_"+Date.now();saldos.unshift(prop);lsSaveS(saldos);renderResumen();
+      toast("💸 Propuesta registrada");
+    }
+  }catch(e){
+    toast("⚠️ "+e.message);
+    if(btn){btn.disabled=false;btn.style.opacity="1";}
   }
 }
 
 async function aceptarSaldo(id){
-  // Move to "confirmado_b" — proposer still needs to confirm
-  if(db){
-    try{
+  const btn=document.getElementById("btn-aceptar-saldo");
+  if(btn){btn.disabled=true;btn.style.opacity=".6";}
+  try{
+    if(db){
       await coupleCol("saldos").doc(id).update({estado:"confirmado_b",aceptadoPor:curUser,tsAceptado:Date.now()});
       toast("✅ Aceptaste — esperando confirmación del otro");
-    }catch(e){toast("⚠️ "+e.message);}
-  }else{
-    const idx=saldos.findIndex(s=>s.id===id);
-    if(idx>=0){saldos[idx]={...saldos[idx],estado:"confirmado_b",aceptadoPor:curUser,tsAceptado:Date.now()};lsSaveS(saldos);}
-    renderResumen();toast("✅ Aceptaste — esperando confirmación del otro");
+    }else{
+      const idx=saldos.findIndex(s=>s.id===id);
+      if(idx>=0){saldos[idx]={...saldos[idx],estado:"confirmado_b",aceptadoPor:curUser,tsAceptado:Date.now()};lsSaveS(saldos);}
+      renderResumen();toast("✅ Aceptaste — esperando confirmación del otro");
+    }
+  }catch(e){
+    toast("⚠️ "+e.message);
+    if(btn){btn.disabled=false;btn.style.opacity="1";}
   }
 }
 
 async function confirmarSaldo(id){
-  // Calculate current balance
-  const lastTs2=lastSettleTs();
-  const gFilt=gastos.filter(g=>g.ts>lastTs2);
+  const btnConf=document.getElementById("btn-confirmar-saldo");
+  if(btnConf){btnConf.disabled=true;btnConf.style.opacity=".6";}
+  try{ await _confirmarSaldoImpl(id); }
+  finally{ if(btnConf){btnConf.disabled=false;btnConf.style.opacity="1";} }
+}
+async function _confirmarSaldoImpl(id){
+  // Guard: verify saldo is still in confirmado_b (race condition between two users)
+  if(db){
+    try{
+      const saldoSnap=await coupleCol("saldos").doc(id).get();
+      if(!saldoSnap.exists||saldoSnap.data().estado!=="confirmado_b"){
+        toast("⚠️ Este saldo ya fue procesado"); return;
+      }
+    }catch(e){/* proceed */}
+  }
+  // Fresh gastos read so recently-added expenses aren't missed due to snapshot lag
+  let gBase=gastos;
+  if(db){
+    try{
+      const snap=await coupleCol("gastos").get();
+      gBase=snap.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){/* fall back to cached gastos */}
+  }
+  // Fresh saldos read for accurate lastTs cutoff
+  let lastTs2=lastSettleTs();
+  if(db){
+    try{
+      const sSnap=await coupleCol("saldos").where("estado","==","aceptado").get();
+      if(!sSnap.empty) lastTs2=Math.max(...sSnap.docs.map(d=>d.data().tsAceptado||d.data().ts));
+      else lastTs2=0;
+    }catch(e){/* use cached value */}
+  }
+  const gFilt=gBase.filter(g=>g.ts>lastTs2);
   const dJ2 =gFilt.filter(g=>isPagadorFirst(g.pagador)).reduce((s,g)=>s+g.debe,0);
   const dJo2=gFilt.filter(g=>!isPagadorFirst(g.pagador)).reduce((s,g)=>s+g.debe,0);
   const net2=dJ2-dJo2; // + second owes first; - first owes second
@@ -6688,6 +6846,7 @@ function abrirEditarGasto(id){
 function cerrarEditarGasto(){
   $("edit-overlay").style.display="none";
   _editGastoId=null;
+  ["eg-desc","eg-val"].forEach(id=>{const el=$(id);if(el)el.value="";});
 }
 function selectEditSplit(btn){
   document.querySelectorAll(".eg-split-btn").forEach(b=>b.classList.remove("on"));
@@ -6741,7 +6900,7 @@ async function guardarEdicionGasto(){
   if(!fec){toast("⚠️ Selecciona el mes");return;}
   const [anioS,mesS]=fec.split("-");
   let debe=raw;
-  if(_editSplit===50) debe=raw*.5;
+  if(_editSplit===50) debe=Math.round(raw*.5);
   else if(_editSplit==="custom"){
     const sal=curCouple?.salarios||{};
     const tot=Object.values(sal).reduce((s,v)=>s+v,0);
@@ -7260,10 +7419,6 @@ async function createSalaFromTab(){
         <input id="nd-sala-name" class="finp" placeholder="Ej: Ana & Carlos ❤️" maxlength="20" style="font-size:13px;padding:9px 12px">
       </div>
       <div>
-        <label class="flbl" style="margin-bottom:4px;display:block">Mi salario en esta sala</label>
-        <input id="nd-sala-sal" class="finp" type="number" min="0" placeholder="0" style="font-size:13px;padding:9px 12px">
-      </div>
-      <div>
         <label class="flbl" style="margin-bottom:4px;display:block">Moneda</label>
         <select id="nd-sala-mon" class="fsel" style="font-size:13px">
           <option value="COP">🇨🇴 COP — Peso colombiano</option>
@@ -7278,17 +7433,14 @@ async function createSalaFromTab(){
     didOpen:dlg=>{ setTimeout(()=>dlg.querySelector('#nd-sala-name')?.focus(),60); },
     preConfirm:async()=>{
       const name=document.getElementById('nd-sala-name')?.value.trim();
-      const salStr=document.getElementById('nd-sala-sal')?.value;
       const moneda=document.getElementById('nd-sala-mon')?.value||'COP';
       if(!name) throw new Error('Escribe el nombre de la sala');
-      const salario=parseFloat(salStr)||0;
-      if(salario<0||salario>100000000) throw new Error('Salario debe estar entre 0 y 100,000,000');
       showAuthLoading(true);
       try{
         await fbReady;
         const code=genCode();
         const now=Date.now();
-        const data={name,moneda,members:{[myProfile.uid]:myProfile.uid},salarios:{[myProfile.uid]:salario},inviteCode:code,createdBy:myProfile.uid,createdAt:now};
+        const data={name,moneda,members:{[myProfile.uid]:myProfile.uid},salarios:{},inviteCode:code,createdBy:myProfile.uid,createdAt:now};
         const ref=await db.collection("couples").add(data);
         await db.collection("invite_codes").doc(code).set({coupleId:ref.id,createdAt:now}).catch(()=>{});
         const newCouples=[...(myProfile.couples||[]),ref.id];
@@ -7343,8 +7495,7 @@ async function joinSalaFromTab(){
         if(mems[myProfile.uid]){ showAuthLoading(false); throw new Error('Ya eres miembro de esta sala'); }
         if(Object.keys(mems).length>=2){ showAuthLoading(false); throw new Error('Esta sala ya está completa'); }
         const updatedMembers={...mems,[myProfile.uid]:myProfile.uid};
-        const updatedSalarios={...(cdata.salarios||{}),[myProfile.uid]:(curCouple?.salarios?.[myProfile.uid]||0)};
-        await db.collection("couples").doc(cid).update({members:updatedMembers,salarios:updatedSalarios,inviteCode:null});
+        await db.collection("couples").doc(cid).update({members:updatedMembers,inviteCode:null});
         await db.collection("invite_codes").doc(rawCode).delete().catch(()=>{});
         const newCouples=[...(myProfile.couples||[]).filter(c=>c!==cid),cid];
         await db.collection("users").doc(myProfile.uid).update({couples:newCouples});
@@ -7382,6 +7533,7 @@ async function _doSwitchToCouple(cid){
   if(unsubViajes){unsubViajes();unsubViajes=null;}
   if(unsubSaldos){unsubSaldos();unsubSaldos=null;}
   if(unsubWaiting){unsubWaiting();unsubWaiting=null;}
+  if(unsubNotif){unsubNotif();unsubNotif=null;}
 
   // 2. Limpiar datos de la sala anterior
   gastos=[]; viajes=[]; saldos=[];
@@ -7394,6 +7546,9 @@ async function _doSwitchToCouple(cid){
 
     curCouple = {id:cid,...snap.data()};
     coupleId  = cid;
+
+    updatePremiumBadges();
+    buildCatSelects(false); renderCustomCats(); initCatEmojiPicker(); renderRecurrentes(); initReceiptPicker();
 
     // 4. Cargar perfil del partner
     const mems = Object.keys(curCouple.members||{});
@@ -7479,8 +7634,9 @@ async function sendPush(titulo, cuerpo, paraUsuario){
 /* ── In-app notification bell (reads unread from Firestore) ── */
 function startListenNotif(){
   if(!db||!coupleId) return;
+  if(unsubNotif){unsubNotif();unsubNotif=null;}
   const myUid=myProfile?.uid||curUser;
-  coupleCol("notificaciones")
+  unsubNotif=coupleCol("notificaciones")
     .where("para","in",[myUid,"todos"])
     .where("leido","==",false)
     .onSnapshot(snap=>{
@@ -7636,6 +7792,7 @@ function populateSettings(){
   const avatarWrap=$("set-avatar-wrap");
   if(avatarWrap){ avatarWrap.innerHTML=""; const av=buildAvatar(myProfile,68,avatarWrap); if(av) avatarWrap.appendChild(av); }
   const pn=$("set-profile-name"); if(pn) pn.textContent = myProfile.displayName||"Sin nombre";
+  renderSettingsColorPicker();
   const pe=$("set-profile-email"); if(pe) pe.textContent = myProfile.email||"—";
   const ns=$("set-name-sub"); if(ns) ns.textContent = myProfile.displayName||"—";
   const le=$("set-logout-email"); if(le) le.textContent = myProfile.email||"—";
@@ -8222,7 +8379,6 @@ async function renderSalaTab(){
   renderProportions();
   await renderIntegrantes();
   renderSalaMoneda();
-  renderSalaColorPicker();
   const members = curCouple.members || {};
   const memberCount = Object.keys(members).length;
   const invSec=$("sala-invite-section");
@@ -8295,21 +8451,13 @@ function updateSalaStatus(){
   if(!el) return;
   const members = curCouple?.members || {};
   const memberCount = Object.keys(members).length;
-  const sal = curCouple?.salarios || {};
-  const hasBothSalaries = memberCount>=2 &&
-    Object.keys(sal).length >= 2 &&
-    Object.values(sal).every(s=>s>0);
-  if(hasBothSalaries){
+  if(memberCount>=2){
     el.className="sala-tab-status sala-status-ok";
     el.textContent="✅ Sala completa";
     const dot=$("sala-pending-dot"); if(dot) dot.style.display="none";
-  } else if(memberCount < 2){
+  } else {
     el.className="sala-tab-status sala-status-solo";
     el.textContent="⏳ Esperando al otro integrante";
-    const dot=$("sala-pending-dot"); if(dot) dot.style.display="block";
-  } else {
-    el.className="sala-tab-status sala-status-wait";
-    el.textContent="⏳ Falta ingresar ingresos";
     const dot=$("sala-pending-dot"); if(dot) dot.style.display="block";
   }
 }
@@ -8332,26 +8480,22 @@ async function renderIntegrantes(){
     const salary = salarios[uid] || 0;
     const salaryStr = salary > 0
       ? (isMe ? fmtH(salary) : "✓ Ingresado")
-      : (isMe ? "Toca para agregar tus ingresos" : "⏳ Pendiente");
+      : (isMe ? "" : "Sin ingresos");
     const salaryColor = salary > 0 ? "var(--ac)" : "var(--mu)";
     const editBtn = isMe
       ? `<button class="int-edit-btn" onclick="openSalaryEdit()">${salary>0?"✏️ Editar":"💰 Agregar"}</button>`
-      : "";
-    const editIcon = isMe
-      ? `<span class="int-av-edit">✏️</span>`
       : "";
     const userColor = getUserColor(uid);
     const card = document.createElement("div");
     card.className = "integrante-card" + (isMe ? " me-card" : "");
     card.style.position="relative";
-    const clickHandler = isMe ? ' onclick="openAvatarPicker()"' : '';
     const avSz   = isMe ? 42 : 34;
     const avWH   = isMe ? "46px" : "38px";
     const avBord = isMe ? `3px solid ${userColor}` : `2px solid ${userColor}`;
     const avHTML2 = peepImg(avatarSeed, avSz);
     card.innerHTML = `
-      <div class="int-avatar" style="position:relative;width:${avWH};height:${avWH};background:${userColor}33;border:${avBord}"${clickHandler}>
-        ${avHTML2}${editIcon}
+      <div class="int-avatar" style="position:relative;width:${avWH};height:${avWH};background:${userColor}33;border:${avBord};cursor:default">
+        ${avHTML2}
       </div>
       <div class="int-info">
         <div class="int-name" style="${isMe?"":"font-size:13px"}">${name}${isMe?" <span style='font-size:10px;color:var(--mu);font-weight:400'>(tú)</span>":""}</div>
@@ -8474,7 +8618,7 @@ async function saveMySalary(){
   }catch(e){ handleErr(e); }
 }
 document.addEventListener("input",e=>{
-  if(["salary-input","onb-salary","new-couple-salary"].includes(e.target?.id)){
+  if(e.target?.id==="salary-input"){
     const d=e.target.value.replace(/\D/g,"");
     e.target.value=d?parseInt(d,10).toLocaleString("es-CO"):"";
   }
@@ -8494,40 +8638,40 @@ function preloadAvatarImages(){
   });
 }
 
-/* ── Avatar picker ── */
+/* ── Avatar + Color picker (Settings) ── */
 let _pickedAvatar=null;
 let _pickedColor=null;
-function openAvatarPicker(){
-  const panel=$("avatar-picker-panel"); if(!panel) return;
-  panel.style.display="block";
-  _pickedAvatar=(curCouple?.avatars||{})[myProfile.uid]||"Valeria";
-  // Preview
-  const prev=$("av-preview");
-  const curColor=myProfile?.avatarColor||AVATAR_COLORS[0];
-  if(prev){ prev.innerHTML=peepImg(_pickedAvatar,46); prev.style.background=curColor; }
-  // Avatar grid — usa caché del preload; si no está lista, carga secuencialmente
-  const grid=$("avatar-grid"); if(!grid) return;
-  grid.innerHTML=AVATARS.map(a=>
-    `<div class="av-opt${a===_pickedAvatar?" sel":""}" data-seed="${a}" onclick="pickAvatar('${a}')">` +
-    `<img data-src="${peepURL(a)}" width="38" height="38" style="width:38px;height:38px;object-fit:cover;display:block;border-radius:50%" alt=""></div>`
-  ).join("");
-  // Carga secuencial: esperar a que cada imagen cargue antes de disparar la siguiente
-  const imgs=Array.from(grid.querySelectorAll("img[data-src]"));
-  function loadNext(i){
-    if(i>=imgs.length) return;
-    const img=imgs[i];
-    img.onload=img.onerror=()=>setTimeout(()=>loadNext(i+1),120);
-    img.src=img.dataset.src;
+function toggleSettingsAvatarPicker(){
+  const panel=$("set-avatar-picker-panel"); if(!panel) return;
+  const isOpen=panel.style.display!=="none";
+  if(!isOpen){
+    _pickedAvatar=myProfile?.avatar||AVATARS[0];
+    const prev=$("set-av-preview");
+    const curColor=myProfile?.avatarColor||AVATAR_COLORS[0];
+    if(prev){ prev.innerHTML=peepImg(_pickedAvatar,40); prev.style.background=curColor; }
+    const grid=$("set-avatar-grid"); if(!grid) return;
+    grid.innerHTML=AVATARS.map(a=>
+      `<div class="av-opt${a===_pickedAvatar?" sel":""}" data-seed="${a}" onclick="pickAvatar('${a}')">` +
+      `<img data-src="${peepURL(a)}" width="38" height="38" style="width:38px;height:38px;object-fit:cover;display:block;border-radius:50%" alt=""></div>`
+    ).join("");
+    const imgs=Array.from(grid.querySelectorAll("img[data-src]"));
+    function loadNext(i){
+      if(i>=imgs.length) return;
+      const img=imgs[i];
+      img.onload=img.onerror=()=>setTimeout(()=>loadNext(i+1),120);
+      img.src=img.dataset.src;
+    }
+    loadNext(0);
   }
-  loadNext(0);
-  panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  panel.style.display=isOpen?"none":"block";
+  const ico=$("set-av-toggle-ico");
+  if(ico) ico.style.transform=isOpen?"":"rotate(90deg)";
 }
-function renderSalaColorPicker(){
-  // Render the standalone color picker section in Sala
+function renderSettingsColorPicker(){
   _pickedColor=myProfile?.avatarColor||AVATAR_COLORS[0];
-  const dot=$("clr-preview-dot"); if(dot) dot.style.background=_pickedColor;
+  const dot=$("set-clr-preview-dot"); if(dot) dot.style.background=_pickedColor;
   const partnerColor=partnerProfile?.avatarColor||null;
-  const clrPicker=$("sala-clr-picker"); if(!clrPicker) return;
+  const clrPicker=$("set-clr-picker"); if(!clrPicker) return;
   clrPicker.innerHTML="";
   AVATAR_COLORS.forEach(color=>{
     const btn=document.createElement("div");
@@ -8537,10 +8681,9 @@ function renderSalaColorPicker(){
     btn.addEventListener("click",async()=>{
       if(color===partnerColor) return;
       _pickedColor=color;
-      const dot2=$("clr-preview-dot"); if(dot2) dot2.style.background=color;
+      const dot2=$("set-clr-preview-dot"); if(dot2) dot2.style.background=color;
       clrPicker.querySelectorAll(".clr-opt").forEach(b=>b.classList.remove("clr-sel"));
       btn.classList.add("clr-sel");
-      // Auto-save immediately on click
       await saveMyColor();
     });
     clrPicker.appendChild(btn);
@@ -8566,25 +8709,26 @@ async function saveMyColor(){
 }
 function pickAvatar(a){
   _pickedAvatar=a;
-  document.querySelectorAll(".av-opt").forEach(el=>el.classList.toggle("sel",el.dataset.seed===a));
-  const prev=$("av-preview"); if(prev) prev.innerHTML=peepImg(a,46);
+  document.querySelectorAll("#set-avatar-grid .av-opt").forEach(el=>el.classList.toggle("sel",el.dataset.seed===a));
+  const prev=$("set-av-preview"); if(prev) prev.innerHTML=peepImg(a,40);
 }
 function cancelAvatarPick(){
-  const p=$("avatar-picker-panel"); if(p) p.style.display="none";
+  const p=$("set-avatar-picker-panel"); if(p) p.style.display="none";
+  const ico=$("set-av-toggle-ico"); if(ico) ico.style.transform="";
 }
 async function saveMyAvatar(){
   if(!_pickedAvatar) return;
   try{
-    // Guardar avatar en perfil propio del usuario (users/{uid})
     await db.collection("users").doc(myProfile.uid).update({avatar:_pickedAvatar});
     myProfile.avatar=_pickedAvatar;
     updateTopbarAvatar();
     cancelAvatarPick();
+    const avatarWrap=$("set-avatar-wrap");
+    if(avatarWrap){ avatarWrap.innerHTML=""; const av=buildAvatar(myProfile,68,avatarWrap); if(av) avatarWrap.appendChild(av); }
     await renderIntegrantes();
-    renderSalaColorPicker();
-    render();                                        // movimientos + resumen + viajes
-    if(curPag) setPag(curPag);                       // badge "Agregar gasto"
-    if(curViaje) renderViajeDetalle();               // detalle de viaje si está abierto
+    render();
+    if(curPag) setPag(curPag);
+    if(curViaje) renderViajeDetalle();
     toast("✅ Avatar actualizado");
   }catch(e){ handleErr(e); }
 }
@@ -9127,6 +9271,40 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
           </div>
           <div class="lerr" id="set-name-err" style="font-size:11px;margin-top:4px">&nbsp;</div>
         </div>
+
+        <!-- Avatar row (collapsible) -->
+        <div class="set-row" id="set-av-toggle-row" onclick="toggleSettingsAvatarPicker()" style="margin-top:4px">
+          <div class="set-row-ico" style="background:rgba(168,85,247,.15)">🧑</div>
+          <div class="set-row-body">
+            <div class="set-row-lbl">Mi avatar</div>
+            <div class="set-row-sub">Elige tu personaje</div>
+          </div>
+          <span id="set-av-toggle-ico" class="set-row-end" style="transition:transform .2s">›</span>
+        </div>
+        <div id="set-avatar-picker-panel" style="display:none;padding:4px 4px 10px;border-top:1px solid var(--bor)">
+          <div style="display:flex;align-items:center;gap:10px;margin:10px 0 8px">
+            <div id="set-av-preview" style="width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid var(--bor2);flex-shrink:0;background:var(--s2)"></div>
+            <div style="font-size:11px;color:var(--mu)">Elige tu personaje de identificación</div>
+          </div>
+          <div class="avatar-grid" id="set-avatar-grid"></div>
+          <div style="display:flex;gap:7px;margin-top:10px">
+            <button class="btn" onclick="saveMyAvatar()" style="background:linear-gradient(135deg,var(--pk),#ec4899);flex:1;font-size:13px;padding:9px">Guardar ✓</button>
+            <button class="btn btn-outline" onclick="cancelAvatarPick()" style="padding:9px 12px;font-size:13px">✕</button>
+          </div>
+        </div>
+
+        <!-- Mi color row -->
+        <div class="set-row no-hover" style="flex-direction:column;align-items:stretch;gap:8px;cursor:default;padding-top:12px;padding-bottom:12px;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="set-row-ico" style="background:rgba(244,114,182,.15)">🎨</div>
+            <div class="set-row-body">
+              <div class="set-row-lbl">Mi color</div>
+              <div class="set-row-sub">Se usa en gastos y resúmenes</div>
+            </div>
+            <div id="set-clr-preview-dot" style="width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2.5px solid var(--bor2);transition:background .2s"></div>
+          </div>
+          <div class="clr-picker" id="set-clr-picker"></div>
+        </div>
       </div>
 
       <!-- PLAN -->
@@ -9256,6 +9434,17 @@ if(_isIOS && !_isInStandalone && !sessionStorage.getItem("install-dismissed")){
     </div><!-- /set-body -->
   </div><!-- /settings-panel -->
 </div><!-- /settings-drawer -->
+
+<!-- ── Category picker bottom sheet ── -->
+<div id="cat-picker-overlay" style="display:none" onclick="closeCatPicker()">
+  <div id="cat-picker-sheet" onclick="event.stopPropagation()">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="width:36px;height:4px;background:var(--bor2);border-radius:2px;margin:0 auto 10px"></div>
+      <div style="font-weight:700;font-size:14px;color:var(--tx)">Categoría</div>
+    </div>
+    <div id="cat-picker-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+  </div>
+</div>
 
 <script>
   /* ── Inicializar Lucide + inyectar logos Nido al cargar ── */
@@ -9674,7 +9863,7 @@ function _fillFormFromAI(parsed) {
       : parseFloat(parsed.monto).toFixed(2);
     $('f-val').dispatchEvent(new Event('input'));
   }
-  if (parsed.categoria && CATI[parsed.categoria]) $('f-cat').value = parsed.categoria;
+  if(parsed.categoria && CATI[parsed.categoria]){ $('f-cat').value=parsed.categoria; setCatLabel(parsed.categoria); }
   updatePrev();
 }
 
